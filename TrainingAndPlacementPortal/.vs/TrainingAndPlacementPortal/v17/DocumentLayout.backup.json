@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|d:\\trainingandplacementportal-asp.net\\trainingandplacementportal\\trainingandplacementportal\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|solutionrelative:trainingandplacementportal\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|d:\\trainingandplacementportal-asp.net\\trainingandplacementportal\\trainingandplacementportal\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|solutionrelative:trainingandplacementportal\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -14,8 +18,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Program.cs",
+              "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Program.cs",
+              "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Program.cs",
+              "RelativeToolTip": "TrainingAndPlacementPortal\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-25T05:42:01.471Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
@@ -34,13 +51,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "HomeController.cs",
               "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Controllers\\HomeController.cs",
               "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\HomeController.cs",
               "RelativeToolTip": "TrainingAndPlacementPortal\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAaAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-25T05:16:41.601Z",
               "EditorCaption": ""
