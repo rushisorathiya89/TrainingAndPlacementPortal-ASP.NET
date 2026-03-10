@@ -2,48 +2,214 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TrainingAndPlacementPortal</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/TrainingAndPlacementPortal.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TrainingAndPlacementPortal</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <title>RK University T&P Portal</title>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - TrainingAndPlacementPortal - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+
+<body class="bg-gray-50">
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="w-full bg-gray-200 shadow-sm">
+
+        <div class="w-full flex items-center justify-between px-6 py-3">
+
+            <!-- LOGO -->
+            <div class="flex-shrink-0">
+                <img src="/images/logo.png" alt="RK University" class="h-14">
+            </div>
+
+            <!-- DESKTOP NAVIGATION -->
+            <nav class="hidden md:flex flex-1 justify-center space-x-10 text-gray-800 font-medium">
+
+                <a href="#home" class="hover:text-red-600">Home</a>
+
+                <a href="#placements" class="hover:text-red-600">
+                    Placements
+                </a>
+
+                <a href="#recruiters" class="hover:text-red-600">
+                    Recruiters
+                </a>
+
+                <a href="/Company/SubmitJD" class="hover:text-red-600">
+                    Submit JD
+                </a>
+
+                <a href="#about" class="hover:text-red-600">
+                    About Us
+                </a>
+
+            </nav>
+
+            <!-- AUTH BUTTONS -->
+            <div class="hidden md:flex items-center space-x-3 flex-shrink-0">
+
+                <a href="/Authentication/Login"
+                   class="px-4 py-1 border border-red-600 text-red-600 rounded-md hover:bg-red-50">
+                    Login
+                </a>
+
+                <a href="/Authentication/Register"
+                   class="px-4 py-1 bg-red-600 text-white rounded-md hover:bg-red-700">
+                    Register
+                </a>
+
+            </div>
+
+            <!-- MOBILE MENU BUTTON -->
+            <button onclick="toggleMenu()" class="md:hidden text-2xl">
+                ☰
+            </button>
+
         </div>
+
+
+        <!-- MOBILE MENU -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white shadow-lg">
+
+            <div class="flex flex-col p-4 space-y-4">
+
+                <a href="/">Home</a>
+                <a href="#placements">Placements</a>
+                <a href="#recruiters">Recruiters</a>
+                <a href="/Company/SubmitJD">Submit JD</a>
+                <a href="#about">About Us</a>
+
+                <hr />
+
+                <a href="/Authentication/Login"
+                   class="border border-red-600 text-red-600 px-4 py-2 rounded text-center">
+                    Login
+                </a>
+
+                <a href="/Authentication/Register"
+                   class="bg-red-600 text-white px-4 py-2 rounded text-center">
+                    Register
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- ================= PAGE CONTENT ================= -->
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="bg-[#d8cfc2] ">
+
+        <div class="max-w-7xl mx-auto px-8 py-10 grid md:grid-cols-4 gap-8">
+
+            <!-- COLUMN 1 -->
+            <div>
+
+                <h2 class="font-bold text-black">
+                    RK University
+                    <span class="text-red-600">T&P Portal</span>
+                </h2>
+
+                <p class="text-sm mt-3 text-gray-700">
+                    Empowering students with career opportunities
+                </p>
+
+            </div>
+
+            <!-- COLUMN 2 -->
+            <div>
+
+                <h3 class="text-red-600 font-semibold mb-3">
+                    Quick Links
+                </h3>
+
+                <ul class="space-y-2 text-sm">
+
+                    <li>About T&P Cell</li>
+                    <li>Placement Statistics</li>
+                    <li>Recruiters</li>
+                    <li>Contact Us</li>
+
+                </ul>
+
+            </div>
+
+            <!-- COLUMN 3 -->
+            <div>
+
+                <h3 class="text-red-600 font-semibold mb-3">
+                    For Students
+                </h3>
+
+                <ul class="space-y-2 text-sm">
+
+                    <li>Register</li>
+                    <li>Login</li>
+                    <li>Guidelines</li>
+                    <li>FAQs</li>
+
+                </ul>
+
+            </div>
+
+            <!-- COLUMN 4 -->
+            <div>
+
+                <h3 class="text-red-600 font-semibold mb-3">
+                    Contact
+                </h3>
+
+                <ul class="space-y-2 text-sm">
+
+                    <li>tpo@rku.ac.in</li>
+                    <li>+91 2827 255734</li>
+                    <li>Rajkot, Gujarat</li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="border-t border-gray-400 text-sm py-4 px-8 flex justify-between">
+
+            <p>© 2026 RK University. All rights reserved.</p>
+
+            <div class="space-x-4">
+                <span>Privacy Policy</span>
+                <span>Terms of Service</span>
+            </div>
+
+        </div>
+
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- ================= MOBILE MENU SCRIPT ================= -->
+
+    <script>
+
+        function toggleMenu() {
+
+            const menu = document.getElementById("mobileMenu");
+
+            if (menu.classList.contains("hidden")) {
+                menu.classList.remove("hidden");
+            } else {
+                menu.classList.add("hidden");
+            }
+
+        }
+
+    </script>
+
 </body>
 </html>

@@ -1,5 +1,15 @@
 wwwroot\css\site.css
 wwwroot\favicon.ico
+wwwroot\images\about.png
+wwwroot\images\hero.jpg
+wwwroot\images\logo.png
+wwwroot\images\Recruiters\gateway.jpg
+wwwroot\images\Recruiters\infinity.jpg
+wwwroot\images\Recruiters\multiicon.jpg
+wwwroot\images\Recruiters\qtonz.png
+wwwroot\images\Recruiters\rkit.jpg
+wwwroot\images\Recruiters\rtcamp.png
+wwwroot\images\Recruiters\tcs.jpg
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
