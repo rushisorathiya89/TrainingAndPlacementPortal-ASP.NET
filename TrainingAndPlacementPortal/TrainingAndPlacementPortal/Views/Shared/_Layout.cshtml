@@ -2,214 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>RK University T&P Portal</title>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TP Portal</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body {
+            font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+            margin: 0;
+            background-color: #ffffff;
+            color: #333333;
+        }</style>
 </head>
-
-<body class="bg-gray-50">
-
-    <!-- ================= HEADER ================= -->
-
-    <header class="w-full bg-gray-200 shadow-sm">
-
-        <div class="w-full flex items-center justify-between px-6 py-3">
-
-            <!-- LOGO -->
-            <div class="flex-shrink-0">
-                <img src="/images/logo.png" alt="RK University" class="h-14">
-            </div>
-
-            <!-- DESKTOP NAVIGATION -->
-            <nav class="hidden md:flex flex-1 justify-center space-x-10 text-gray-800 font-medium">
-
-                <a href="#home" class="hover:text-red-600">Home</a>
-
-                <a href="#placements" class="hover:text-red-600">
-                    Placements
-                </a>
-
-                <a href="#recruiters" class="hover:text-red-600">
-                    Recruiters
-                </a>
-
-                <a href="/Company/SubmitJD" class="hover:text-red-600">
-                    Submit JD
-                </a>
-
-                <a href="#about" class="hover:text-red-600">
-                    About Us
-                </a>
-
-            </nav>
-
-            <!-- AUTH BUTTONS -->
-            <div class="hidden md:flex items-center space-x-3 flex-shrink-0">
-
-                <a href="/Authentication/Login"
-                   class="px-4 py-1 border border-red-600 text-red-600 rounded-md hover:bg-red-50">
-                    Login
-                </a>
-
-                <a href="/Authentication/Register"
-                   class="px-4 py-1 bg-red-600 text-white rounded-md hover:bg-red-700">
-                    Register
-                </a>
-
-            </div>
-
-            <!-- MOBILE MENU BUTTON -->
-            <button onclick="toggleMenu()" class="md:hidden text-2xl">
-                ☰
-            </button>
-
-        </div>
-
-
-        <!-- MOBILE MENU -->
-        <div id="mobileMenu" class="hidden md:hidden bg-white shadow-lg">
-
-            <div class="flex flex-col p-4 space-y-4">
-
-                <a href="/">Home</a>
-                <a href="#placements">Placements</a>
-                <a href="#recruiters">Recruiters</a>
-                <a href="/Company/SubmitJD">Submit JD</a>
-                <a href="#about">About Us</a>
-
-                <hr />
-
-                <a href="/Authentication/Login"
-                   class="border border-red-600 text-red-600 px-4 py-2 rounded text-center">
-                    Login
-                </a>
-
-                <a href="/Authentication/Register"
-                   class="bg-red-600 text-white px-4 py-2 rounded text-center">
-                    Register
-                </a>
-
-            </div>
-
-        </div>
-
-    </header>
-
-    <!-- ================= PAGE CONTENT ================= -->
-
-    <main>
-        @RenderBody()
-    </main>
-
-    <!-- ================= FOOTER ================= -->
-
-    <footer class="bg-[#d8cfc2] ">
-
-        <div class="max-w-7xl mx-auto px-8 py-10 grid md:grid-cols-4 gap-8">
-
-            <!-- COLUMN 1 -->
-            <div>
-
-                <h2 class="font-bold text-black">
-                    RK University
-                    <span class="text-red-600">T&P Portal</span>
-                </h2>
-
-                <p class="text-sm mt-3 text-gray-700">
-                    Empowering students with career opportunities
-                </p>
-
-            </div>
-
-            <!-- COLUMN 2 -->
-            <div>
-
-                <h3 class="text-red-600 font-semibold mb-3">
-                    Quick Links
-                </h3>
-
-                <ul class="space-y-2 text-sm">
-
-                    <li>About T&P Cell</li>
-                    <li>Placement Statistics</li>
-                    <li>Recruiters</li>
-                    <li>Contact Us</li>
-
-                </ul>
-
-            </div>
-
-            <!-- COLUMN 3 -->
-            <div>
-
-                <h3 class="text-red-600 font-semibold mb-3">
-                    For Students
-                </h3>
-
-                <ul class="space-y-2 text-sm">
-
-                    <li>Register</li>
-                    <li>Login</li>
-                    <li>Guidelines</li>
-                    <li>FAQs</li>
-
-                </ul>
-
-            </div>
-
-            <!-- COLUMN 4 -->
-            <div>
-
-                <h3 class="text-red-600 font-semibold mb-3">
-                    Contact
-                </h3>
-
-                <ul class="space-y-2 text-sm">
-
-                    <li>tpo@rku.ac.in</li>
-                    <li>+91 2827 255734</li>
-                    <li>Rajkot, Gujarat</li>
-
-                </ul>
-
-            </div>
-
-        </div>
-
-        <div class="border-t border-gray-400 text-sm py-4 px-8 flex justify-between">
-
-            <p>© 2026 RK University. All rights reserved.</p>
-
-            <div class="space-x-4">
-                <span>Privacy Policy</span>
-                <span>Terms of Service</span>
-            </div>
-
-        </div>
-
-    </footer>
-
-    <!-- ================= MOBILE MENU SCRIPT ================= -->
-
-    <script>
-
-        function toggleMenu() {
-
-            const menu = document.getElementById("mobileMenu");
-
-            if (menu.classList.contains("hidden")) {
-                menu.classList.remove("hidden");
-            } else {
-                menu.classList.add("hidden");
-            }
-
-        }
-
-    </script>
-
+<body>
+    @RenderBody()
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

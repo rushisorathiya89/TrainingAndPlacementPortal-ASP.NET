@@ -1,23 +1,179 @@
-html {
-  font-size: 14px;
+/* ===== TP Portal Custom Styles ===== */
+
+/* Scrolling animation for recruiters */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-scroll {
+    animation: scroll 20s linear infinite;
+}
+
+/* Hide scrollbar */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Page Layout Utilities */
+.page-container {
+    padding: 1.5rem;
+    background-color: #ffffff;
+    min-height: calc(100vh - 80px);
+    width: 100%;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    color: #e7000b;
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    margin-top: 0;
+}
+
+.page-subtitle {
+    color: #666666;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Card Styles */
+.card-basic {
+    background-color: #ece6da;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.card-dashboard {
+    background-color: #ece6da;
+    border: 1.5px solid #e7000b;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-action {
+    background-color: #ece6da;
+    border: 1px solid #e7000b;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    transition: transform 0.2s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+    .card-action:hover {
+        transform: translateY(-4px);
+    }
+
+/* Button Styles */
+.btn-primary {
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    background-color: #e7000b;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+    .btn-primary:hover {
+        background-color: #b91c1c;
+    }
+
+.btn-outline {
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: all 0.2s;
+    border: 1px solid #1f2937;
+    color: #111827;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+    .btn-outline:hover {
+        background-color: #f3f4f6;
+    }
+
+.btn-disabled {
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background-color: #9ca3af;
+    color: #ffffff;
+    cursor: default;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Sidebar active state */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: inherit;
+    background-color: #ffffff;
+    font-weight: 500;
+}
+
+    .sidebar-link:hover {
+        background-color: #e5e7eb;
+    }
+
+    .sidebar-link.active {
+        background-color: rgb(175, 172, 172);
+        color: #ffffff;
+    }
+
+/* Mobile sidebar */
+.sidebar-mobile-hidden {
+    display: none;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    .sidebar-mobile-hidden {
+        display: block;
+    }
 }
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
