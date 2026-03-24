@@ -20,6 +20,50 @@ build_property._RazorSourceGeneratorDebug =
 build_property.EffectiveAnalysisLevelStyle = 8.0
 build_property.EnableCodeStyleSeverity = 
 
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/ChangePassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ2hhbmdlUGFzc3dvcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/CompanyManagement.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cQ29tcGFueU1hbmFnZW1lbnQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/Dashboard.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRGFzaGJvYXJkLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/ForgotPassword.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cRm9yZ290UGFzc3dvcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/InterviewSchedule.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW50ZXJ2aWV3U2NoZWR1bGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/InterviewScheduleForm.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW50ZXJ2aWV3U2NoZWR1bGVGb3JtLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/JdDetail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSmREZXRhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/PlacementHistory.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUGxhY2VtZW50SGlzdG9yeS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/Profile.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cUHJvZmlsZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/StudentsManagement.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cU3R1ZGVudHNNYW5hZ2VtZW50LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Admin/_ViewStart.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cX1ZpZXdTdGFydC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Auth/ChangePassword.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxDaGFuZ2VQYXNzd29yZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
