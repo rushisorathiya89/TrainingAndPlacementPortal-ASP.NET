@@ -1,0 +1,140 @@
+@{
+    ViewData["Title"] = "Student Registration";
+    Layout = "_AuthLayout";
+}
+
+<section class="bg-gray-100 min-h-screen py-12">
+    <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-800">Student Registration</h2>
+            <p class="text-gray-500 text-sm mt-2">Fill out the form below to register for Placements.</p>
+        </div>
+
+        <form id="studentRegForm" onsubmit="return validateStudentRegistration()" class="space-y-6">
+            <!-- Personal Information -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-user"></i> Personal Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Enrollment Number *</label>
+                        <input type="text" id="enrollment" class="w-full p-3 border rounded-lg" placeholder="Enter enrollment number" oninput="validateRegField('enrollment')" />
+                        <p id="enrollmentError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                        <input type="text" id="name" class="w-full p-3 border rounded-lg" placeholder="Enter full name" oninput="validateRegField('name')" />
+                        <p id="nameError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Branch *</label>
+                        <select id="branch" class="w-full p-3 border rounded-lg" onchange="validateRegField('branch')">
+                            <option value="">Select Branch</option>
+                            <option>Computer Engineering</option>
+                            <option>Information Technology</option>
+                            <option>Mechanical Engineering</option>
+                            <option>Civil Engineering</option>
+                            <option>Electrical Engineering</option>
+                        </select>
+                        <p id="branchError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Semester *</label>
+                        <select id="semester" class="w-full p-3 border rounded-lg" onchange="validateRegField('semester')">
+                            <option value="">Select Semester</option>
+                            <option>1st</option><option>2nd</option><option>3rd</option><option>4th</option>
+                            <option>5th</option><option>6th</option><option>7th</option><option>8th</option>
+                        </select>
+                        <p id="semesterError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">University Email *</label>
+                        <input type="email" id="universityEmail" class="w-full p-3 border rounded-lg" placeholder="Enter university email" oninput="validateRegField('universityEmail')" />
+                        <p id="universityEmailError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Personal Email *</label>
+                        <input type="email" id="personalEmail" class="w-full p-3 border rounded-lg" placeholder="Enter personal email" oninput="validateRegField('personalEmail')" />
+                        <p id="personalEmailError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
+                        <input type="password" id="password" class="w-full p-3 border rounded-lg" placeholder="Enter password" oninput="validateRegField('password')" />
+                        <p id="passwordError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
+                        <input type="password" id="confirmPassword" class="w-full p-3 border rounded-lg" placeholder="Confirm password" oninput="validateRegField('confirmPassword')" />
+                        <p id="confirmPasswordError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number *</label>
+                        <input type="text" id="mobile" class="w-full p-3 border rounded-lg" placeholder="Enter mobile number" oninput="validateRegField('mobile')" />
+                        <p id="mobileError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Details -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-book"></i> Academic Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">10th Percentage *</label>
+                        <input type="number" id="tenth" class="w-full p-3 border rounded-lg" placeholder="Enter %" oninput="validateRegField('tenth')" />
+                        <p id="tenthError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">12th Percentage *</label>
+                        <input type="number" id="twelfth" class="w-full p-3 border rounded-lg" placeholder="Enter %" oninput="validateRegField('twelfth')" />
+                        <p id="twelfthError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">CGPA *</label>
+                        <input type="number" step="0.01" id="cgpa" class="w-full p-3 border rounded-lg" placeholder="Enter CGPA" oninput="validateRegField('cgpa')" />
+                        <p id="cgpaError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parent Info -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-users"></i> Parent Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Name *</label><input type="text" id="parentName" class="w-full p-3 border rounded-lg" oninput="validateRegField('parentName')" /><p id="parentNameError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Email *</label><input type="email" id="parentEmail" class="w-full p-3 border rounded-lg" oninput="validateRegField('parentEmail')" /><p id="parentEmailError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Mobile *</label><input type="text" id="parentMobile" class="w-full p-3 border rounded-lg" oninput="validateRegField('parentMobile')" /><p id="parentMobileError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                </div>
+            </div>
+
+            <!-- Address -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-map-marker-alt"></i> Address</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Current Address *</label><textarea id="currentAddress" class="w-full p-3 border rounded-lg" rows="2" oninput="validateRegField('currentAddress')"></textarea><p id="currentAddressError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Permanent Address *</label><textarea id="permanentAddress" class="w-full p-3 border rounded-lg" rows="2" oninput="validateRegField('permanentAddress')"></textarea><p id="permanentAddressError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">City *</label><input type="text" id="city" class="w-full p-3 border rounded-lg" oninput="validateRegField('city')" /><p id="cityError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">State *</label><input type="text" id="state" class="w-full p-3 border rounded-lg" oninput="validateRegField('state')" /><p id="stateError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Pincode *</label><input type="text" id="pincode" class="w-full p-3 border rounded-lg" oninput="validateRegField('pincode')" /><p id="pincodeError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                </div>
+            </div>
+
+            <!-- Consent & Payment -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-upload"></i> Consent & Payment</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Consent Form (PDF) *</label><input type="file" accept=".pdf" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Payment Proof (Image) *</label><input type="file" accept="image/*" class="w-full p-3 border rounded-lg" /></div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col items-center gap-3 pb-6">
+                <div class="flex flex-col sm:flex-row justify-center gap-3 w-full sm:w-auto">
+                    <button type="button" onclick="clearForm('studentRegForm')" class="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto bg-white cursor-pointer">Clear Form</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto border-none cursor-pointer">Submit Form</button>
+                </div>
+                <p class="text-xs text-gray-400 mt-3 text-center max-w-md mx-auto">After registration, admin will verify your payment and eligibility criteria. After verification you can access the portal.</p>
+            </div>
+        </form>
+    </div>
+</section>
