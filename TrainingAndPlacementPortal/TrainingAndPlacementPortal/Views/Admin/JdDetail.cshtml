@@ -1,0 +1,159 @@
+@{ ViewData["Title"] = "JD Detail"; }
+
+<div class="w-full">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0 relative z-10">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-red-600">Company Management</h1>
+            <p class="text-gray-600 text-sm">Update and Verify company details for campus drives.</p>
+        </div>
+        <div class="flex gap-3 w-full md:w-auto">
+            <button id="editJdBtn" data-editing="false" onclick="toggleJdEdit()" class="bg-red-600 text-white px-5 py-2 rounded-lg flex-1 md:flex-none hover:bg-red-700 border-none cursor-pointer font-medium">Edit Content</button>
+            <a href="/AdminCompanyManagement" class="border px-5 py-2 rounded-lg flex-1 md:flex-none text-center no-underline text-gray-800 hover:bg-gray-50 bg-white">← Back</a>
+        </div>
+    </div>
+
+    <!-- Form Title -->
+    <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 text-center mb-6">
+        <h2 class="text-lg font-semibold">Campus Placement Registration Form</h2>
+        <p class="text-gray-500 text-sm">RK University, Rajkot – Training &amp; Placement Cell</p>
+    </div>
+
+    <!-- Contact Information -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-red-600 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
+                <i class="fas fa-address-book"></i>
+            </div>
+            <h2 class="text-md font-semibold text-gray-700">Contact Information</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div class="bg-gray-100 p-4 rounded-lg"><p class="font-semibold">Dr. Vishal Doshi</p><p class="text-sm text-gray-600">Head of Training &amp; Placement Cell</p><p class="text-sm">+91 98765 43210</p></div>
+            <div class="bg-gray-100 p-4 rounded-lg"><p class="font-semibold">Mr. Osho Shah</p><p class="text-sm text-gray-600">Assistant Training &amp; Placement Officer</p><p class="text-sm">+91 87654 32109</p></div>
+        </div>
+    </div>
+
+    <!-- Company Details -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-red-600 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
+                <i class="fas fa-building"></i>
+            </div>
+            <h2 class="text-md font-semibold text-gray-700">Company Details</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label><input type="email" value="hr@multiicon.in" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Company Name *</label><input type="text" value="Multiicon" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Job Location *</label><input type="text" value="Rajkot, Gujarat" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Company Website URL *</label><input type="text" value="https://www.multiicon.in" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div class="md:col-span-2"><textarea rows="4" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500">Multiicon is a leading software development company in Rajkot, specializing in Web and Mobile App Development.</textarea></div>
+        </div>
+    </div>
+
+    <!-- Job Role -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-red-600 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
+                <i class="fas fa-briefcase"></i>
+            </div>
+            <h2 class="text-md font-semibold text-gray-700">Job Role &amp; Compensation</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Job Position</label><input type="text" value="PHP Developer" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Annual CTC</label><input type="text" value="₹3.6 LPA" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Internship Duration</label><input type="text" value="6 Months" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Stipend During Internship</label><input type="text" value="₹8,000 - ₹10,000 / month" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Bond</label><input type="text" value="1.5 Years" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Date of Joining</label><input type="date" value="2025-06-01" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+        </div>
+    </div>
+
+    <!-- Eligibility -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-red-600 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="text-md font-semibold text-gray-700">Eligibility Criteria</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <p class="font-semibold text-sm mb-2">Eligible Batch</p>
+                <div class="flex flex-wrap gap-3">
+                    @foreach (var b in new[] { "2025", "2024", "2023" }) { <label class="flex items-center gap-2"><input type="checkbox" value="@b" @(b == "2025" ? "checked" : "") disabled class="jd-editable" /> @b</label> }
+                </div>
+            </div>
+            <div>
+                <p class="font-semibold text-sm mb-2">Eligible Courses</p>
+                <div class="flex flex-wrap gap-3">
+                    @foreach (var c in new[] { "B.Tech CS", "B.Tech IT", "Mechanical", "Civil", "Electrical", "BCA", "MCA", "MBA" }) {
+                        var isChecked = (c == "B.Tech CS" || c == "B.Tech IT" || c == "MCA");
+                        <label class="flex items-center gap-2"><input type="checkbox" value="@c" @(isChecked ? "checked" : "") disabled class="jd-editable" /> @c</label>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selection Process -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-red-600 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h2 class="text-md font-semibold text-gray-700">Selection Process</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="md:col-span-2"><textarea rows="3" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500">1. Aptitude Test
+2. Technical Interview
+3. HR Round</textarea></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Expected Date of Campus Drive</label><input type="date" value="2025-04-10" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Registration Link (Optional)</label><input type="text" value="https://forms.gle/multiicon123" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+        </div>
+    </div>
+
+    <!-- Contact Person -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-red-600 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h2 class="text-md font-semibold text-gray-700">Contact Person Details</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Person Name</label><input type="text" value="Shweta Jethwa" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Person Email ID</label><input type="text" value="careers@multiicon.in" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Person Mobile No</label><input type="text" value="+91 90999 88877" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500" /></div>
+        </div>
+    </div>
+
+    <!-- Upload -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-red-600 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
+                <i class="fas fa-upload"></i>
+            </div>
+            <h2 class="text-md font-semibold text-gray-700">Upload Documents</h2>
+        </div>
+        <div class="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center">
+            <p class="text-gray-500 mb-3">Drop files here or click to browse</p>
+        </div>
+    </div>
+
+    <!-- Additional Details -->
+    <div class="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="bg-red-600 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h2 class="text-md font-semibold text-gray-700">Additional Details</h2>
+        </div>
+        <textarea rows="4" readonly class="jd-editable w-full border rounded-lg p-3 outline-none bg-gray-100 text-gray-500">Bring updated resume and passport size photographs.</textarea>
+    </div>
+
+    <!-- Save/Cancel Buttons -->
+    <div id="jdSaveArea" class="flex flex-col-reverse md:flex-row justify-end gap-4 mt-6 hidden">
+        <button onclick="cancelJdEdit()" class="border px-6 py-2 rounded-lg hover:bg-gray-50 w-full md:w-auto bg-white cursor-pointer">CANCEL</button>
+        <button onclick="cancelJdEdit()" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 w-full md:w-auto border-none cursor-pointer">Save Changes</button>
+    </div>
+</div>

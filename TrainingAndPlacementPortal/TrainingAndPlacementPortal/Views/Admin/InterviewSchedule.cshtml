@@ -1,0 +1,81 @@
+@{ ViewData["Title"] = "Interview Schedule"; }
+
+<div class="w-full">
+    <h1 class="text-2xl md:text-3xl font-bold text-red-600">Interview Schedule</h1>
+    <p class="text-gray-600 mb-6 md:mb-8 text-sm md:text-base">Manage interview schedules.</p>
+
+    <!-- Search and Filter -->
+    <div class="mb-6 flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+        <div class="relative flex-grow w-full">
+            <input type="text" id="searchInput" placeholder="Search by company, role, location, or salary" oninput="filterCards()" class="w-full p-3 pl-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300" />
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+        <div class="relative w-full md:w-48 flex-shrink-0">
+            <select id="searchCategory" onchange="filterCards()" class="w-full appearance-none p-3 pr-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-gray-700 shadow-sm">
+                <option value="All">All Categories</option>
+                <option value="Company">Company Name</option>
+                <option value="Role">Job Role</option>
+                <option value="Location">Location</option>
+                <option value="Salary">Salary</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+        </div>
+        <div class="relative w-full md:w-72 flex-shrink-0">
+            <select id="filterStatus" onchange="filterCards()" class="w-full appearance-none p-3 pr-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-gray-700 shadow-sm">
+                <option value="All">All Status</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Scheduled Interview (Pending)">Scheduled Interview (Pending)</option>
+                <option value="Scheduled Interview (Complete)">Scheduled Interview (Complete)</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+        </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @{
+            var interviews = new[] {
+                new { Name = "Multiicon", Role = "PHP Developer", Salary = "₹3.6 LPA", Location = "Rajkot, Gujarat", Process = "Aptitude + Technical Interview + HR", Status = "Scheduled Interview (Pending)", SColor = "bg-yellow-100 text-yellow-700" },
+                new { Name = "Gateway Group of Companies", Role = "Software Engineer", Salary = "₹4.5 LPA", Location = "Ahmedabad, Gujarat", Process = "Written Test + Technical Round + HR", Status = "Scheduled Interview (Pending)", SColor = "bg-yellow-100 text-yellow-700" },
+                new { Name = "Infinity IT Company", Role = "React Native Developer", Salary = "₹5 LPA", Location = "Surat, Gujarat", Process = "Online Test + Personal Interview", Status = "On Hold", SColor = "bg-gray-100 text-gray-700" },
+                new { Name = "TCS Ltd", Role = "Software Development Engineer", Salary = "₹8 LPA", Location = "Bangalore, Karnataka", Process = "Aptitude Test + Personal Int. + Practical Test + Panel Int.", Status = "Scheduled Interview (Complete)", SColor = "bg-green-100 text-green-700" }
+            };
+        }
+        @foreach (var iv in interviews)
+        {
+            <div class="filterable-card bg-[#d8cfc3] p-6 rounded-xl shadow" data-name="@iv.Name" data-role="@iv.Role" data-location="@iv.Location" data-salary="@iv.Salary" data-status="@iv.Status">
+                <!-- Header -->
+                <div class="flex items-center gap-4 mb-3">
+                    <div class="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold">
+                        @(iv.Name.Substring(0, 1))
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg m-0">@iv.Name</h3>
+                        <p class="text-gray-600 text-sm m-0">@iv.Role</p>
+                    </div>
+                </div>
+
+                <!-- Salary -->
+                <p class="text-red-600 font-bold text-lg mb-2 m-0">@iv.Salary</p>
+                
+                <!-- Location -->
+                <p class="flex items-center gap-2 text-gray-600 text-sm mb-2 m-0">
+                    <i class="fas fa-map-marker-alt"></i>@iv.Location
+                </p>
+                
+                <!-- Process -->
+                <p class="text-gray-600 text-sm mb-4 m-0">@iv.Process</p>
+
+                <!-- Buttons -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="toggleOnHold(this)" class="bg-orange-500 hover:bg-orange-600 text-white py-2 rounded cursor-pointer border-none font-semibold transition" data-hold="false">
+                        ON HOLD
+                    </button>
+                    <a href="/AdminInterviewScheduleForm" class="bg-blue-600 text-white py-2 flex items-center justify-center rounded hover:bg-blue-700 cursor-pointer border-none font-semibold transition no-underline text-center text-sm md:text-base">
+                        SCHEDULE INTERVIEW
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
