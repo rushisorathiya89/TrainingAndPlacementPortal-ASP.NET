@@ -1,0 +1,120 @@
+@{
+    ViewData["Title"] = "Submit JD";
+    Layout = "_AuthLayout";
+}
+
+<section class="bg-gray-100 min-h-screen py-12">
+    <div class="max-w-4xl mx-auto px-6">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-800">Campus Placement Registration</h2>
+            <p class="text-gray-500 text-sm mt-2">RK University, Rajkot – Training &amp; Placement Cell</p>
+        </div>
+
+        <form id="companyRegForm" onsubmit="return validateCompanyRegistration()" class="space-y-6">
+            <!-- Contact Information -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-address-book"></i> Contact Information</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <p class="font-semibold">Dr. Vishal Doshi</p>
+                        <p class="text-sm text-gray-600">Head of Training &amp; Placement Cell</p>
+                        <p class="text-sm">+91 98765 43210</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <p class="font-semibold">Mr. Osho Shah</p>
+                        <p class="text-sm text-gray-600">Assistant Training &amp; Placement Officer</p>
+                        <p class="text-sm">+91 87654 32109</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Details -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-building"></i> Company Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Email *</label><input type="email" id="compEmail" class="w-full p-3 border rounded-lg" oninput="validateCompField('compEmail')" /><p id="compEmailError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Company Name *</label><input type="text" id="companyName" class="w-full p-3 border rounded-lg" oninput="validateCompField('companyName')" /><p id="companyNameError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Job Location *</label><input type="text" id="jobLocation" class="w-full p-3 border rounded-lg" oninput="validateCompField('jobLocation')" /><p id="jobLocationError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Company Website *</label><input type="url" id="website" class="w-full p-3 border rounded-lg" oninput="validateCompField('website')" /><p id="websiteError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Short Company Description</label><textarea class="w-full p-3 border rounded-lg" rows="3"></textarea></div>
+                </div>
+            </div>
+
+            <!-- Job Role & Compensation -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-briefcase"></i> Job Role &amp; Compensation</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Job Position *</label><input type="text" id="jobPosition" class="w-full p-3 border rounded-lg" oninput="validateCompField('jobPosition')" /><p id="jobPositionError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Annual CTC *</label><input type="text" id="ctc" class="w-full p-3 border rounded-lg" oninput="validateCompField('ctc')" /><p id="ctcError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Internship Duration</label><input type="text" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Stipend</label><input type="text" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Bond</label><input type="text" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Date of Joining *</label><input type="date" id="joinDate" class="w-full p-3 border rounded-lg" onchange="validateCompField('joinDate')" /><p id="joinDateError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                </div>
+            </div>
+
+            <!-- Eligibility -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-check-circle"></i> Eligibility Criteria</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="font-semibold text-sm mb-2">Eligible Batch</p>
+                        <div class="flex flex-wrap gap-3">
+                            @foreach (var b in new[] { "2025", "2024", "2023" }) { <label class="flex items-center gap-2"><input type="checkbox" value="@b" /> @b</label> }
+                        </div>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-sm mb-2">Eligible Courses</p>
+                        <div class="flex flex-wrap gap-3">
+                            @foreach (var c in new[] { "B.Tech CS", "B.Tech IT", "Mechanical", "Civil", "Electrical", "BCA", "MCA", "MBA" }) { <label class="flex items-center gap-2"><input type="checkbox" value="@c" /> @c</label> }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selection Process -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-clipboard-list"></i> Selection Process</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Selection Process *</label><textarea id="selectionProcess" class="w-full p-3 border rounded-lg" rows="3" oninput="validateCompField('selectionProcess')"></textarea><p id="selectionProcessError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Campus Drive Date *</label><input type="date" id="driveDate" class="w-full p-3 border rounded-lg" onchange="validateCompField('driveDate')" /><p id="driveDateError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Registration Link (Optional)</label><input type="url" class="w-full p-3 border rounded-lg" /></div>
+                </div>
+            </div>
+
+            <!-- Contact Person -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-user-tie"></i> Contact Person Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Name *</label><input type="text" id="contactName" class="w-full p-3 border rounded-lg" oninput="validateCompField('contactName')" /><p id="contactNameError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Email *</label><input type="email" id="contactEmail" class="w-full p-3 border rounded-lg" oninput="validateCompField('contactEmail')" /><p id="contactEmailError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Mobile *</label><input type="text" id="contactMobile" class="w-full p-3 border rounded-lg" oninput="validateCompField('contactMobile')" /><p id="contactMobileError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                </div>
+            </div>
+
+            <!-- Upload -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-upload"></i> Upload Documents</h3>
+                <div class="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center">
+                    <p class="text-gray-500 mb-3">Drop files here or click to browse</p>
+                    <input type="file" class="mb-2" />
+                </div>
+            </div>
+
+            <!-- Additional Details -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-info-circle"></i> Additional Details</h3>
+                <textarea class="w-full p-3 border rounded-lg" rows="4" placeholder="Any additional information or special requirements"></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col items-center gap-3 pb-6">
+                <div class="flex flex-col sm:flex-row justify-center gap-3 w-full sm:w-auto">
+                    <button type="button" onclick="clearForm('companyRegForm')" class="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto bg-white cursor-pointer">Clear Form</button>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto border-none cursor-pointer">Submit Form</button>
+                </div>
+                <p class="text-xs text-gray-400 mt-3 text-center max-w-md mx-auto">After registration, admin will verify your details and eligibility. After verification you will receive further instructions.</p>
+            </div>
+        </form>
+    </div>
+</section>
