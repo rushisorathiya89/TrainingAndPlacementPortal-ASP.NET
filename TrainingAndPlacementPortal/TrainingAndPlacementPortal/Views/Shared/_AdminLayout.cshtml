@@ -1,0 +1,11 @@
+@{
+    Layout = "_Layout";
+}
+
+<div class="min-h-screen bg-gray-100">
+    @await Html.PartialAsync("_AdminSidebar")
+
+    <main class="p-4 md:p-8 md:ml-64">
+        @RenderBody()
+    </main>
+</div>

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TrainingAndPlacementPortal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fc6aa8c2000b3962074c7513886e9e134cc49e0f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+759b258e1a7a23055b82370ae9924770282775cd")]
 [assembly: System.Reflection.AssemblyProductAttribute("TrainingAndPlacementPortal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TrainingAndPlacementPortal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

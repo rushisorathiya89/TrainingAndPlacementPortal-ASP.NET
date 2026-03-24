@@ -104,6 +104,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Shared/_AdminLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BZG1pbkxheW91dC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Shared/_AdminSidebar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BZG1pblNpZGViYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Shared/_AuthHeader.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BdXRoSGVhZGVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -118,6 +126,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Shared/_Header.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9IZWFkZXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Shared/_StudentLayout.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TdHVkZW50TGF5b3V0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Shared/_StudentSidebar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9TdHVkZW50U2lkZWJhci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/TrainingAndPlacementPortal-ASP.NET/TrainingAndPlacementPortal/TrainingAndPlacementPortal/Views/Shared/_ValidationScriptsPartial.cshtml]
