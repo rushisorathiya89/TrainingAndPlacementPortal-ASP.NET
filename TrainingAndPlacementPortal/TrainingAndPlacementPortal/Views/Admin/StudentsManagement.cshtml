@@ -1,0 +1,66 @@
+@{ ViewData["Title"] = "Students Management"; }
+
+<div class="w-full">
+    <div class="mb-6">
+        <h1 class="text-2xl md:text-3xl font-bold text-red-600">Students Management</h1>
+        <p class="text-gray-600 text-sm md:text-base">Manage student registrations and approvals.</p>
+    </div>
+
+    <div class="bg-white rounded-xl shadow overflow-x-auto">
+        <table class="w-full text-left min-w-[800px]">
+            <thead class="bg-white text-sm border-b">
+                <tr>
+                    <th class="p-4">Student Name</th>
+                    <th class="p-4">Enrollment No.</th>
+                    <th class="p-4">Course / Branch</th>
+                    <th class="p-4">Batch</th>
+                    <th class="p-4">CGPA</th>
+                    <th class="p-4">Email</th>
+                    <th class="p-4">Approval</th>
+                    <th class="p-4">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var students = new[] {
+                        new { Id = 1, Name = "Aarav Patel", Enrollment = "21SOECE11001", Course = "B.Tech - CE", Batch = "2025", Cgpa = "8.9", Email = "aarav.patel@rku.ac.in" },
+                        new { Id = 2, Name = "Vivaan Shah", Enrollment = "21SOEIT11023", Course = "B.Tech - IT", Batch = "2025", Cgpa = "7.8", Email = "vivaan.shah@rku.ac.in" },
+                        new { Id = 3, Name = "Diya Mehta", Enrollment = "21SOECE11045", Course = "B.Tech - CE", Batch = "2025", Cgpa = "9.2", Email = "diya.mehta@rku.ac.in" },
+                        new { Id = 4, Name = "Ishaan Gupta", Enrollment = "21SOEIT11056", Course = "B.Tech - IT", Batch = "2025", Cgpa = "8.1", Email = "ishaan.gupta@rku.ac.in" },
+                        new { Id = 5, Name = "Riya Singh", Enrollment = "21SOECE11089", Course = "B.Tech - CE", Batch = "2025", Cgpa = "8.5", Email = "riya.singh@rku.ac.in" },
+                        new { Id = 6, Name = "Ananya Roy", Enrollment = "21SOEIT11012", Course = "B.Tech - IT", Batch = "2025", Cgpa = "7.6", Email = "ananya.roy@rku.ac.in" },
+                        new { Id = 7, Name = "Vihaan Kumar", Enrollment = "21SOECE11034", Course = "B.Tech - CE", Batch = "2025", Cgpa = "8.7", Email = "vihaan.kumar@rku.ac.in" },
+                        new { Id = 8, Name = "Aditya Joshi", Enrollment = "21SOEIT11067", Course = "B.Tech - IT", Batch = "2025", Cgpa = "9.0", Email = "aditya.joshi@rku.ac.in" },
+                        new { Id = 9, Name = "Aisha Sharma", Enrollment = "21SOECE11099", Course = "B.Tech - CE", Batch = "2025", Cgpa = "8.2", Email = "aisha.sharma@rku.ac.in" },
+                        new { Id = 10, Name = "Rohan Verma", Enrollment = "21SOEIT11078", Course = "B.Tech - IT", Batch = "2025", Cgpa = "7.9", Email = "rohan.verma@rku.ac.in" },
+                        new { Id = 11, Name = "Priya Reddy", Enrollment = "21SOECE11015", Course = "B.Tech - CE", Batch = "2025", Cgpa = "9.5", Email = "priya.reddy@rku.ac.in" },
+                        new { Id = 12, Name = "Arjun Nair", Enrollment = "21SOEIT11042", Course = "B.Tech - IT", Batch = "2025", Cgpa = "8.8", Email = "arjun.nair@rku.ac.in" },
+                        new { Id = 13, Name = "Saanvi Singh", Enrollment = "21SOECE11063", Course = "B.Tech - CE", Batch = "2025", Cgpa = "8.0", Email = "saanvi.singh@rku.ac.in" },
+                        new { Id = 14, Name = "Kabir Das", Enrollment = "21SOEIT11081", Course = "B.Tech - IT", Batch = "2025", Cgpa = "7.5", Email = "kabir.das@rku.ac.in" },
+                        new { Id = 15, Name = "Myra Desai", Enrollment = "21SOECE11029", Course = "B.Tech - CE", Batch = "2025", Cgpa = "9.1", Email = "myra.desai@rku.ac.in" },
+                        new { Id = 16, Name = "Advik Rao", Enrollment = "21SOEIT11095", Course = "B.Tech - IT", Batch = "2025", Cgpa = "8.4", Email = "advik.rao@rku.ac.in" }
+                    };
+                }
+                @foreach (var s in students)
+                {
+                    <tr id="studentRow@(s.Id)" class="bg-[#d8cfc3] border-t text-sm">
+                        <td class="p-4 font-semibold">@s.Name</td>
+                        <td class="p-4">@s.Enrollment</td>
+                        <td class="p-4">@s.Course</td>
+                        <td class="p-4">@s.Batch</td>
+                        <td class="p-4">@s.Cgpa</td>
+                        <td class="p-4">@s.Email</td>
+                        <td class="p-4 text-center">
+                            <input type="checkbox" checked class="accent-purple-600 w-4 h-4 cursor-pointer" />
+                        </td>
+                        <td class="p-4 text-center">
+                            <button onclick="deleteStudent('studentRow@(s.Id)')" class="text-red-600 cursor-pointer bg-transparent border-none text-base">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,45 @@
+@{ ViewData["Title"] = "Jobs"; }
+
+<div class="w-full">
+    <header class="page-header">
+        <h1 class="page-title">Companies for Apply</h1>
+        <p class="page-subtitle">Here you can Apply for Interviews</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @{
+            var jobs = new[] {
+                new { Id = "1", Company = "TCS", Role = "Software Development Engineer", Salary = "₹8.0 LPA", Location = "Pune, Maharashtra", Cgpa = "7.5", Applied = false },
+                new { Id = "2", Company = "Infosys", Role = "Systems Engineer", Salary = "₹6.5 LPA", Location = "Bangalore, Karnataka", Cgpa = "7.0", Applied = true },
+                new { Id = "3", Company = "Wipro", Role = "Project Engineer", Salary = "₹7.0 LPA", Location = "Hyderabad, Telangana", Cgpa = "6.5", Applied = true },
+                new { Id = "4", Company = "HCL Technologies", Role = "Software Engineer", Salary = "₹8.5 LPA", Location = "Noida, Uttar Pradesh", Cgpa = "7.0", Applied = false },
+                new { Id = "5", Company = "Tech Mahindra", Role = "Software Developer", Salary = "₹6.0 LPA", Location = "Pune, Maharashtra", Cgpa = "6.0", Applied = false },
+                new { Id = "6", Company = "Larsen & Toubro", Role = "Embedded Engineer", Salary = "₹9.0 LPA", Location = "Chennai, Tamil Nadu", Cgpa = "7.5", Applied = true }
+            };
+        }
+        @foreach (var job in jobs)
+        {
+            <div class="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex flex-col">
+                <div class="flex items-start gap-4 mb-5">
+                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-2xl shrink-0">@job.Company[0]</div>
+                    <div>
+                        <h2 class="text-xl font-bold m-0 mb-1 text-gray-900">@job.Company</h2>
+                        <p class="text-gray-600 text-sm font-medium m-0">@job.Role</p>
+                    </div>
+                </div>
+                <div class="text-[#e7000b] text-2xl font-bold mb-4">@job.Salary</div>
+                <div class="mb-6">
+                    <div class="flex items-center gap-2 text-gray-600 text-sm mb-2"><span>📍</span><span>@job.Location</span></div>
+                    <div class="flex items-center gap-2 text-green-700 text-sm font-semibold"><span>✅</span><span>CGPA ≥ @job.Cgpa ✔</span></div>
+                </div>
+                <div class="flex gap-3 mt-auto">
+                    <a href="/StudJobDetails" class="btn-outline flex-1">View Details</a>
+                    @if (job.Applied)
+                    { <button class="btn-disabled flex-1" disabled>Applied</button> }
+                    else
+                    { <button id="applyBtn@(job.Id)" class="btn-primary flex-1" onclick="applyJob('applyBtn@(job.Id)')">Apply</button> }
+                </div>
+            </div>
+        }
+    </div>
+</div>

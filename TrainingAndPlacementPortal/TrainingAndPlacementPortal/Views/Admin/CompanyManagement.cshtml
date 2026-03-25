@@ -1,0 +1,103 @@
+@{ ViewData["Title"] = "Company Management"; }
+
+<div class="w-full">
+    <h1 class="text-2xl md:text-3xl font-bold text-red-600">Company Management</h1>
+    <p class="text-gray-600 mb-6 md:mb-8 text-sm md:text-base">Manage and maintain company information and records.</p>
+
+    <!-- Search and Filter -->
+    <div class="mb-6 flex flex-col md:flex-row gap-4 items-stretch md:items-center">
+        <div class="relative flex-grow w-full">
+            <input type="text" id="searchInput" placeholder="Search by company, role, location, or salary" oninput="filterCards()" class="w-full p-3 pl-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300" />
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+        <div class="relative w-full md:w-48 flex-shrink-0">
+            <select id="searchCategory" onchange="filterCards()" class="w-full appearance-none p-3 pr-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-gray-700 shadow-sm">
+                <option value="All">All Categories</option>
+                <option value="Company">Company Name</option>
+                <option value="Role">Job Role</option>
+                <option value="Location">Location</option>
+                <option value="Salary">Salary</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+        </div>
+        <div class="relative w-full md:w-72 flex-shrink-0">
+            <select id="filterStatus" onchange="filterCards()" class="w-full appearance-none p-3 pr-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-gray-700 shadow-sm">
+                <option value="All">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="verified">Verified</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
+        </div>
+    </div>
+
+    <!-- Company Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        @{
+            var companies = new[] {
+                new { Id = "comp1", Name = "Multiicon", Role = "PHP Developer", Salary = "₹3.6 LPA", Location = "Rajkot, Gujarat", Process = "Aptitude + Technical Interview + HR", Status = "pending" },
+                new { Id = "comp2", Name = "Gateway Group of Companies", Role = "Software Engineer", Salary = "₹4.5 LPA", Location = "Ahmedabad, Gujarat", Process = "Written Test + Technical Round + HR", Status = "pending" },
+                new { Id = "comp3", Name = "Infinity IT Company", Role = "React Native Developer", Salary = "₹5 LPA", Location = "Surat, Gujarat", Process = "Online Test + Personal Interview", Status = "pending" },
+                new { Id = "comp4", Name = "TCS Ltd", Role = "Software Development Engineer", Salary = "₹8 LPA", Location = "Bangalore, Karnataka", Process = "Aptitude Test + Personal Interview + Practical Test + Panel Interview", Status = "pending" }
+            };
+        }
+        @foreach (var c in companies)
+        {
+            <div id="@c.Id" class="filterable-card bg-[#d8cfc3] p-6 rounded-xl shadow" data-name="@c.Name" data-role="@c.Role" data-location="@c.Location" data-salary="@c.Salary" data-status="@c.Status">
+                
+                <!-- Header -->
+                <div class="flex items-center gap-4 mb-3">
+                    <div class="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold">
+                        @(c.Name.Substring(0, 1))
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg m-0">@c.Name</h3>
+                        <p class="text-gray-600 text-sm m-0">@c.Role</p>
+                    </div>
+                </div>
+
+                <!-- Salary -->
+                <p class="text-red-600 font-bold text-lg mb-2 m-0">@c.Salary</p>
+
+                <!-- Location -->
+                <p class="flex items-center gap-2 text-gray-600 text-sm mb-2 m-0">
+                    <i class="fas fa-map-marker-alt"></i>@c.Location
+                </p>
+
+                <!-- Selection Process -->
+                <p class="text-gray-600 text-sm mb-4 m-0">@c.Process</p>
+
+                <!-- Buttons Top Row (Accept/Decline) -->
+                <div class="status-buttons-container grid grid-cols-2 gap-3 mb-3">
+                    <button onclick="changeCompanyStatus('@c.Id', 'rejected')" class="bg-red-600 text-white py-2 rounded hover:bg-red-700 transition cursor-pointer border-none font-semibold">
+                        ✕ DECLINE
+                    </button>
+                    <button onclick="changeCompanyStatus('@c.Id', 'verified')" class="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition cursor-pointer border-none font-semibold">
+                        ✓ ACCEPT
+                    </button>
+                </div>
+
+                <!-- Undo Button (Initially Hidden) -->
+                <div class="undo-container hidden grid grid-cols-2 gap-2 mb-3">
+                    <button disabled class="status-indicator bg-green-600 flex-1 text-white py-2 rounded cursor-not-allowed border-none font-semibold">
+                        ✓ ACCEPTED
+                    </button>
+                    <button onclick="undoCompanyStatus('@c.Id')" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition cursor-pointer border-none font-semibold text-center mt-0">
+                        Undo
+                    </button>
+                </div>
+
+                <!-- Buttons Bottom Row (View/Edit) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="/AdminJdDetail" class="border flex items-center justify-center border-black py-2 rounded hover:bg-gray-50 transition text-black font-semibold no-underline text-center text-sm md:text-base cursor-pointer">
+                        VIEW DETAILS
+                    </a>
+                    <a href="/AdminJdDetail" class="bg-blue-600 text-white flex items-center justify-center py-2 rounded border-none hover:bg-blue-700 transition font-semibold text-center text-sm md:text-base no-underline cursor-pointer">
+                        EDIT DETAILS
+                    </a>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>

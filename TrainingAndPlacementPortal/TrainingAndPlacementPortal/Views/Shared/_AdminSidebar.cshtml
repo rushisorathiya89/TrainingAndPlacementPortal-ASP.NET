@@ -1,0 +1,22 @@
+<!-- Admin Sidebar -->
+<div class="w-full md:w-64 md:h-screen md:fixed md:left-0 md:top-0 bg-[#d8cfc3] p-5 z-50 md:overflow-y-auto hide-scrollbar sticky top-0 md:sticky-none">
+    <!-- Logo + Mobile Button -->
+    <div class="flex justify-between items-center md:justify-center md:flex-col">
+        <img src="~/images/logo.png" alt="RK University" class="w-28 md:w-36 md:mb-4" />
+        <button class="text-2xl md:hidden" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- Menu -->
+    <ul id="sidebarMenu" class="space-y-3 hidden md:block mt-4 md:mt-0 list-none p-0">
+        <li><a href="/AdminDashboard" class="sidebar-link"><i class="fas fa-th-large text-xl"></i><span class="font-medium">Dashboard</span></a></li>
+        <li><a href="/AdminProfile" class="sidebar-link"><i class="fas fa-user text-xl"></i><span class="font-medium">Profile</span></a></li>
+        <li><a href="/AdminCompanyManagement" class="sidebar-link"><i class="fas fa-building text-xl"></i><span class="font-medium">Company Management</span></a></li>
+        <li><a href="/AdminStudentsManagement" class="sidebar-link"><i class="fas fa-users text-xl"></i><span class="font-medium">Student Management</span></a></li>
+        <li><a href="/AdminInterviewSchedule" class="sidebar-link"><i class="fas fa-calendar-alt text-xl"></i><span class="font-medium">Interview Schedule</span></a></li>
+        <li><a href="/AdminPlacementHistory" class="sidebar-link"><i class="fas fa-history text-xl"></i><span class="font-medium">Placement History</span></a></li>
+        <li><a href="/AdminChangePassword" class="sidebar-link"><i class="fas fa-lock text-xl"></i><span class="font-medium">Change Password</span></a></li>
+        <li><a href="/" class="sidebar-link"><i class="fas fa-sign-out-alt text-xl"></i><span class="font-medium">Logout</span></a></li>
+    </ul>
+</div>

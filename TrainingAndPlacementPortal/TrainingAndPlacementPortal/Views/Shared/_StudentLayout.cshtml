@@ -1,0 +1,18 @@
+@{
+    Layout = "_Layout";
+}
+
+<div class="min-h-screen bg-gray-100">
+    @await Html.PartialAsync("_StudentSidebar")
+
+    <!-- Student Header (Profile button) -->
+    <header class="absolute top-0 right-0 z-40 p-4 md:p-8 hidden md:flex justify-end">
+        <a href="/StudProfile" class="px-5 py-2.5 rounded-md bg-[#e7000b] text-white font-bold cursor-pointer border-none shadow-sm hover:bg-red-700 transition-colors no-underline">
+            Profile
+        </a>
+    </header>
+
+    <main class="p-4 md:p-8 md:ml-64">
+        @RenderBody()
+    </main>
+</div>
