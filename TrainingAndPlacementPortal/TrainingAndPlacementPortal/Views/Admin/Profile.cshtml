@@ -1,0 +1,123 @@
+@{ ViewData["Title"] = "Admin Profile"; }
+
+<div class="w-full">
+    <!-- Header -->
+    <h1 class="text-2xl md:text-3xl font-bold text-red-600">Admin Profile Edit Test</h1>
+    <p class="text-gray-600 mb-8">Update your information.</p>
+
+    <!-- Top Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- ProfileCard -->
+        <div class="bg-[#d8cfc3] rounded-xl p-6 md:p-8 shadow-sm">
+            <div class="flex flex-col items-center mb-6">
+                <!-- Initials Avatar -->
+                <div id="adminInitialsDisplay" class="admin-profile-display w-20 h-20 bg-red-600 text-white rounded-full flex items-center justify-center text-xl font-bold">
+                    VD
+                </div>
+                <div class="w-full flex flex-col items-center">
+                    <h2 id="adminNameDisplay" class="admin-profile-display mt-4 text-lg font-semibold text-center p-1 border border-transparent w-3/4 m-0">Vishal Doshi</h2>
+                    <input id="adminNameInput" value="Vishal Doshi" class="admin-profile-input mt-4 text-lg font-semibold text-center bg-white rounded border border-gray-400 p-1 w-3/4 hidden" oninput="validateAdminField('adminNameInput'); document.getElementById('adminInfoNameInput').value = this.value" />
+                    <p id="adminNameError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    
+                    <p id="adminRoleDisplay" class="admin-profile-display mt-1 text-gray-600 text-sm text-center p-1 border border-transparent w-1/2 m-0">TPO Head</p>
+                    <input id="adminRoleInput" value="TPO Head" class="admin-profile-input mt-1 text-gray-600 text-sm text-center bg-white rounded border border-gray-400 p-1 w-1/2 hidden" oninput="validateAdminField('adminRoleInput'); document.getElementById('adminInfoRoleInput').value = this.value" />
+                    <p id="adminRoleError" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+            </div>
+            
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between items-center border-b border-gray-300 pb-2">
+                    <span>Employee Id.</span>
+                    <div class="w-1/2 flex flex-col items-end">
+                        <span id="adminEmpIdDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">26FGHP579</span>
+                        <input id="adminEmpIdInput" value="26FGHP579" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminEmpIdInput')" />
+                        <p id="adminEmpIdError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-b border-gray-300 pb-2">
+                    <span>Department</span>
+                    <div class="w-1/2 flex flex-col items-end">
+                        <span id="adminDeptDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">Training & Placement Shell</span>
+                        <input id="adminDeptInput" value="Training & Placement Shell" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminDeptInput')" />
+                        <p id="adminDeptError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center border-b border-gray-300 pb-2">
+                    <span>Office Location</span>
+                    <div class="w-1/2 flex flex-col items-end">
+                        <span id="adminLocDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">Office No .27</span>
+                        <input id="adminLocInput" value="Office No .27" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminLocInput')" />
+                        <p id="adminLocError" class="text-red-500 text-xs mt-1 hidden"></p>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="editAdminProfileBtn" onclick="toggleAdminProfileEdit()" data-editing="false" class="mt-6 w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg flex items-center justify-center gap-2 cursor-pointer border-none font-semibold transition">
+                <i class="fas fa-edit"></i> EDIT PROFILE
+            </button>
+        </div>
+
+        <!-- ProfileInfoForm -->
+        <div class="bg-[#d8cfc3] rounded-xl p-6 md:p-8 shadow-sm">
+            <h2 class="text-center font-semibold mb-6 m-0">Profile Information</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm">Full Name</label>
+                    <input id="adminInfoNameInput" value="Vishal Doshi" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="document.getElementById('adminNameInput').value = this.value; validateAdminField('adminNameInput')" />
+                </div>
+                <div>
+                    <label class="text-sm">Mobile Number</label>
+                    <input id="adminMobileInput" value="+91 98765 43210" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="validateAdminField('adminMobileInput')" />
+                    <p id="adminMobileError" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label class="text-sm">Email Address</label>
+                    <input id="adminEmailInput" value="vishal.doshi@rku.ac.in" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="validateAdminField('adminEmailInput')" />
+                    <p id="adminEmailError" class="text-red-500 text-xs mt-1 hidden"></p>
+                </div>
+                <div>
+                    <label class="text-sm">Role</label>
+                    <input id="adminInfoRoleInput" value="TPO Head" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="document.getElementById('adminRoleInput').value = this.value; validateAdminField('adminRoleInput')" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Cards -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6 items-start">
+        <!-- AddPortalUser -->
+        <div class="bg-[#d8cfc3] rounded-xl p-6 md:p-8 shadow-sm">
+            <h2 class="text-center font-semibold mb-6 m-0">Add Another Person To Access A Portal</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm">Enter Email Address</label>
+                    <input placeholder="Enter college verified email" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
+                </div>
+                <div>
+                    <label class="text-sm">Enter Password</label>
+                    <input type="password" placeholder="Enter new password" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
+                </div>
+                <div>
+                    <label class="text-sm">Confirm Password</label>
+                    <input type="password" placeholder="Re-enter new password" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
+                </div>
+                <button class="mt-2 w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 border-none cursor-pointer flex items-center justify-center gap-2 font-semibold transition" onclick="alert('User added successfully!')">
+                    Add
+                </button>
+                <button class="w-full border border-gray-400 bg-transparent py-3 rounded-lg hover:bg-gray-200 cursor-pointer flex items-center justify-center gap-2 font-semibold text-gray-700 transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- PasswordActions -->
+        <div class="flex flex-col gap-4">
+            <a href="/AdminChangePassword" class="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700 no-underline font-semibold text-sm md:text-base cursor-pointer transition">
+                <i class="fas fa-edit"></i> Click Here For Change Password
+            </a>
+            <a href="/AdminForgotPassword" class="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700 no-underline font-semibold text-sm md:text-base cursor-pointer transition">
+                <i class="fas fa-edit"></i> Click Here For Forgot Password
+            </a>
+        </div>
+    </div>
+</div>

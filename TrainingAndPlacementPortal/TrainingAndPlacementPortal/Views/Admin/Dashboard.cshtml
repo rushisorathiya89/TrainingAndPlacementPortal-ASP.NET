@@ -1,0 +1,59 @@
+@{ ViewData["Title"] = "Admin Dashboard"; }
+
+<div class="w-full">
+    <h1 class="text-2xl md:text-3xl font-bold text-red-600">Dashboard</h1>
+    <p class="text-gray-600 mb-8">Overview of placement activities and statistics.</p>
+
+    <!-- Statistics -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        @{
+            var stats = new[] {
+                new { Title = "Total Students", Value = "2,847", Icon = "fa-users", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Title = "Pending Approvals", Value = "23", Icon = "fa-clock", Color = "text-red-600", Bg = "bg-red-100" },
+                new { Title = "Active Job Drives", Value = "15", Icon = "fa-briefcase", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Title = "Total Applications", Value = "1,256", Icon = "fa-file-alt", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Title = "Shortlisted Students", Value = "342", Icon = "fa-check-circle", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Title = "Selected Students", Value = "189", Icon = "fa-trophy", Color = "text-blue-600", Bg = "bg-blue-100" }
+            };
+        }
+        @foreach (var stat in stats)
+        {
+            <div class="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm">
+                <div>
+                    <p class="text-gray-600 m-0">@stat.Title</p>
+                    <h2 class="text-2xl font-bold text-blue-700 m-0">@stat.Value</h2>
+                </div>
+                <div class="p-3 rounded-lg @stat.Bg">
+                    <i class="fas @stat.Icon @stat.Color text-xl w-[20px] h-[20px] flex items-center justify-center"></i>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Quick Actions -->
+    <h2 class="text-xl md:text-2xl font-bold text-red-600 mb-6 m-0">Quick Actions</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        @{
+            var actions = new[] {
+                new { Title = "Companies", Desc = "Explore Company details and JD", Btn = "View Companies →", Href = "/AdminCompanyManagement", Icon = "fa-briefcase", Color = "text-orange-500" },
+                new { Title = "Students", Desc = "Explore Student Details", Btn = "View Student Details →", Href = "/AdminStudentsManagement", Icon = "fa-search", Color = "text-cyan-500" },
+                new { Title = "Interview Schedule", Desc = "Manage Interviews", Btn = "View Schedules →", Href = "/AdminInterviewSchedule", Icon = "fa-file-alt", Color = "text-blue-600" },
+                new { Title = "History", Desc = "Explore Placement History", Btn = "View Placement History →", Href = "/AdminPlacementHistory", Icon = "fa-clock", Color = "text-red-500" },
+                new { Title = "Profile", Desc = "Update your information", Btn = "Edit Profile →", Href = "/AdminProfile", Icon = "fa-users", Color = "text-purple-500" }
+            };
+        }
+        @foreach (var a in actions)
+        {
+            <div class="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                <div class="flex justify-center mb-4 text-3xl">
+                    <i class="fas @a.Icon @a.Color"></i>
+                </div>
+                <h3 class="text-lg font-semibold mb-1 m-0">@a.Title</h3>
+                <p class="text-gray-600 text-sm m-0">@a.Desc</p>
+                <a href="@a.Href" class="mt-4 font-semibold @a.Color inline-block cursor-pointer border-none bg-transparent no-underline">
+                    @a.Btn
+                </a>
+            </div>
+        }
+    </div>
+</div>
