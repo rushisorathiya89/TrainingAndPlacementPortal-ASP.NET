@@ -1,0 +1,119 @@
+@{ ViewData["Title"] = "Student Profile"; }
+
+<div class="w-full max-w-6xl mx-auto">
+    <header class="page-header">
+        <h1 class="page-title">Your Profile</h1>
+        <p class="page-subtitle">Read All Information Properly If Any Mistakes You can Edit It</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-8 mb-10">
+        <!-- Left: Identity Card -->
+        <div class="bg-white rounded-xl py-10 px-8 text-center flex flex-col items-center border border-gray-200 shadow-sm">
+            <div class="w-24 h-24 bg-[#e7000b] rounded-full text-white flex items-center justify-center text-4xl font-bold mb-5 shadow-md">RP</div>
+            <h2 id="studFullNameDisplay" class="text-[22px] mb-1 text-gray-900 font-bold">Raj Patel</h2>
+            <p class="text-gray-400 text-sm mb-8 font-medium">Computer Science Student</p>
+
+            <div class="w-full border-t border-[#e7000b] pt-4 pb-4 flex justify-between items-center text-sm">
+                <span class="text-gray-500 font-medium">Enrollment No.</span>
+                <span class="font-bold text-gray-900">2023CS001</span>
+            </div>
+            <div class="w-full border-t border-gray-200 pt-4 pb-4 flex justify-between items-center text-sm">
+                <span class="text-gray-500 font-medium">Branch</span>
+                <span class="font-bold text-gray-900">Computer Engineering</span>
+            </div>
+            <div class="w-full border-t border-b border-gray-200 pt-4 pb-4 flex justify-between items-center text-sm">
+                <span class="text-gray-500 font-medium">CGPA</span>
+                <span class="font-bold text-green-700 text-base">8.2</span>
+            </div>
+
+            <button id="editProfileBtn" data-editing="false" onclick="toggleProfileEdit()" class="bg-[#c72027] text-white rounded-md mt-6 w-full py-3 px-4 font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-red-800 transition shadow-sm border-none cursor-pointer">
+                <i class="fas fa-edit"></i> EDIT CONTACT
+            </button>
+        </div>
+
+        <!-- Right: Profile Info -->
+        <div class="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
+            <h3 class="text-xl mb-8 text-gray-900 font-bold">Profile Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-5">
+                <!-- Full Name -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Full Name</label>
+                    <input id="studFullNameInput" type="text" value="Raj Patel" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studFullNameInput')" />
+                    <p id="studFullNameInputError" class="text-red-500 text-xs hidden"></p>
+                </div>
+                <!-- Mobile Number -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Mobile Number</label>
+                    <input id="studMobileInput" type="tel" value="+91 98765 43210" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studMobileInput')" />
+                    <p id="studMobileInputError" class="text-red-500 text-xs hidden"></p>
+                </div>
+                <!-- Parents Name -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Parents Name</label>
+                    <input id="studParentNameInput" type="text" value="Aman Patel" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studParentNameInput')" />
+                    <p id="studParentNameInputError" class="text-red-500 text-xs hidden"></p>
+                </div>
+                <!-- Parents Mobile Number -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Parents Mobile Number</label>
+                    <input id="studParentMobileInput" type="tel" value="+91 98765 43210" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studParentMobileInput')" />
+                    <p id="studParentMobileInputError" class="text-red-500 text-xs hidden"></p>
+                </div>
+                <!-- Email Address -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Email Address</label>
+                    <input id="studEmailInput" type="email" value="raj.patel@rku.ac.in" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studEmailInput')" />
+                    <p id="studEmailInputError" class="text-red-500 text-xs hidden"></p>
+                </div>
+                <!-- Date of Birth -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Date of Birth</label>
+                    <input id="studDobInput" type="date" value="2001-08-15" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studDobInput')" />
+                    <p id="studDobInputError" class="text-red-500 text-xs hidden"></p>
+                </div>
+                <!-- Academic Year -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Academic Year</label>
+                    <input id="studYearInput" type="text" value="2023-2024" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studYearInput')" />
+                    <p id="studYearInputError" class="text-red-500 text-xs hidden"></p>
+                </div>
+                <!-- Semester -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Semester</label>
+                    <select id="studSemesterInput" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" onchange="validateStudentProfileField('studSemesterInput')">
+                        <option>1st Semester</option>
+                        <option>2nd Semester</option>
+                        <option selected>3rd Semester</option>
+                        <option>4th Semester</option>
+                        <option>5th Semester</option>
+                        <option>6th Semester</option>
+                        <option>7th Semester</option>
+                        <option>8th Semester</option>
+                    </select>
+                    <p id="studSemesterInputError" class="text-red-500 text-xs hidden"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Applications -->
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
+        <div class="px-8 py-6 pb-4"><h3 class="m-0 text-lg font-bold text-gray-900">Recent Applications</h3></div>
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="text-center md:text-left py-4 px-8 text-xs text-gray-800 font-bold border-b border-gray-200">Job Position</th>
+                        <th class="text-center md:text-left py-4 px-8 text-xs text-gray-800 font-bold border-b border-gray-200">Company</th>
+                        <th class="text-center md:text-left py-4 px-8 text-xs text-gray-800 font-bold border-b border-gray-200">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    <tr class="bg-white"><td class="py-5 px-8"><p class="font-bold text-sm text-gray-900 m-0">Software Developer</p><p class="text-xs font-medium text-gray-400 mt-1 m-0">Full-time</p></td><td class="py-5 px-8 text-center md:text-left"><span class="font-bold text-sm text-gray-800">TechCorp Solutions</span></td><td class="py-5 px-8 text-center md:text-left"><span class="font-semibold text-xs text-yellow-700">Interview Scheduled</span></td></tr>
+                    <tr class="bg-white"><td class="py-5 px-8"><p class="font-bold text-sm text-gray-900 m-0">Frontend Developer</p><p class="text-xs font-medium text-gray-400 mt-1 m-0">Internship</p></td><td class="py-5 px-8 text-center md:text-left"><span class="font-bold text-sm text-gray-800">Digital Innovations</span></td><td class="py-5 px-8 text-center md:text-left"><span class="font-semibold text-xs text-blue-600">Under Review</span></td></tr>
+                    <tr class="bg-white"><td class="py-5 px-8"><p class="font-bold text-sm text-gray-900 m-0">Data Analyst</p><p class="text-xs font-medium text-gray-400 mt-1 m-0">Full-time</p></td><td class="py-5 px-8 text-center md:text-left"><span class="font-bold text-sm text-gray-800">Analytics Pro</span></td><td class="py-5 px-8 text-center md:text-left"><span class="font-semibold text-xs text-red-600">Not Selected</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+@{ ViewData["Title"] = "Interview Schedule"; }
+
+<div class="w-full">
+    <header class="page-header">
+        <h1 class="page-title">Interview Schedule</h1>
+        <p class="page-subtitle">View your upcoming and completed interview details.</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @{
+            var interviews = new[] {
+                new { Company = "TCS", Role = "Software Developer", Date = "March 18, 2024", Time = "11:00 AM - 12:00 PM", Type = "Online Interview", Location = "Zoom", Round = "Final Round", Status = "Pending", StatusColor = "bg-red-700" },
+                new { Company = "Infosys", Role = "Software Developer", Date = "March 10, 2024", Time = "2:00 PM - 3:30 PM", Type = "Offline Interview", Location = "College Auditorium", Round = "HR Round", Status = "Completed", StatusColor = "bg-green-700" },
+                new { Company = "Wipro", Role = "Software Developer", Date = "March 15, 2024", Time = "10:00 AM - 11:30 AM", Type = "Online Interview", Location = "Microsoft Teams", Round = "Technical Round", Status = "Completed", StatusColor = "bg-green-700" },
+                new { Company = "Accenture", Role = "Software Developer", Date = "March 8, 2024", Time = "3:00 PM - 4:00 PM", Type = "Offline Interview", Location = "Conference Room A", Round = "Technical Round", Status = "Completed", StatusColor = "bg-green-700" }
+            };
+        }
+        @foreach (var iv in interviews)
+        {
+            <div class="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm relative flex flex-col pb-20 md:pb-6">
+                <div class="flex flex-row items-center gap-4 mb-6">
+                    <div class="w-14 h-14 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-2xl shrink-0">
+                        @iv.Company.Substring(0, 1)
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h3 class="m-0 text-xl font-bold text-gray-900">@iv.Company</h3>
+                        <p class="m-0 text-gray-700 text-sm font-medium">@iv.Role</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-2 text-gray-600 text-sm font-medium mb-16 md:mb-12">
+                    <div class="flex items-center gap-3"><i class="fas fa-calendar text-gray-600 w-5"></i>@iv.Date</div>
+                    <div class="flex items-center gap-3"><i class="fas fa-clock text-gray-600 w-5"></i>@iv.Time</div>
+                    <div class="flex items-center gap-3">
+                        <i class="fas @(iv.Type.Contains("Online") ? "fa-video" : "fa-building") text-gray-600 w-5"></i>@iv.Type
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <i class="fas @(iv.Location.Contains("Room") || iv.Location.Contains("Auditorium") ? "fa-location-dot" : "fa-link") text-gray-600 w-5"></i>@iv.Location
+                    </div>
+                    <div class="flex items-center gap-3 md:col-span-2"><i class="fas fa-layer-group text-gray-600 w-5"></i>@iv.Round</div>
+                </div>
+
+                <div class="absolute bottom-6 right-6 mt-auto flex justify-end inset-x-auto">
+                    <span class="px-4 py-2 rounded text-white font-bold text-sm tracking-wide inline-block shadow-sm @iv.StatusColor">
+                        @iv.Status
+                    </span>
+                </div>
+            </div>
+        }
+    </div>
+</div>
