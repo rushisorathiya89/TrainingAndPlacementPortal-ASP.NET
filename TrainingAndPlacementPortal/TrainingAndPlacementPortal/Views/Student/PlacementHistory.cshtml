@@ -1,0 +1,94 @@
+@{ ViewData["Title"] = "Placement History"; }
+
+<div class="w-full">
+    <header class="page-header flex justify-between items-start mb-6">
+        <div>
+            <h1 class="page-title text-[#e7000b] text-[2rem] font-bold m-0 mb-2">Placement History</h1>
+            <p class="page-subtitle text-[#666] text-base m-0">View your final offers.</p>
+        </div>
+    </header>
+
+    @{
+        var currentOffer = new
+        {
+            Company = "Google Inc.",
+            Role = "Software Engineer",
+            Package = "₹18 LPA",
+            OfferDate = "Jan 12, 2026",
+            JoiningDate = "July 12, 2026",
+            Status = "Selected"
+        };
+
+        var records = new[] {
+            new { Company = "Google Inc.", Role = "Software Engineer", Package = "₹18 LPA", OfferDate = "Jan 12, 2026", JoiningDate = "July 12, 2026", Status = "Selected", IconBg = "bg-[#e1f0ff]", IconText = "text-[#3b82f6]", StatusBg = "bg-[#dcfae6]", StatusText = "text-[#16a34a]", StatusIcon = "fa-circle-check" },
+            new { Company = "Microsoft", Role = "Cloud Solutions Architect", Package = "₹22 LPA", OfferDate = "-", JoiningDate = "-", Status = "Interview Scheduled", IconBg = "bg-[#dcfae6]", IconText = "text-[#22c55e]", StatusBg = "bg-[#d9dee6]", StatusText = "text-[#314a72]", StatusIcon = "fa-calendar-days" },
+            new { Company = "Amazon", Role = "SDE II", Package = "₹25 LPA", OfferDate = "Mar 10, 2026", JoiningDate = "Sep 15, 2026", Status = "Shortlisted", IconBg = "bg-[#f3e8ff]", IconText = "text-[#a855f7]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-star" },
+            new { Company = "Adobe Systems", Role = "Frontend Developer", Package = "₹16 LPA", OfferDate = "Apr 05, 2026", JoiningDate = "Oct 10, 2026", Status = "Applied", IconBg = "bg-[#ffedd5]", IconText = "text-[#f97316]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-paper-plane" },
+            new { Company = "Oracle", Role = "Database Administrator", Package = "₹14 LPA", OfferDate = "May 20, 2026", JoiningDate = "Nov 01, 2026", Status = "Rejected", IconBg = "bg-[#fee2e2]", IconText = "text-[#ef4444]", StatusBg = "bg-[#fee2e2]", StatusText = "text-[#dc2626]", StatusIcon = "fa-circle-xmark" },
+            new { Company = "IBM", Role = "Data Scientist", Package = "₹20 LPA", OfferDate = "Jun 18, 2026", JoiningDate = "Dec 05, 2026", Status = "Applied", IconBg = "bg-[#e0e7ff]", IconText = "text-[#6366f1]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-paper-plane" },
+            new { Company = "Infosys", Role = "System Engineer", Package = "₹8 LPA", OfferDate = "Jul 22, 2026", JoiningDate = "Jan 10, 2027", Status = "Shortlisted", IconBg = "bg-[#ccfbf1]", IconText = "text-[#14b8a6]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-star" }
+        };
+    }
+
+    <div class="bg-white border text-left border-gray-200 p-6 md:p-8 rounded-[12px] shadow-sm w-full mb-10">
+        <h2 class="text-[1.5rem] font-bold text-[#333] mb-6 m-0">Current Placement Status</h2>
+        <div class="grid grid-cols-2 gap-y-6 gap-x-8">
+            <div>
+                <p class="text-[#888] text-[0.85rem] font-medium mb-2 m-0 mt-3">Status</p>
+                <span class="inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[14px] font-bold bg-[#dcfae6] text-[#16a34a]">
+                    <i class="fas fa-circle-check text-sm"></i>@currentOffer.Status
+                </span>
+            </div>
+            <div><p class="text-[#888] text-[0.85rem] font-medium mb-2 m-0 mt-3">Company Name</p><p class="text-[1.1rem] font-bold text-[#333] m-0">@currentOffer.Company</p></div>
+            <div><p class="text-[#888] text-[0.85rem] font-medium mb-1 m-0 mt-3">Job Role</p><p class="text-[1.05rem] font-bold text-[#444] m-0">@currentOffer.Role</p></div>
+            <div><p class="text-[#888] text-[0.85rem] font-medium mb-1 m-0 mt-3">Package</p><p class="text-[1.05rem] font-bold text-[#444] m-0">@currentOffer.Package</p></div>
+            <div><p class="text-[#888] text-[0.85rem] font-medium mb-1 m-0 mt-3">Offer Date</p><p class="text-[1.05rem] font-bold text-[#444] m-0">@currentOffer.OfferDate</p></div>
+            <div><p class="text-[#888] text-[0.85rem] font-medium mb-1 m-0 mt-3">Joining Date</p><p class="text-[1.05rem] font-bold text-[#444] m-0">@currentOffer.JoiningDate</p></div>
+        </div>
+    </div>
+
+    <div class="mb-6">
+        <h2 class="text-[1.8rem] font-bold text-[#e7000b] m-0 mb-2">Placement Records</h2>
+        <p class="text-[#64748b] text-[15px] font-medium m-0">Complete history of your placement applications and outcomes</p>
+    </div>
+
+    <div class="bg-white rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto hide-scrollbar">
+            <div class="min-w-[900px]">
+                <div class="grid grid-cols-6 gap-4 px-8 py-5 border-b border-gray-200 bg-[#fbfaf8]">
+                    <div class="font-bold text-[#444] text-sm col-span-1 pl-[60px]">Company Name</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Job Role</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Package</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Offer Date</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Joining Date</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Status</div>
+                </div>
+
+                <div class="flex flex-col">
+                    @for (var i = 0; i < records.Length; i++)
+                    {
+                        var app = records[i];
+                        var rowBg = i % 2 == 0 ? "bg-gray-50" : "bg-white";
+                        <div class="grid grid-cols-6 gap-4 px-8 py-[22px] items-center border-b border-gray-200 @rowBg">
+                            <div class="flex items-center gap-4 col-span-1">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 @app.IconBg @app.IconText">
+                                    <i class="fas fa-building text-base"></i>
+                                </div>
+                                <span class="font-bold text-[#222] text-[15.5px] whitespace-nowrap">@app.Company</span>
+                            </div>
+                            <div class="text-[#555] text-[15px] text-center whitespace-nowrap overflow-hidden text-ellipsis px-1">@app.Role</div>
+                            <div class="font-extrabold text-[#333] text-[15px] text-center whitespace-nowrap">@app.Package</div>
+                            <div class="text-[#666] text-[15px] text-center whitespace-nowrap">@app.OfferDate</div>
+                            <div class="text-[#666] text-[15px] text-center whitespace-nowrap">@app.JoiningDate</div>
+                            <div class="flex justify-center">
+                                <span class="inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[13px] font-bold @app.StatusBg @app.StatusText">
+                                    <i class="fas @app.StatusIcon text-[11px]"></i>@app.Status
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

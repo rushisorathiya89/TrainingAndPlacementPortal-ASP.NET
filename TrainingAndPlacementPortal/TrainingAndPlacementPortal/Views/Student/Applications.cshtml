@@ -1,0 +1,58 @@
+@{ ViewData["Title"] = "Applied Companies List"; }
+
+<div class="w-full">
+    <header class="page-header flex justify-between items-start mb-8">
+        <div>
+            <h1 class="page-title text-[#e7000b] text-[2rem] font-bold m-0 mb-2">Applied Companies List</h1>
+            <p class="page-subtitle text-[#666] text-base m-0">Here you can Apply for Interviews</p>
+        </div>
+    </header>
+
+    @{
+        var applications = new[] {
+            new { Company = "Google Inc.", Role = "Software Engineer", Package = "₹18 LPA", Date = "Jan 15, 2024", Status = "Interview Scheduled", IconBg = "bg-[#e1f0ff]", IconText = "text-[#3b82f6]", StatusBg = "bg-[#d9dee6]", StatusText = "text-[#314a72]", StatusIcon = "fa-calendar-days" },
+            new { Company = "Microsoft", Role = "Cloud Solutions Architect", Package = "₹22 LPA", Date = "Jan 12, 2024", Status = "Selected", IconBg = "bg-[#dcfae6]", IconText = "text-[#22c55e]", StatusBg = "bg-[#ccfbe1]", StatusText = "text-[#16a34a]", StatusIcon = "fa-circle-check" },
+            new { Company = "Amazon", Role = "SDE II", Package = "₹25 LPA", Date = "Jan 10, 2024", Status = "Shortlisted", IconBg = "bg-[#f3e8ff]", IconText = "text-[#a855f7]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-star" },
+            new { Company = "Adobe Systems", Role = "Frontend Developer", Package = "₹16 LPA", Date = "Jan 08, 2024", Status = "Applied", IconBg = "bg-[#ffedd5]", IconText = "text-[#f97316]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-paper-plane" },
+            new { Company = "Oracle", Role = "Database Administrator", Package = "₹14 LPA", Date = "Jan 05, 2024", Status = "Rejected", IconBg = "bg-[#fee2e2]", IconText = "text-[#ef4444]", StatusBg = "bg-[#fee2e2]", StatusText = "text-[#dc2626]", StatusIcon = "fa-circle-xmark" },
+            new { Company = "IBM", Role = "Data Scientist", Package = "₹20 LPA", Date = "Jan 03, 2024", Status = "Applied", IconBg = "bg-[#e0e7ff]", IconText = "text-[#6366f1]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-paper-plane" },
+            new { Company = "Infosys", Role = "System Engineer", Package = "₹8 LPA", Date = "Dec 28, 2023", Status = "Shortlisted", IconBg = "bg-[#ccfbf1]", IconText = "text-[#14b8a6]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-star" }
+        };
+    }
+
+    <div class="bg-white rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto hide-scrollbar">
+            <div class="min-w-[700px]">
+                <div class="grid grid-cols-5 gap-4 px-8 py-5 border-b border-gray-200">
+                    <div class="font-bold text-[#444] text-sm col-span-1 pl-[60px]">Company Name</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Job Role</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Package</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Applied Date</div>
+                    <div class="font-bold text-[#444] text-sm text-center">Status</div>
+                </div>
+
+                <div class="flex flex-col">
+                    @foreach (var app in applications)
+                    {
+                        <div class="grid grid-cols-5 gap-4 px-8 py-[22px] items-center bg-white border-b border-gray-200">
+                            <div class="flex items-center gap-4 col-span-1">
+                                <div class="w-10 h-10 rounded-lg flex items-center justify-center @app.IconBg @app.IconText">
+                                    <i class="fas fa-building text-base"></i>
+                                </div>
+                                <span class="font-bold text-[#222] text-[15.5px] whitespace-nowrap">@app.Company</span>
+                            </div>
+                            <div class="text-[#555] text-[15px] text-center whitespace-nowrap">@app.Role</div>
+                            <div class="font-extrabold text-[#333] text-[15px] text-center whitespace-nowrap">@app.Package</div>
+                            <div class="text-[#666] text-[15px] text-center whitespace-nowrap">@app.Date</div>
+                            <div class="flex justify-center">
+                                <span class="inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[13px] font-bold @app.StatusBg @app.StatusText">
+                                    <i class="fas @app.StatusIcon text-[11px]"></i>@app.Status
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
