@@ -5,3 +5,7 @@
 @await Html.PartialAsync("_AuthHeader")
 @RenderBody()
 @await Html.PartialAsync("_Footer")
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

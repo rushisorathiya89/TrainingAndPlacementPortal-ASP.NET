@@ -1,4 +1,57 @@
-﻿// ===== TP Portal Client-Side JavaScript =====
+// ===== TP Portal Client-Side JavaScript =====
+
+// ===== JWT Auth Utilities =====
+function getAuthToken() { return localStorage.getItem('tp_token'); }
+function getAuthRole() { return localStorage.getItem('tp_role'); }
+function getAuthName() { return localStorage.getItem('tp_fullName'); }
+function getAuthEmail() { return localStorage.getItem('tp_email'); }
+
+function isAuthenticated() {
+    return !!getAuthToken();
+}
+
+function logout() {
+    localStorage.removeItem('tp_token');
+    localStorage.removeItem('tp_role');
+    localStorage.removeItem('tp_fullName');
+    localStorage.removeItem('tp_email');
+    window.location.href = '/Auth/Login';
+}
+
+// Fetch wrapper that includes JWT Authorization header
+async function authFetch(url, options = {}) {
+    const token = getAuthToken();
+    if (!token) {
+        window.location.href = '/Auth/Login';
+        return;
+    }
+    options.headers = {
+        ...options.headers,
+        'Authorization': 'Bearer ' + token
+    };
+    const response = await fetch(url, options);
+    if (response.status === 401) {
+        logout();
+        return;
+    }
+    return response;
+}
+
+// Page guard — call on protected student pages
+function requireAuth(requiredRole) {
+    const token = getAuthToken();
+    const role = getAuthRole();
+    if (!token) {
+        window.location.href = '/Auth/Login';
+        return false;
+    }
+    if (requiredRole && role !== requiredRole) {
+        window.location.href = '/Auth/Login';
+        return false;
+    }
+    return true;
+}
+
 
 // ---- Mobile Menu Toggle (Guest Header) ----
 function toggleMobileMenu() {
@@ -111,48 +164,11 @@ function setBorderError(inputId, hasError) {
 }
 
 // ---- Login Validation ----
+// NOTE: Login is now handled by handleLogin() in Login.cshtml via API
 function validateLogin() {
-    let valid = true;
-    const role = document.getElementById('loginRole');
-    const email = document.getElementById('loginEmail');
-    const password = document.getElementById('loginPassword');
-
-    clearError('roleError');
-    clearError('emailError');
-    clearError('passwordError');
-    clearError('loginError');
-
-    if (!role.value) { showError('roleError', 'Please select a role.'); setBorderError('loginRole', true); valid = false; }
-    else { setBorderError('loginRole', false); }
-
-    if (!email.value) {
-        showError('emailError', 'Email is required.'); setBorderError('loginEmail', true); valid = false;
-    } else if (!/^[^\s@]+@rku\.ac\.in$/.test(email.value)) {
-        showError('emailError', 'Only @rku.ac.in emails are allowed.'); setBorderError('loginEmail', true); valid = false;
-    } else { setBorderError('loginEmail', false); }
-
-    if (!password.value) { showError('passwordError', 'Password is required.'); setBorderError('loginPassword', true); valid = false; }
-    else { setBorderError('loginPassword', false); }
-
-    if (!valid) return false;
-
-    // Static auth check
-    if (role.value === 'Student') {
-        if (email.value === 'student@rku.ac.in' && password.value === 'Student@123') {
-            window.location.href = '/Student/Dashboard';
-            return false;
-        } else {
-            showError('loginError', 'Invalid Student email or password');
-            return false;
-        }
-    } else if (role.value === 'Admin') {
-        if (email.value === 'admin@rku.ac.in' && password.value === 'Admin@123') {
-            window.location.href = '/Admin/Dashboard';
-            return false;
-        } else {
-            showError('loginError', 'Invalid Admin email or password');
-            return false;
-        }
+    // Legacy function - login now uses JWT API in Login.cshtml
+    if (typeof handleLogin === 'function') {
+        handleLogin();
     }
     return false;
 }
@@ -602,7 +618,8 @@ function applyJob(btnId) {
 }
 
 // ---- Student Delete ----
-function deleteStudent(rowId) {
+// NOTE: Student delete is now handled via API in StudentsManagement.cshtml
+function deleteStudentLegacy(rowId) {
     const row = document.getElementById(rowId);
     if (row && confirm('Are you sure you want to delete this student?')) {
         row.remove();

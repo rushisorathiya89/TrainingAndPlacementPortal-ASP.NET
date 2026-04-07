@@ -2,6 +2,12 @@
     Layout = "_Layout";
 }
 
+<script>
+    if (!requireAuth('Admin')) {
+        // Redirection handled by requireAuth
+    }
+</script>
+
 <div class="min-h-screen bg-gray-100">
     @await Html.PartialAsync("_AdminSidebar")
 
@@ -9,3 +15,7 @@
         @RenderBody()
     </main>
 </div>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

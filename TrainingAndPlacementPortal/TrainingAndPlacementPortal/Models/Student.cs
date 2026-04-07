@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TrainingAndPlacementPortal.Models
 {
@@ -9,31 +10,33 @@ namespace TrainingAndPlacementPortal.Models
         public int Id { get; set; }
 
         public int UserId { get; set; }
-        public User User { get; set; }
+
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
 
         [Required]
         [MaxLength(50)]
-        public string EnrollmentNumber { get; set; }
+        public string EnrollmentNumber { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(100)]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(50)]
-        public string Branch { get; set; }
+        public string Branch { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(20)]
-        public string Semester { get; set; }
+        public string Semester { get; set; } = string.Empty;
 
         [MaxLength(100)]
         [EmailAddress]
-        public string PersonalEmail { get; set; }
+        public string? PersonalEmail { get; set; }
 
         [Required]
         [MaxLength(15)]
-        public string MobileNumber { get; set; }
+        public string MobileNumber { get; set; } = string.Empty;
 
         // Academic Details
         [Required]
@@ -47,28 +50,28 @@ namespace TrainingAndPlacementPortal.Models
 
         // Parent Information
         [MaxLength(100)]
-        public string ParentName { get; set; }
+        public string? ParentName { get; set; }
         [MaxLength(100)]
         [EmailAddress]
-        public string ParentEmail { get; set; }
+        public string? ParentEmail { get; set; }
         [MaxLength(15)]
-        public string ParentMobile { get; set; }
+        public string? ParentMobile { get; set; }
 
         // Address
         [MaxLength(200)]
-        public string CurrentAddress { get; set; }
+        public string? CurrentAddress { get; set; }
         [MaxLength(200)]
-        public string PermanentAddress { get; set; }
+        public string? PermanentAddress { get; set; }
         [MaxLength(50)]
-        public string City { get; set; }
+        public string? City { get; set; }
         [MaxLength(50)]
-        public string State { get; set; }
+        public string? State { get; set; }
         [MaxLength(10)]
-        public string Pincode { get; set; }
+        public string? Pincode { get; set; }
 
         // Documents paths
-        public string ConsentFormPath { get; set; }
-        public string PaymentProofPath { get; set; }
+        public string? ConsentFormPath { get; set; }
+        public string? PaymentProofPath { get; set; }
 
         public bool IsApproved { get; set; } = false;
         public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
