@@ -6,40 +6,113 @@
         <p class="page-subtitle">Here you can Apply for Interviews</p>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @{
-            var jobs = new[] {
-                new { Id = "1", Company = "TCS", Role = "Software Development Engineer", Salary = "₹8.0 LPA", Location = "Pune, Maharashtra", Cgpa = "7.5", Applied = false },
-                new { Id = "2", Company = "Infosys", Role = "Systems Engineer", Salary = "₹6.5 LPA", Location = "Bangalore, Karnataka", Cgpa = "7.0", Applied = true },
-                new { Id = "3", Company = "Wipro", Role = "Project Engineer", Salary = "₹7.0 LPA", Location = "Hyderabad, Telangana", Cgpa = "6.5", Applied = true },
-                new { Id = "4", Company = "HCL Technologies", Role = "Software Engineer", Salary = "₹8.5 LPA", Location = "Noida, Uttar Pradesh", Cgpa = "7.0", Applied = false },
-                new { Id = "5", Company = "Tech Mahindra", Role = "Software Developer", Salary = "₹6.0 LPA", Location = "Pune, Maharashtra", Cgpa = "6.0", Applied = false },
-                new { Id = "6", Company = "Larsen & Toubro", Role = "Embedded Engineer", Salary = "₹9.0 LPA", Location = "Chennai, Tamil Nadu", Cgpa = "7.5", Applied = true }
-            };
-        }
-        @foreach (var job in jobs)
-        {
-            <div class="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex flex-col">
-                <div class="flex items-start gap-4 mb-5">
-                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-2xl shrink-0">@job.Company[0]</div>
-                    <div>
-                        <h2 class="text-xl font-bold m-0 mb-1 text-gray-900">@job.Company</h2>
-                        <p class="text-gray-600 text-sm font-medium m-0">@job.Role</p>
-                    </div>
-                </div>
-                <div class="text-[#e7000b] text-2xl font-bold mb-4">@job.Salary</div>
-                <div class="mb-6">
-                    <div class="flex items-center gap-2 text-gray-600 text-sm mb-2"><span>📍</span><span>@job.Location</span></div>
-                    <div class="flex items-center gap-2 text-green-700 text-sm font-semibold"><span>✅</span><span>CGPA ≥ @job.Cgpa ✔</span></div>
-                </div>
-                <div class="flex gap-3 mt-auto">
-                    <a href="/StudJobDetails" class="btn-outline flex-1">View Details</a>
-                    @if (job.Applied)
-                    { <button class="btn-disabled flex-1" disabled>Applied</button> }
-                    else
-                    { <button id="applyBtn@(job.Id)" class="btn-primary flex-1" onclick="applyJob('applyBtn@(job.Id)')">Apply</button> }
-                </div>
-            </div>
-        }
+    <!-- Loading State -->
+    <div id="jobsLoading" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-3xl text-red-500"></i>
+        <p class="text-gray-500 mt-3">Loading available jobs...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="jobsEmpty" class="hidden text-center py-12">
+        <i class="fas fa-briefcase text-5xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500 text-lg">No approved job postings available at the moment.</p>
+        <p class="text-gray-400 text-sm">Check back later for new opportunities!</p>
+    </div>
+
+    <!-- Jobs Container -->
+    <div id="jobsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
     </div>
 </div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Student')) return;
+    loadApprovedJobs();
+});
+
+async function loadApprovedJobs() {
+    const container = document.getElementById('jobsContainer');
+    const loading = document.getElementById('jobsLoading');
+    const empty = document.getElementById('jobsEmpty');
+
+    try {
+        const res = await authFetch('/api/company/approved-jobs');
+        const result = await res.json();
+
+        loading.classList.add('hidden');
+
+        if (!result.success || !result.data || result.data.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+        container.innerHTML = '';
+
+        result.data.forEach(job => {
+            const card = createStudentJobCard(job);
+            container.appendChild(card);
+        });
+
+    } catch (err) {
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+        console.error('Failed to load jobs:', err);
+    }
+}
+
+function createStudentJobCard(job) {
+    const card = document.createElement('div');
+    card.className = 'bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex flex-col';
+
+    const initial = job.companyName ? job.companyName.charAt(0).toUpperCase() : '?';
+    const cgpaText = job.minCGPA ? `CGPA ≥ ${job.minCGPA} ✔` : 'Open for all CGPA';
+
+    // We will check application status asynchronously and update the button
+    const btnId = `applyBtn${job.id}`;
+
+    card.innerHTML = `
+        <div class="flex items-start gap-4 mb-5">
+            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-2xl shrink-0">${initial}</div>
+            <div>
+                <h2 class="text-xl font-bold m-0 mb-1 text-gray-900">${job.companyName}</h2>
+                <p class="text-gray-600 text-sm font-medium m-0">${job.jobPosition}</p>
+            </div>
+        </div>
+        <div class="text-[#e7000b] text-2xl font-bold mb-4">${job.annualCTC}</div>
+        <div class="mb-6">
+            <div class="flex items-center gap-2 text-gray-600 text-sm mb-2"><span>📍</span><span>${job.jobLocation || 'N/A'}</span></div>
+            <div class="flex items-center gap-2 text-green-700 text-sm font-semibold"><span>✅</span><span>${cgpaText}</span></div>
+        </div>
+        <div class="flex gap-3 mt-auto">
+            <a href="/Student/JobDetails?id=${job.id}" class="border flex items-center justify-center border-black py-2 rounded hover:bg-gray-50 transition text-black font-semibold no-underline text-center text-sm md:text-base cursor-pointer flex-1">View Details</a>
+            <button id="${btnId}" class="bg-blue-600 text-white flex items-center justify-center py-2 rounded border-none hover:bg-blue-700 transition font-semibold text-center text-sm md:text-base no-underline cursor-pointer flex-1" onclick="applyJobApi(${job.id}, '${btnId}')">Apply</button>
+        </div>
+    `;
+
+    // Check status immediately
+    checkApplicationStatus(job.id, btnId);
+
+    return card;
+}
+
+async function checkApplicationStatus(jobId, btnId) {
+    try {
+        const res = await authFetch(`/api/applications/check/${jobId}`);
+        const result = await res.json();
+        
+        if (result.success && result.hasApplied) {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                btn.textContent = 'Applied ✅';
+                btn.className = 'btn-disabled flex-1 bg-green-100 text-green-800 cursor-not-allowed border-none font-bold py-2 rounded text-center text-sm md:text-base';
+                btn.disabled = true;
+            }
+        }
+    } catch (err) {
+        console.error('Failed to check application status:', err);
+    }
+}
+</script>
+}

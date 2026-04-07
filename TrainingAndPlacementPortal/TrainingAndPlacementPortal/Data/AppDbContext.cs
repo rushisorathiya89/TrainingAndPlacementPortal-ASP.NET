@@ -30,6 +30,13 @@ namespace TrainingAndPlacementPortal.Data
                 .HasForeignKey<Student>(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // 1:N Company -> JobPostings relationship
+            modelBuilder.Entity<Company>()
+                .HasMany(c => c.JobPostings)
+                .WithOne(j => j.Company)
+                .HasForeignKey(j => j.CompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Seed Admin User
             // Password: Admin@123 hashed with BCrypt
             var adminPasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123");

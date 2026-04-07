@@ -40,9 +40,15 @@ namespace TrainingAndPlacementPortal.Models
         public string AdditionalNotes { get; set; }
         public string DocumentsPath { get; set; }
 
-        // Comma separated values for simple storage, or can use relational tables
+        // Comma separated values for simple storage
         public string EligibleBatches { get; set; } 
         public string EligibleCourses { get; set; }
+
+        // Approval workflow
+        [MaxLength(20)]
+        public string Status { get; set; } = "Pending"; // Pending, Approved, Rejected, OnHold
+
+        public double? MinCGPA { get; set; }
         
         public bool IsActive { get; set; } = true;
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
