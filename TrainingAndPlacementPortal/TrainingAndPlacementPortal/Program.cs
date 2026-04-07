@@ -17,6 +17,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register JWT Token Service
 builder.Services.AddScoped<JwtTokenService>();
 
+// Register Razorpay Service
+builder.Services.AddScoped<RazorpayService>();
+
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);

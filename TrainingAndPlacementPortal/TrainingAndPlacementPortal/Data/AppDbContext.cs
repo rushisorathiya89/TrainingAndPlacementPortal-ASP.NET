@@ -13,6 +13,7 @@ namespace TrainingAndPlacementPortal.Data
         public DbSet<JobPosting> JobPostings { get; set; }
         public DbSet<JobApplication> JobApplications { get; set; }
         public DbSet<InterviewSchedule> InterviewSchedules { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

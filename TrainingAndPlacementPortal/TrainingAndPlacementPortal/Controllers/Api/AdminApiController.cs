@@ -11,10 +11,12 @@ namespace TrainingAndPlacementPortal.Controllers.Api
     public class AdminApiController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public AdminApiController(AppDbContext context)
+        public AdminApiController(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
         }
 
         // GET: api/admin/students
@@ -33,7 +35,7 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                     s.Branch,
                     s.Semester,
                     s.CGPA,
-                    Email = s.User.Email,
+                    Email = s.User!.Email,
                     s.MobileNumber,
                     s.PersonalEmail,
                     s.TenthPercentage,
@@ -46,12 +48,52 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                     s.City,
                     s.State,
                     s.Pincode,
+                    s.ConsentFormPath,
+                    s.PaymentProofPath,
+                    s.PaymentStatus,
+                    s.RazorpayPaymentId,
+                    s.PaymentAmount,
                     IsApproved = s.User.IsApproved,
                     s.RegisteredAt
                 })
                 .ToListAsync();
 
             return Ok(new { success = true, data = students });
+        }
+
+        // GET: api/admin/students/{id}/document/{fileType}
+        [HttpGet("students/{id}/document/{fileType}")]
+        public async Task<IActionResult> DownloadDocument(int id, string fileType)
+        {
+            var student = await _context.Students.FindAsync(id);
+            if (student == null)
+                return NotFound(new { success = false, message = "Student not found." });
+
+            string? relativePath = fileType.ToLower() switch
+            {
+                "consent" => student.ConsentFormPath,
+                "payment" => student.PaymentProofPath,
+                _ => null
+            };
+
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return NotFound(new { success = false, message = "Document not found." });
+
+            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
+            if (!System.IO.File.Exists(fullPath))
+                return NotFound(new { success = false, message = "File not found on server." });
+
+            var contentType = Path.GetExtension(fullPath).ToLower() switch
+            {
+                ".pdf" => "application/pdf",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
+
+            var fileName = $"{student.EnrollmentNumber}_{fileType}{Path.GetExtension(fullPath)}";
+            return PhysicalFile(fullPath, contentType, fileName);
         }
 
         // PUT: api/admin/students/{id}/approve
@@ -63,12 +105,10 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-            {
                 return NotFound(new { success = false, message = "Student not found." });
-            }
 
             student.IsApproved = true;
-            student.User.IsApproved = true;
+            student.User!.IsApproved = true;
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, message = $"{student.FullName} has been approved successfully." });
@@ -83,12 +123,10 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-            {
                 return NotFound(new { success = false, message = "Student not found." });
-            }
 
             student.IsApproved = false;
-            student.User.IsApproved = false;
+            student.User!.IsApproved = false;
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, message = $"{student.FullName} has been rejected." });
@@ -103,20 +141,24 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-            {
                 return NotFound(new { success = false, message = "Student not found." });
-            }
 
             var studentName = student.FullName;
 
-            // Remove student record
-            _context.Students.Remove(student);
-
-            // Remove associated user record
-            if (student.User != null)
+            // Delete uploaded files
+            var uploadDir = Path.Combine(_env.WebRootPath, "uploads", "students", student.EnrollmentNumber);
+            if (Directory.Exists(uploadDir))
             {
-                _context.Users.Remove(student.User);
+                Directory.Delete(uploadDir, true);
             }
+
+            // Remove payment records
+            var payments = await _context.Payments.Where(p => p.StudentId == id).ToListAsync();
+            _context.Payments.RemoveRange(payments);
+
+            _context.Students.Remove(student);
+            if (student.User != null)
+                _context.Users.Remove(student.User);
 
             await _context.SaveChangesAsync();
 

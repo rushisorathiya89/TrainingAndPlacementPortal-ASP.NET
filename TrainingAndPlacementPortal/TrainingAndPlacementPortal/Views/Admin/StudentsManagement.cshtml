@@ -31,15 +31,17 @@
                 <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-xs font-medium"><i class="fas fa-clock mr-1"></i> Pending: <span id="smPendingCount">0</span></span>
             </div>
         </div>
-        <table class="w-full text-left min-w-[800px]">
+        <table class="w-full text-left min-w-[1000px]">
             <thead class="bg-white text-sm border-b">
                 <tr>
                     <th class="p-4">Student Name</th>
                     <th class="p-4">Enrollment No.</th>
-                    <th class="p-4">Course / Branch</th>
+                    <th class="p-4">Branch</th>
                     <th class="p-4">Semester</th>
                     <th class="p-4">CGPA</th>
                     <th class="p-4">Email</th>
+                    <th class="p-4">Payment</th>
+                    <th class="p-4">Documents</th>
                     <th class="p-4">Status</th>
                     <th class="p-4">Approval</th>
                     <th class="p-4">Delete</th>
@@ -118,7 +120,6 @@
         tableContainer.classList.remove('hidden');
         empty.classList.add('hidden');
 
-        // Update counts
         document.getElementById('smCount').textContent = students.length;
         const approved = students.filter(s => s.isApproved).length;
         document.getElementById('smApprovedCount').textContent = approved;
@@ -129,6 +130,27 @@
             const row = document.createElement('tr');
             row.id = 'studentRow' + s.id;
             row.className = 'border-t text-sm ' + (s.isApproved ? 'bg-green-50' : 'bg-[#d8cfc3]');
+
+            // Payment badge
+            let payBadge = '';
+            if (s.paymentStatus === 'Paid') {
+                payBadge = `<span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700"><i class="fas fa-check mr-1"></i>Paid</span>`;
+            } else {
+                payBadge = `<span class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700"><i class="fas fa-clock mr-1"></i>Pending</span>`;
+            }
+
+            // Document links
+            let docLinks = '';
+            if (s.consentFormPath) {
+                docLinks += `<a href="/api/admin/students/${s.id}/document/consent" target="_blank" class="text-blue-600 hover:underline text-xs block" title="Download Consent Form"><i class="fas fa-file-pdf text-red-500 mr-1"></i>Consent</a>`;
+            }
+            if (s.paymentProofPath) {
+                docLinks += `<a href="/api/admin/students/${s.id}/document/payment" target="_blank" class="text-blue-600 hover:underline text-xs block mt-1" title="View Payment Proof"><i class="fas fa-image text-blue-500 mr-1"></i>Receipt</a>`;
+            }
+            if (!s.consentFormPath && !s.paymentProofPath) {
+                docLinks = '<span class="text-gray-400 text-xs">None</span>';
+            }
+
             row.innerHTML = `
                 <td class="p-4 font-semibold">${escapeHtml(s.fullName)}</td>
                 <td class="p-4">${escapeHtml(s.enrollmentNumber)}</td>
@@ -136,6 +158,8 @@
                 <td class="p-4">${escapeHtml(s.semester)}</td>
                 <td class="p-4">${s.cgpa}</td>
                 <td class="p-4">${escapeHtml(s.email)}</td>
+                <td class="p-4">${payBadge}</td>
+                <td class="p-4">${docLinks}</td>
                 <td class="p-4">
                     <span class="px-2 py-1 rounded-full text-xs font-medium ${s.isApproved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
                         ${s.isApproved ? 'Approved' : 'Pending'}
@@ -176,11 +200,10 @@
 
             if (result.success) {
                 showToast(result.message, 'success');
-                // Reload to update UI
                 await loadStudents();
             } else {
                 showToast(result.message || 'Operation failed.', 'error');
-                await loadStudents(); // Reload to reset checkbox state
+                await loadStudents();
             }
         } catch (err) {
             showToast('Network error. Please try again.', 'error');

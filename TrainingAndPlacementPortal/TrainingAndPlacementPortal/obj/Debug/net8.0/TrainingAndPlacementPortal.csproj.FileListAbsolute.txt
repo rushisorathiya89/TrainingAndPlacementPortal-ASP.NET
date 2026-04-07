@@ -279,4 +279,6 @@ C:\Users\bhave\OneDrive\Pictures\Documents\GitHub\TrainingAndPlacementPortal-ASP
 C:\Users\bhave\OneDrive\Pictures\Documents\GitHub\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\ref\TrainingAndPlacementPortal.dll
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\bin\Debug\net8.0\BCrypt.Net-Next.dll
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\bin\Debug\net8.0\Newtonsoft.Json.dll
+D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\bin\Debug\net8.0\BouncyCastle.Crypto.dll
+D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\bin\Debug\net8.0\Razorpay.dll

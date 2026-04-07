@@ -12,8 +12,8 @@ using TrainingAndPlacementPortal.Data;
 namespace TrainingAndPlacementPortal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260406161040_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260407075946_InitialCreateWithPayments")]
+    partial class InitialCreateWithPayments
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -239,6 +239,56 @@ namespace TrainingAndPlacementPortal.Migrations
                     b.ToTable("JobPostings");
                 });
 
+            modelBuilder.Entity("TrainingAndPlacementPortal.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RazorpayOrderId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RazorpayPaymentId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RazorpaySignature")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("TrainingAndPlacementPortal.Models.Student", b =>
                 {
                     b.Property<int>("Id")
@@ -296,8 +346,16 @@ namespace TrainingAndPlacementPortal.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<decimal>("PaymentAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("PaymentProofPath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PermanentAddress")
                         .HasMaxLength(200)
@@ -310,6 +368,14 @@ namespace TrainingAndPlacementPortal.Migrations
                     b.Property<string>("Pincode")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("RazorpayOrderId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RazorpayPaymentId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("datetime2");
@@ -382,7 +448,7 @@ namespace TrainingAndPlacementPortal.Migrations
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@rku.ac.in",
                             IsApproved = true,
-                            PasswordHash = "$2a$11$GdIUjEar/o7zd1HnXw40DOyGLjbVu1mkCLY1laWAxRd4hEGc2qc/K",
+                            PasswordHash = "$2a$11$TmWiW5KXuATt/CEDlfSJfu.CdP6feIPqKtYLjYujRYA3.tN1WhVZC",
                             Role = "Admin"
                         });
                 });
@@ -435,6 +501,17 @@ namespace TrainingAndPlacementPortal.Migrations
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("TrainingAndPlacementPortal.Models.Payment", b =>
+                {
+                    b.HasOne("TrainingAndPlacementPortal.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("TrainingAndPlacementPortal.Models.Student", b =>
