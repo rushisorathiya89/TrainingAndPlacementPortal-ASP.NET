@@ -4,23 +4,25 @@
     <header class="page-header flex justify-between items-start mb-8">
         <div>
             <h1 class="page-title text-[#e7000b] text-[2rem] font-bold m-0 mb-2">Applied Companies List</h1>
-            <p class="page-subtitle text-[#666] text-base m-0">Here you can Apply for Interviews</p>
+            <p class="page-subtitle text-[#666] text-base m-0">View all the campus placements you have applied for.</p>
         </div>
     </header>
 
-    @{
-        var applications = new[] {
-            new { Company = "Google Inc.", Role = "Software Engineer", Package = "₹18 LPA", Date = "Jan 15, 2024", Status = "Interview Scheduled", IconBg = "bg-[#e1f0ff]", IconText = "text-[#3b82f6]", StatusBg = "bg-[#d9dee6]", StatusText = "text-[#314a72]", StatusIcon = "fa-calendar-days" },
-            new { Company = "Microsoft", Role = "Cloud Solutions Architect", Package = "₹22 LPA", Date = "Jan 12, 2024", Status = "Selected", IconBg = "bg-[#dcfae6]", IconText = "text-[#22c55e]", StatusBg = "bg-[#ccfbe1]", StatusText = "text-[#16a34a]", StatusIcon = "fa-circle-check" },
-            new { Company = "Amazon", Role = "SDE II", Package = "₹25 LPA", Date = "Jan 10, 2024", Status = "Shortlisted", IconBg = "bg-[#f3e8ff]", IconText = "text-[#a855f7]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-star" },
-            new { Company = "Adobe Systems", Role = "Frontend Developer", Package = "₹16 LPA", Date = "Jan 08, 2024", Status = "Applied", IconBg = "bg-[#ffedd5]", IconText = "text-[#f97316]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-paper-plane" },
-            new { Company = "Oracle", Role = "Database Administrator", Package = "₹14 LPA", Date = "Jan 05, 2024", Status = "Rejected", IconBg = "bg-[#fee2e2]", IconText = "text-[#ef4444]", StatusBg = "bg-[#fee2e2]", StatusText = "text-[#dc2626]", StatusIcon = "fa-circle-xmark" },
-            new { Company = "IBM", Role = "Data Scientist", Package = "₹20 LPA", Date = "Jan 03, 2024", Status = "Applied", IconBg = "bg-[#e0e7ff]", IconText = "text-[#6366f1]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-paper-plane" },
-            new { Company = "Infosys", Role = "System Engineer", Package = "₹8 LPA", Date = "Dec 28, 2023", Status = "Shortlisted", IconBg = "bg-[#ccfbf1]", IconText = "text-[#14b8a6]", StatusBg = "bg-[#dbeafe]", StatusText = "text-[#3b82f6]", StatusIcon = "fa-star" }
-        };
-    }
+    <!-- Loading State -->
+    <div id="appsLoading" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-3xl text-red-500"></i>
+        <p class="text-gray-500 mt-3">Loading your applications...</p>
+    </div>
 
-    <div class="bg-white rounded-2xl overflow-hidden shadow-sm">
+    <!-- Empty State -->
+    <div id="appsEmpty" class="hidden text-center py-12 bg-white rounded-2xl shadow-sm">
+        <i class="fas fa-paper-plane text-5xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500 text-lg">You haven't applied to any jobs yet.</p>
+        <a href="/Student/Jobs" class="inline-block mt-4 text-blue-600 font-semibold hover:underline bg-blue-50 px-6 py-2 rounded-lg">Browse Available Jobs</a>
+    </div>
+
+    <!-- Applications Table -->
+    <div id="appsContainer" class="hidden bg-white rounded-2xl overflow-hidden shadow-sm">
         <div class="overflow-x-auto hide-scrollbar">
             <div class="min-w-[700px]">
                 <div class="grid grid-cols-5 gap-4 px-8 py-5 border-b border-gray-200">
@@ -31,28 +33,84 @@
                     <div class="font-bold text-[#444] text-sm text-center">Status</div>
                 </div>
 
-                <div class="flex flex-col">
-                    @foreach (var app in applications)
-                    {
-                        <div class="grid grid-cols-5 gap-4 px-8 py-[22px] items-center bg-white border-b border-gray-200">
-                            <div class="flex items-center gap-4 col-span-1">
-                                <div class="w-10 h-10 rounded-lg flex items-center justify-center @app.IconBg @app.IconText">
-                                    <i class="fas fa-building text-base"></i>
-                                </div>
-                                <span class="font-bold text-[#222] text-[15.5px] whitespace-nowrap">@app.Company</span>
-                            </div>
-                            <div class="text-[#555] text-[15px] text-center whitespace-nowrap">@app.Role</div>
-                            <div class="font-extrabold text-[#333] text-[15px] text-center whitespace-nowrap">@app.Package</div>
-                            <div class="text-[#666] text-[15px] text-center whitespace-nowrap">@app.Date</div>
-                            <div class="flex justify-center">
-                                <span class="inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[13px] font-bold @app.StatusBg @app.StatusText">
-                                    <i class="fas @app.StatusIcon text-[11px]"></i>@app.Status
-                                </span>
-                            </div>
-                        </div>
-                    }
+                <div id="appsTableBody" class="flex flex-col">
+                    <!-- Rows dynamically loaded -->
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Student')) return;
+    loadMyApplications();
+});
+
+async function loadMyApplications() {
+    const container = document.getElementById('appsContainer');
+    const tbody = document.getElementById('appsTableBody');
+    const loading = document.getElementById('appsLoading');
+    const empty = document.getElementById('appsEmpty');
+
+    try {
+        const res = await authFetch('/api/applications/my-applications');
+        const result = await res.json();
+
+        loading.classList.add('hidden');
+
+        if (!result.success || !result.data || result.data.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+        tbody.innerHTML = '';
+
+        result.data.forEach(app => {
+            const row = document.createElement('div');
+            row.className = 'grid grid-cols-5 gap-4 px-8 py-[22px] items-center bg-white border-b border-gray-200 hover:bg-gray-50 transition-colors';
+            
+            const initial = app.companyName ? app.companyName.charAt(0).toUpperCase() : '?';
+            const statusConfig = getApplicationStatusConfig(app.applicationStatus);
+            const appliedDate = new Date(app.appliedAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+
+            row.innerHTML = `
+                <div class="flex items-center gap-4 col-span-1">
+                    <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-100 text-blue-600 font-bold shrink-0">
+                        ${initial}
+                    </div>
+                    <a href="/Student/JobDetails?id=${app.jobPostingId}" class="font-bold text-[#222] text-[15.5px] whitespace-nowrap hover:text-blue-600 transition-colors no-underline">
+                        ${app.companyName}
+                    </a>
+                </div>
+                <div class="text-[#555] text-[15px] text-center whitespace-nowrap">${app.jobRole}</div>
+                <div class="font-extrabold text-[#333] text-[15px] text-center whitespace-nowrap">${app.package || 'TBD'}</div>
+                <div class="text-[#666] text-[15px] text-center whitespace-nowrap">${appliedDate}</div>
+                <div class="flex justify-center">
+                    <span class="inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[13px] font-bold ${statusConfig.bgClass} ${statusConfig.textClass}">
+                        <i class="fas ${statusConfig.iconClass} text-[11px]"></i>${app.applicationStatus}
+                    </span>
+                </div>
+            `;
+            tbody.appendChild(row);
+        });
+
+    } catch (err) {
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+        console.error('Failed to load applications:', err);
+    }
+}
+
+function getApplicationStatusConfig(status) {
+    if (status === 'Shortlisted') return { bgClass: 'bg-[#dbeafe]', textClass: 'text-[#3b82f6]', iconClass: 'fa-star' };
+    if (status === 'Interview Scheduled') return { bgClass: 'bg-[#d9dee6]', textClass: 'text-[#314a72]', iconClass: 'fa-calendar-days' };
+    if (status === 'Selected') return { bgClass: 'bg-[#ccfbe1]', textClass: 'text-[#16a34a]', iconClass: 'fa-circle-check' };
+    if (status === 'Rejected') return { bgClass: 'bg-[#fee2e2]', textClass: 'text-[#dc2626]', iconClass: 'fa-circle-xmark' };
+    // Default: Applied
+    return { bgClass: 'bg-[#ffedd5]', textClass: 'text-[#f97316]', iconClass: 'fa-paper-plane' };
+}
+</script>
+}

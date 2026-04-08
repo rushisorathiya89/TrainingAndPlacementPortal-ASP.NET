@@ -461,33 +461,10 @@ function validateStudentRegistration() {
 }
 
 // ---- Company Registration Validation ----
+// Now handled by handleJdSubmit() in SubmitJd.cshtml via API
 function validateCompanyRegistration() {
-    let valid = true;
-    const fields = [
-        { id: 'compEmail', msg: 'Email is required' },
-        { id: 'companyName', msg: 'Company name is required' },
-        { id: 'jobLocation', msg: 'Job location is required' },
-        { id: 'website', msg: 'Website is required' },
-        { id: 'jobPosition', msg: 'Job position is required' },
-        { id: 'ctc', msg: 'Annual CTC is required' },
-        { id: 'joinDate', msg: 'Date of joining is required' },
-        { id: 'selectionProcess', msg: 'Selection process is required' },
-        { id: 'driveDate', msg: 'Campus drive date is required' },
-        { id: 'contactName', msg: 'Contact name is required' },
-        { id: 'contactEmail', msg: 'Contact email is required' },
-        { id: 'contactMobile', msg: 'Contact mobile is required' }
-    ];
-
-    fields.forEach(f => {
-        clearError(f.id + 'Error');
-        const el = document.getElementById(f.id);
-        if (el && !el.value) { showError(f.id + 'Error', f.msg); setBorderError(f.id, true); valid = false; }
-        else if (el) { setBorderError(f.id, false); }
-    });
-
-    if (valid) {
-        alert('JD submitted successfully! Our T&P team will review it.');
-        window.location.href = '/';
+    if (typeof handleJdSubmit === 'function') {
+        return handleJdSubmit();
     }
     return false;
 }
@@ -539,47 +516,15 @@ function filterStudentTable() {
 }
 
 // ---- Company Status Management ----
+// Now handled by updateJpStatus() in CompanyManagement.cshtml via API
 function changeCompanyStatus(cardId, newStatus) {
-    const card = document.getElementById(cardId);
-    if (!card) return;
-
-    // The exact React UI has two button sets:
-    const statusContainer = card.querySelector('.status-buttons-container');
-    const undoContainer = card.querySelector('.undo-container');
-    const statusIndicator = card.querySelector('.status-indicator');
-
-    if (statusContainer && undoContainer && statusIndicator) {
-        statusContainer.classList.add('hidden');
-        undoContainer.classList.remove('hidden');
-
-        if (newStatus === 'verified') {
-            statusIndicator.innerHTML = '✓ ACCEPTED';
-            statusIndicator.className = 'status-indicator bg-green-600 flex-1 text-white py-2 rounded border-none font-semibold cursor-not-allowed';
-        } else if (newStatus === 'rejected') {
-            statusIndicator.innerHTML = '✕ DECLINED';
-            statusIndicator.className = 'status-indicator bg-red-600 flex-1 text-white py-2 rounded border-none font-semibold cursor-not-allowed';
-        }
-    }
-
-    card.dataset.status = newStatus;
-
-    // Store previous status for undo (assuming pending)
-    card.dataset.prevStatus = "pending";
+    // Legacy stub — company status is now managed via API in CompanyManagement.cshtml
+    console.log('changeCompanyStatus is deprecated. Use updateJpStatus() instead.');
 }
 
 function undoCompanyStatus(cardId) {
-    const card = document.getElementById(cardId);
-    if (!card) return;
-
-    const statusContainer = card.querySelector('.status-buttons-container');
-    const undoContainer = card.querySelector('.undo-container');
-
-    if (statusContainer && undoContainer) {
-        statusContainer.classList.remove('hidden');
-        undoContainer.classList.add('hidden');
-    }
-
-    card.dataset.status = card.dataset.prevStatus || 'pending';
+    // Legacy stub — company status is now managed via API in CompanyManagement.cshtml
+    console.log('undoCompanyStatus is deprecated. Use updateJpStatus() instead.');
 }
 
 // ---- Student Profile Edit Toggle ----
@@ -607,13 +552,39 @@ function toggleProfileEdit() {
 }
 
 // ---- Job Apply ----
-function applyJob(btnId) {
+async function applyJobApi(jobId, btnId) {
     const btn = document.getElementById(btnId);
     if (btn) {
-        btn.textContent = 'Applied';
-        btn.className = 'btn-disabled flex-1';
+        btn.textContent = 'Applying...';
         btn.disabled = true;
-        alert('Application submitted successfully!');
+    }
+
+    try {
+        const res = await authFetch(`/api/applications/apply/${jobId}`, {
+            method: 'POST'
+        });
+        const result = await res.json();
+
+        if (result.success) {
+            if (btn) {
+                btn.textContent = 'Applied ✅';
+                btn.className = 'btn-disabled flex-1 bg-green-100 text-green-800 cursor-not-allowed border-none font-bold py-3 rounded-lg text-center';
+            }
+            alert('Application submitted successfully!');
+        } else {
+            if (btn) {
+                btn.textContent = 'Apply';
+                btn.disabled = false;
+            }
+            alert(result.message || 'Failed to apply.');
+        }
+    } catch (err) {
+        if (btn) {
+            btn.textContent = 'Apply';
+            btn.disabled = false;
+        }
+        alert('Network error. Please try again.');
+        console.error(err);
     }
 }
 
