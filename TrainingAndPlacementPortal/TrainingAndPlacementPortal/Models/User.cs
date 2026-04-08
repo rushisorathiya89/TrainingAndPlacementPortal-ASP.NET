@@ -11,15 +11,20 @@ namespace TrainingAndPlacementPortal.Models
         [Required]
         [EmailAddress]
         [MaxLength(100)]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        public string PasswordHash { get; set; }
+        public string PasswordHash { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(20)]
-        public string Role { get; set; } // "Student", "Admin", "Company"
+        public string Role { get; set; } = string.Empty; // "Student", "Admin", "Company"
+
+        public bool IsApproved { get; set; } = false; // For students, to indicate if approved by admin
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation property
+        public Student? Student { get; set; }
     }
 }

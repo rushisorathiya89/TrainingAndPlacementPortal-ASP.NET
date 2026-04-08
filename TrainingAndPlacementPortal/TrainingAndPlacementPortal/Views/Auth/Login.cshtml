@@ -14,10 +14,15 @@
             <h2 class="text-xl font-bold text-center mb-2">Welcome Back</h2>
             <p class="text-center text-sm text-gray-600 mb-6">Sign in to access your account</p>
 
+            <!-- Success/Error Messages -->
+            <div id="loginSuccessMsg" class="hidden mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm text-center"></div>
+            <div id="loginErrorMsg" class="hidden mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm text-center"></div>
+            <div id="loginWarningMsg" class="hidden mb-4 p-3 bg-yellow-100 border border-yellow-500 text-yellow-700 rounded-lg text-sm text-center"></div>
+
             <!-- Select Role -->
             <div class="mb-4">
                 <label class="text-sm font-medium">Select Role</label>
-                <select id="loginRole" class="w-full mt-1 p-2 rounded-md border" onchange="validateFieldRealtime('role')">
+                <select id="loginRole" class="w-full mt-1 p-2 rounded-md border" onchange="clearLoginMessages()">
                     <option value="">Choose your role</option>
                     <option value="Student">Student</option>
                     <option value="Admin">Admin</option>
@@ -28,7 +33,7 @@
             <!-- Email -->
             <div class="mb-4">
                 <label class="text-sm font-medium">Email Address</label>
-                <input type="email" id="loginEmail" placeholder="Enter your college email" class="w-full mt-1 p-2 rounded-md border" oninput="validateFieldRealtime('loginEmail')" />
+                <input type="email" id="loginEmail" placeholder="Enter your college email" class="w-full mt-1 p-2 rounded-md border" oninput="clearLoginMessages()" />
                 <p id="emailError" class="text-red-500 text-xs mt-1 hidden"></p>
             </div>
 
@@ -36,7 +41,7 @@
             <div class="mb-2">
                 <label class="text-sm font-medium">Password</label>
                 <div class="relative mt-1">
-                    <input type="password" id="loginPassword" placeholder="Enter your password" class="w-full p-2 rounded-md border" oninput="validateFieldRealtime('loginPassword')" />
+                    <input type="password" id="loginPassword" placeholder="Enter your password" class="w-full p-2 rounded-md border" oninput="clearLoginMessages()" />
                     <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" onclick="togglePassword('loginPassword', 'loginPwdIcon')">
                         <i id="loginPwdIcon" class="fas fa-eye"></i>
                     </button>
@@ -44,14 +49,16 @@
                 <p id="passwordError" class="text-red-500 text-xs mt-1 hidden"></p>
             </div>
 
-            <p id="loginError" class="text-red-500 text-sm mb-4 hidden"></p>
-
             <div class="text-right text-sm mb-4">
                 <a href="/Auth/ForgotPassword" class="hover:underline cursor-pointer text-gray-700 no-underline">Forgot Password?</a>
             </div>
 
             <!-- Login Button -->
-            <button onclick="validateLogin()" class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mb-3 border-none cursor-pointer font-medium">Login</button>
+            <div id="loginSpinner" class="hidden text-center mb-3">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto"></div>
+                <p class="text-sm text-gray-500 mt-2">Signing in...</p>
+            </div>
+            <button id="loginBtn" onclick="handleLogin()" class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mb-3 border-none cursor-pointer font-medium">Login</button>
             <button onclick="history.back()" class="w-full border border-black py-2 rounded-md hover:bg-gray-100 transition cursor-pointer bg-transparent font-medium">Cancel</button>
 
             <div class="text-center mt-6 text-sm">
@@ -60,3 +67,92 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+function clearLoginMessages() {
+    document.getElementById('loginSuccessMsg').classList.add('hidden');
+    document.getElementById('loginErrorMsg').classList.add('hidden');
+    document.getElementById('loginWarningMsg').classList.add('hidden');
+}
+
+async function handleLogin() {
+    const role = document.getElementById('loginRole').value;
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    const errorMsg = document.getElementById('loginErrorMsg');
+    const warningMsg = document.getElementById('loginWarningMsg');
+    const successMsg = document.getElementById('loginSuccessMsg');
+    const spinner = document.getElementById('loginSpinner');
+    const loginBtn = document.getElementById('loginBtn');
+
+    clearLoginMessages();
+
+    // Client-side validation
+    if (!role) {
+        errorMsg.textContent = 'Please select a role.';
+        errorMsg.classList.remove('hidden');
+        return;
+    }
+    if (!email) {
+        errorMsg.textContent = 'Please enter your email address.';
+        errorMsg.classList.remove('hidden');
+        return;
+    }
+    if (!password) {
+        errorMsg.textContent = 'Please enter your password.';
+        errorMsg.classList.remove('hidden');
+        return;
+    }
+
+    // Show spinner
+    spinner.classList.remove('hidden');
+    loginBtn.classList.add('hidden');
+
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, role })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            // Store auth data in localStorage
+            localStorage.setItem('tp_token', result.token);
+            localStorage.setItem('tp_role', result.role);
+            localStorage.setItem('tp_fullName', result.fullName);
+            localStorage.setItem('tp_email', result.email);
+
+            successMsg.textContent = 'Login successful! Redirecting...';
+            successMsg.classList.remove('hidden');
+
+            // Redirect based on role
+            setTimeout(() => {
+                if (result.role === 'Admin') {
+                    window.location.href = '/Admin/Dashboard';
+                } else if (result.role === 'Student') {
+                    window.location.href = '/Student/Dashboard';
+                }
+            }, 1000);
+        } else if (response.status === 403) {
+            // Account not approved
+            warningMsg.innerHTML = '<i class="fas fa-clock mr-2"></i>' + (result.message || 'Your account is pending admin approval.');
+            warningMsg.classList.remove('hidden');
+        } else {
+            // Invalid credentials
+            errorMsg.textContent = result.message || 'Invalid email or password.';
+            errorMsg.classList.remove('hidden');
+        }
+    } catch (err) {
+        errorMsg.textContent = 'Network error. Please check your connection and try again.';
+        errorMsg.classList.remove('hidden');
+    } finally {
+        spinner.classList.add('hidden');
+        loginBtn.classList.remove('hidden');
+    }
+}
+</script>
+}
