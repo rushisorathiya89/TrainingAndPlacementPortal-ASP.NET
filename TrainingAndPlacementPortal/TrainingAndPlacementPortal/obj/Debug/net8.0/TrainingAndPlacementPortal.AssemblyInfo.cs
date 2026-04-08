@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TrainingAndPlacementPortal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+867e9797de431da9893fb01a0df32535f6c0950a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+39337411790e4912f9e7a2e74a5dd224c102937d")]
 [assembly: System.Reflection.AssemblyProductAttribute("TrainingAndPlacementPortal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TrainingAndPlacementPortal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

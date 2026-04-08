@@ -42,6 +42,10 @@ namespace TrainingAndPlacementPortal.Models
 
         [MaxLength(20)]
         public string Status { get; set; } = "Pending"; // Pending, Verified, Rejected
+
+        // Admin remarks for verification/rejection notes
+        [MaxLength(500)]
+        public string AdminRemarks { get; set; } = string.Empty;
         
         public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
     }

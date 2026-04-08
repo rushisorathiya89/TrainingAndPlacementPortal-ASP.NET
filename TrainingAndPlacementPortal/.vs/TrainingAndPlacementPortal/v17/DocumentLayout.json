@@ -3,6 +3,33 @@
   "WorkspaceRootPath": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.Students.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|d:\\trainingandplacementportal-asp.net\\trainingandplacementportal\\trainingandplacementportal\\models\\jobposting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|solutionrelative:trainingandplacementportal\\models\\jobposting.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.JobApplications.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.JobPostings.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.Users.sql||{0058A1F7-65F3-4DB9-B3D0-CA7E64DD73CD}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|d:\\trainingandplacementportal-asp.net\\trainingandplacementportal\\trainingandplacementportal\\models\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|solutionrelative:trainingandplacementportal\\models\\company.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|d:\\trainingandplacementportal-asp.net\\trainingandplacementportal\\trainingandplacementportal\\controllers\\api\\applicationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|solutionrelative:trainingandplacementportal\\controllers\\api\\applicationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\9.0.310\\Sdks\\Microsoft.NET.Sdk.StaticWebAssets\\targets\\Microsoft.NET.Sdk.StaticWebAssets.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|d:\\trainingandplacementportal-asp.net\\trainingandplacementportal\\trainingandplacementportal\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|solutionrelative:trainingandplacementportal\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -43,19 +70,102 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "dbo.Students [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.Students.sql",
+              "ToolTip": "dbo.Students [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-04-08T05:05:29.273Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "dbo.JobApplications.sql",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.JobApplications.sql",
+              "ToolTip": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.JobApplications.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-04-08T04:48:39.556Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "dbo.JobPostings.sql",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.JobPostings.sql",
+              "ToolTip": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.JobPostings.sql",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-04-08T04:40:07.123Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "dbo.Users [Data]",
+              "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.Users.sql",
+              "ToolTip": "dbo.Users [Data]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
+              "WhenOpened": "2026-04-08T03:16:19.815Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "JobPosting.cs",
+              "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\JobPosting.cs",
+              "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Models\\JobPosting.cs",
+              "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\JobPosting.cs",
+              "RelativeToolTip": "TrainingAndPlacementPortal\\Models\\JobPosting.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-08T03:13:48.571Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Company.cs",
+              "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\Company.cs",
+              "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Models\\Company.cs",
+              "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\Company.cs",
+              "RelativeToolTip": "TrainingAndPlacementPortal\\Models\\Company.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-08T03:13:36.857Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ApplicationApiController.cs",
+              "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\Api\\ApplicationApiController.cs",
+              "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Controllers\\Api\\ApplicationApiController.cs",
+              "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\Api\\ApplicationApiController.cs",
+              "RelativeToolTip": "TrainingAndPlacementPortal\\Controllers\\Api\\ApplicationApiController.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAiwC4AAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-08T03:11:53.085Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Microsoft.NET.Sdk.StaticWebAssets.targets",
+              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\9.0.310\\Sdks\\Microsoft.NET.Sdk.StaticWebAssets\\targets\\Microsoft.NET.Sdk.StaticWebAssets.targets",
+              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\9.0.310\\Sdks\\Microsoft.NET.Sdk.StaticWebAssets\\targets\\Microsoft.NET.Sdk.StaticWebAssets.targets",
+              "ViewState": "AgIAAJYCAAAAAAAAAAAuwKYCAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2026-04-08T03:09:49.056Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\User.cs",
               "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Models\\User.cs",
               "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\User.cs",
               "RelativeToolTip": "TrainingAndPlacementPortal\\Models\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAwwBYAAABnAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAABnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-03T03:00:33.875Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-03T03:00:33.875Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 9,
               "Title": "_AdminLayout.cshtml",
               "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Views\\Shared\\_AdminLayout.cshtml",
               "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Views\\Shared\\_AdminLayout.cshtml",
