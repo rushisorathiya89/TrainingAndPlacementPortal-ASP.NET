@@ -70,11 +70,22 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+<<<<<<< HEAD
               "Title": "dbo.Students [Data]",
               "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.Students.sql",
               "ToolTip": "dbo.Students [Data]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
               "WhenOpened": "2026-04-08T05:05:29.273Z",
+=======
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\User.cs",
+              "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Models\\User.cs",
+              "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\User.cs",
+              "RelativeToolTip": "TrainingAndPlacementPortal\\Models\\User.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAcwAsAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-03T03:00:33.875Z",
+>>>>>>> b8ed8e17a3f40e252f56a576dd3537699d1aa73b
               "EditorCaption": ""
             },
             {
