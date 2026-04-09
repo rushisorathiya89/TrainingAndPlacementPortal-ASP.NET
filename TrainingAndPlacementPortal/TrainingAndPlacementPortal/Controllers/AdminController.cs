@@ -24,6 +24,9 @@ namespace TrainingAndPlacementPortal.Controllers
         [HttpGet("/Admin/StudentsManagement")]
         public IActionResult StudentsManagement() => View();
 
+        [HttpGet("/Admin/AppliedStudents")]
+        public IActionResult AppliedStudents() => View();
+
         [HttpGet("/AdminInterviewSchedule")]
         [HttpGet("/Admin/InterviewSchedule")]
         public IActionResult InterviewSchedule() => View();

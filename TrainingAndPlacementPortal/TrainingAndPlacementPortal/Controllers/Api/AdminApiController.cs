@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingAndPlacementPortal.Data;
+using TrainingAndPlacementPortal.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace TrainingAndPlacementPortal.Controllers.Api
 {
@@ -122,5 +126,137 @@ namespace TrainingAndPlacementPortal.Controllers.Api
 
             return Ok(new { success = true, message = $"{studentName} has been deleted successfully." });
         }
+
+        // GET: api/admin/dashboard-stats
+        [HttpGet("dashboard-stats")]
+        public async Task<IActionResult> GetDashboardStats()
+        {
+            var totalStudents = await _context.Students.CountAsync();
+            var pendingApprovals = await _context.JobPostings.CountAsync(j => j.Status == "Pending");
+            var activeJobDrives = await _context.JobPostings.CountAsync(j => j.Status == "Approved" && j.IsActive);
+            var totalApplications = await _context.JobApplications.CountAsync();
+            var shortlistedStudents = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Shortlisted");
+            var selectedStudents = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Selected");
+
+            return Ok(new 
+            { 
+                success = true, 
+                data = new {
+                    totalStudents,
+                    pendingApprovals,
+                    activeJobDrives,
+                    totalApplications,
+                    shortlistedStudents,
+                    selectedStudents
+                }
+            });
+        }
+
+        // GET: api/admin/placement-history
+        [HttpGet("placement-history")]
+        public async Task<IActionResult> GetPlacementHistory()
+        {
+            var history = await _context.JobPostings
+                .Include(j => j.Company)
+                .Include(j => j.Applications)
+                .Where(j => j.Status == "Approved" || j.Status == "Completed" || j.Status == "Rejected")
+                .OrderByDescending(j => j.PostedAt)
+                .Select(j => new
+                {
+                    j.Id,
+                    CompanyName = j.Company.CompanyName,
+                    JobRole = j.JobPosition,
+                    Package = j.AnnualCTC,
+                    OfferDate = j.CampusDriveDate, // Using Campus Drive Date as a proxy for offer processing start
+                    JoiningDate = j.DateOfJoining,
+                    SelectedStudents = j.Applications.Count(a => a.ApplicationStatus == "Selected"),
+                    StatusLabel = j.Status // Can map to badges in UI
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = history });
+        }
+
+        // GET: api/admin/interview-schedules/{jobId}
+        [HttpGet("interview-schedules/{jobId}")]
+        public async Task<IActionResult> GetInterviewSchedules(int jobId)
+        {
+            var schedules = await _context.InterviewSchedules
+                .Where(s => s.JobPostingId == jobId)
+                .OrderBy(s => s.RoundNumber)
+                .ToListAsync();
+
+            return Ok(new { success = true, data = schedules });
+        }
+
+        public class InterviewRoundDto
+        {
+            public int RoundNumber { get; set; }
+            public string RoundName { get; set; }
+            public string Venue { get; set; }
+            public string WaitingArea { get; set; }
+            public DateTime InterviewDate { get; set; }
+            public string Timing { get; set; }
+        }
+
+        // POST: api/admin/interview-schedules/{jobId}
+        [HttpPost("interview-schedules/{jobId}")]
+        public async Task<IActionResult> SaveInterviewSchedules(int jobId, [FromBody] List<InterviewRoundDto> rounds)
+        {
+            var job = await _context.JobPostings.FindAsync(jobId);
+            if (job == null) return NotFound(new { success = false, message = "Job not found." });
+
+            // Clear existing rounds
+            var existing = _context.InterviewSchedules.Where(s => s.JobPostingId == jobId);
+            _context.InterviewSchedules.RemoveRange(existing);
+
+            // Add new rounds
+            foreach (var r in rounds)
+            {
+                _context.InterviewSchedules.Add(new InterviewSchedule
+                {
+                    JobPostingId = jobId,
+                    RoundNumber = r.RoundNumber,
+                    RoundName = r.RoundName,
+                    Venue = r.Venue,
+                    WaitingArea = r.WaitingArea,
+                    InterviewDate = r.InterviewDate,
+                    Timing = r.Timing,
+                    InterviewType = "Offline", // Default
+                    CreatedAt = DateTime.UtcNow
+                });
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true, message = "Interview rounds updated successfully." });
+        }
+
+        public class AddPortalUserDto
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
+
+        // POST: api/admin/add-portal-user
+        [HttpPost("add-portal-user")]
+        public async Task<IActionResult> AddPortalUser([FromBody] AddPortalUserDto dto)
+        {
+            var existing = await _context.Users.AnyAsync(u => u.Email == dto.Email);
+            if (existing) return BadRequest(new { success = false, message = "Email already registered." });
+
+            var user = new User
+            {
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                Role = "Admin",
+                IsApproved = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "User added successfully!" });
+        }
     }
-}
+    }

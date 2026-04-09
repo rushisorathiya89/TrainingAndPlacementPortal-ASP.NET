@@ -102,15 +102,22 @@ function createCompanyCard(jp) {
 
     card.innerHTML = `
         <!-- Header -->
-        <div class="flex items-center gap-4 mb-3">
-            <div class="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold">
+        <div class="flex items-start gap-4 mb-3">
+            <div class="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0">
                 ${initial}
             </div>
-            <div class="flex-1">
-                <h3 class="font-bold text-lg m-0">${jp.companyName}</h3>
-                <p class="text-gray-600 text-sm m-0">${jp.jobPosition}</p>
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-lg m-0 truncate">${jp.companyName}</h3>
+                <p class="text-gray-600 text-sm m-0 truncate">${jp.jobPosition}</p>
             </div>
-            ${statusBadge}
+            <div class="flex flex-col items-end gap-2">
+                <div class="status-badge-container">
+                    ${statusBadge}
+                </div>
+                <a href="/Admin/AppliedStudents?jobId=${jp.id}" class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold hover:bg-purple-200 no-underline transition border border-purple-200 whitespace-nowrap">
+                    <i class="fas fa-users mr-1"></i> VIEW APPLIED STUDENTS
+                </a>
+            </div>
         </div>
 
         <!-- Salary -->
@@ -128,6 +135,7 @@ function createCompanyCard(jp) {
         <div id="actions-${jp.id}" class="mb-3">
             ${getActionButtons(jp.id, jp.status)}
         </div>
+
 
         <!-- View/Edit Buttons -->
         <div class="grid grid-cols-2 gap-3">
@@ -161,13 +169,20 @@ function getStatusBadge(status) {
     return `<span class="px-3 py-1 rounded-full text-xs font-bold ${color}">${label}</span>`;
 }
 
-function getActionButtons(id, status) {
+function getActionButtons(id, status, hideUndo = false) {
     if (status === 'Approved') {
-        return `
-            <div class="grid grid-cols-2 gap-2">
-                <button disabled class="bg-green-600 text-white py-2 rounded cursor-not-allowed border-none font-semibold">✓ APPROVED</button>
-                <button onclick="updateJpStatus(${id}, 'Pending')" class="bg-gray-500 text-white py-2 rounded hover:bg-gray-600 transition cursor-pointer border-none font-semibold">Undo</button>
-            </div>`;
+        if (hideUndo) {
+            return `
+                <div class="grid grid-cols-1 gap-2">
+                    <button disabled class="bg-green-600 text-white py-2 rounded cursor-not-allowed border-none font-semibold w-full">✓ APPROVED</button>
+                </div>`;
+        } else {
+            return `
+                <div class="grid grid-cols-2 gap-2">
+                    <button disabled class="bg-green-600 text-white py-2 rounded cursor-not-allowed border-none font-semibold">✓ APPROVED</button>
+                    <button onclick="updateJpStatus(${id}, 'Pending')" class="bg-gray-500 text-white py-2 rounded hover:bg-gray-600 transition cursor-pointer border-none font-semibold">Undo</button>
+                </div>`;
+        }
     }
     if (status === 'Rejected') {
         return `
@@ -187,10 +202,31 @@ function getActionButtons(id, status) {
     // Pending
     return `
         <div class="grid grid-cols-3 gap-2">
-            <button onclick="updateJpStatus(${id}, 'Rejected')" class="bg-red-600 text-white py-2 rounded hover:bg-red-700 transition cursor-pointer border-none font-semibold">✕ DECLINE</button>
-            <button onclick="updateJpStatus(${id}, 'OnHold')" class="bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition cursor-pointer border-none font-semibold">⏸ HOLD</button>
-            <button onclick="updateJpStatus(${id}, 'Approved')" class="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition cursor-pointer border-none font-semibold">✓ ACCEPT</button>
+            <button onclick="confirmReject(${id})" class="bg-red-600 text-white py-2 rounded hover:bg-red-700 transition cursor-pointer border-none font-semibold text-sm">✕ DECLINE</button>
+            <button onclick="updateJpStatus(${id}, 'OnHold')" class="bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition cursor-pointer border-none font-semibold text-sm">⏸ HOLD</button>
+            <button onclick="updateJpStatus(${id}, 'Approved')" class="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition cursor-pointer border-none font-semibold text-sm">✓ ACCEPT</button>
         </div>`;
+}
+
+async function confirmReject(id) {
+    if (confirm("Are you sure you want to reject this Job Description? This will delete the Job Drive.")) {
+        try {
+            const res = await authFetch(`/api/company/job-postings/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await res.json();
+            
+            if (result.success) {
+                const card = document.getElementById('jp-' + id);
+                if (card) card.remove();
+            } else {
+                alert(result.message || 'Failed to delete the job posting.');
+            }
+        } catch (err) {
+            alert('Network error. Please try again.');
+            console.error(err);
+        }
+    }
 }
 
 async function updateJpStatus(id, newStatus) {
@@ -208,12 +244,20 @@ async function updateJpStatus(id, newStatus) {
             if (card) {
                 card.dataset.status = newStatus;
                 // Update status badge
-                const header = card.querySelector('.flex.items-center.gap-4.mb-3');
-                const oldBadge = header.querySelector('span');
-                if (oldBadge) oldBadge.remove();
-                header.insertAdjacentHTML('beforeend', getStatusBadge(newStatus));
-                // Update action buttons
+                const badgeContainer = card.querySelector('.status-badge-container');
+                if (badgeContainer) badgeContainer.innerHTML = getStatusBadge(newStatus);
+                // Update action buttons (always re-render standard buttons)
                 document.getElementById('actions-' + id).innerHTML = getActionButtons(id, newStatus);
+                
+                // If newly approved, hide undo after 10s
+                if (newStatus === 'Approved') {
+                    setTimeout(() => {
+                        const currentCard = document.getElementById('jp-' + id);
+                        if (currentCard && currentCard.dataset.status === 'Approved') {
+                            document.getElementById('actions-' + id).innerHTML = getActionButtons(id, 'Approved', true);
+                        }
+                    }, 10000);
+                }
             }
             // Re-apply filters
             filterCards();

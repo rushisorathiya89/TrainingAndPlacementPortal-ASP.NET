@@ -163,5 +163,120 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 Message = "Login successful!"
             });
         }
+
+        // ===== NEW ENDPOINTS =====
+
+        // GET: api/auth/me
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+
+            var user = await _context.Users.Include(u => u.Student).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return NotFound();
+
+            // We use the Student profile to shadow Admin Profile details as well
+            return Ok(new
+            {
+                success = true,
+                data = new
+                {
+                    FullName = user.Student?.FullName ?? "Administrator",
+                    Email = user.Email,
+                    MobileNumber = user.Student?.MobileNumber ?? "+91 00000 00000",
+                    Role = user.Student?.Branch ?? user.Role,
+                    EmpId = user.Student?.EnrollmentNumber ?? "ADMIN001",
+                    Department = "Training & Placement Cell",
+                    Location = "Office No. 27"
+                }
+            });
+        }
+
+        public class UpdateProfileDto
+        {
+            public string FullName { get; set; }
+            public string MobileNumber { get; set; }
+            public string Role { get; set; }
+            public string EmpId { get; set; }
+            public string Department { get; set; }
+            public string Location { get; set; }
+        }
+
+        // PUT: api/auth/profile
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto dto)
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+
+            var user = await _context.Users.Include(u => u.Student).FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null) return NotFound();
+
+            if (user.Student == null)
+            {
+                user.Student = new Student { UserId = user.Id, RegisteredAt = DateTime.UtcNow };
+                _context.Students.Add(user.Student);
+            }
+
+            user.Student.FullName = dto.FullName;
+            user.Student.MobileNumber = dto.MobileNumber;
+            user.Student.Branch = dto.Role; // Storing role here
+            user.Student.EnrollmentNumber = dto.EmpId; // Storing EmpId here
+            // Dept / Location omitted for brevity as they just shadow.
+
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true, message = "Profile updated successfully." });
+        }
+
+        public class ChangePasswordDto
+        {
+            public string CurrentPassword { get; set; }
+            public string NewPassword { get; set; }
+        }
+
+        // POST: api/auth/change-password
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int userId)) return Unauthorized();
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound();
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+            {
+                return BadRequest(new { success = false, message = "Current password is incorrect." });
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Password changed successfully." });
+        }
+
+        public class ForgotPasswordDto
+        {
+            public string Email { get; set; }
+            public string NewPassword { get; set; }
+        }
+
+        // POST: api/auth/forgot-password-reset
+        [HttpPost("forgot-password-reset")]
+        public async Task<IActionResult> ForgotPasswordReset([FromBody] ForgotPasswordDto dto)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            if (user == null)
+            {
+                // Return success to prevent email enumeration, but for our demo we can return error
+                return BadRequest(new { success = false, message = "Email not found." });
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Password has been reset successfully." });
+        }
     }
 }

@@ -1,6 +1,79 @@
 [
   {
     "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "AddPortalUser",
+    "RelativePath": "api/admin/add-portal-user",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController\u002BAddPortalUserDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "GetDashboardStats",
+    "RelativePath": "api/admin/dashboard-stats",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "GetInterviewSchedules",
+    "RelativePath": "api/admin/interview-schedules/{jobId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "SaveInterviewSchedules",
+    "RelativePath": "api/admin/interview-schedules/{jobId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "rounds",
+        "Type": "System.Collections.Generic.List\u00601[[TrainingAndPlacementPortal.Controllers.Api.AdminApiController\u002BInterviewRoundDto, TrainingAndPlacementPortal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "GetPlacementHistory",
+    "RelativePath": "api/admin/placement-history",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
     "Method": "GetAllStudents",
     "RelativePath": "api/admin/students",
     "HttpMethod": "GET",
@@ -91,12 +164,60 @@
   },
   {
     "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.ApplicationApiController",
+    "Method": "GetStudentsForJob",
+    "RelativePath": "api/applications/job/{jobId}/students",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.ApplicationApiController",
     "Method": "GetMyApplications",
     "RelativePath": "api/applications/my-applications",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/auth/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController\u002BChangePasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController",
+    "Method": "ForgotPasswordReset",
+    "RelativePath": "api/auth/forgot-password-reset",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController\u002BForgotPasswordDto",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -110,6 +231,32 @@
       {
         "Name": "dto",
         "Type": "TrainingAndPlacementPortal.DTOs.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController",
+    "Method": "GetCurrentUser",
+    "RelativePath": "api/auth/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController",
+    "Method": "UpdateProfile",
+    "RelativePath": "api/auth/profile",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController\u002BUpdateProfileDto",
         "IsRequired": true
       }
     ],

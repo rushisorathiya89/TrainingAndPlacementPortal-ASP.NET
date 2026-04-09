@@ -2,7 +2,7 @@
 
 <div class="w-full">
     <!-- Header -->
-    <h1 class="text-2xl md:text-3xl font-bold text-red-600">Admin Profile Edit Test</h1>
+    <h1 class="text-2xl md:text-3xl font-bold text-red-600">Admin Profile Edit</h1>
     <p class="text-gray-600 mb-8">Update your information.</p>
 
     <!-- Top Cards -->
@@ -12,15 +12,15 @@
             <div class="flex flex-col items-center mb-6">
                 <!-- Initials Avatar -->
                 <div id="adminInitialsDisplay" class="admin-profile-display w-20 h-20 bg-red-600 text-white rounded-full flex items-center justify-center text-xl font-bold">
-                    VD
+                    ...
                 </div>
                 <div class="w-full flex flex-col items-center">
-                    <h2 id="adminNameDisplay" class="admin-profile-display mt-4 text-lg font-semibold text-center p-1 border border-transparent w-3/4 m-0">Vishal Doshi</h2>
-                    <input id="adminNameInput" value="Vishal Doshi" class="admin-profile-input mt-4 text-lg font-semibold text-center bg-white rounded border border-gray-400 p-1 w-3/4 hidden" oninput="validateAdminField('adminNameInput'); document.getElementById('adminInfoNameInput').value = this.value" />
+                    <h2 id="adminNameDisplay" class="admin-profile-display mt-4 text-lg font-semibold text-center p-1 border border-transparent w-3/4 m-0">Loading...</h2>
+                    <input id="adminNameInput" class="admin-profile-input mt-4 text-lg font-semibold text-center bg-white rounded border border-gray-400 p-1 w-3/4 hidden" oninput="validateAdminField('adminNameInput'); document.getElementById('adminInfoNameInput').value = this.value" />
                     <p id="adminNameError" class="text-red-500 text-xs mt-1 hidden"></p>
                     
-                    <p id="adminRoleDisplay" class="admin-profile-display mt-1 text-gray-600 text-sm text-center p-1 border border-transparent w-1/2 m-0">TPO Head</p>
-                    <input id="adminRoleInput" value="TPO Head" class="admin-profile-input mt-1 text-gray-600 text-sm text-center bg-white rounded border border-gray-400 p-1 w-1/2 hidden" oninput="validateAdminField('adminRoleInput'); document.getElementById('adminInfoRoleInput').value = this.value" />
+                    <p id="adminRoleDisplay" class="admin-profile-display mt-1 text-gray-600 text-sm text-center p-1 border border-transparent w-1/2 m-0">...</p>
+                    <input id="adminRoleInput" class="admin-profile-input mt-1 text-gray-600 text-sm text-center bg-white rounded border border-gray-400 p-1 w-1/2 hidden" oninput="validateAdminField('adminRoleInput'); document.getElementById('adminInfoRoleInput').value = this.value" />
                     <p id="adminRoleError" class="text-red-500 text-xs mt-1 hidden"></p>
                 </div>
             </div>
@@ -29,24 +29,24 @@
                 <div class="flex justify-between items-center border-b border-gray-300 pb-2">
                     <span>Employee Id.</span>
                     <div class="w-1/2 flex flex-col items-end">
-                        <span id="adminEmpIdDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">26FGHP579</span>
-                        <input id="adminEmpIdInput" value="26FGHP579" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminEmpIdInput')" />
+                        <span id="adminEmpIdDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">...</span>
+                        <input id="adminEmpIdInput" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminEmpIdInput')" />
                         <p id="adminEmpIdError" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-300 pb-2">
                     <span>Department</span>
                     <div class="w-1/2 flex flex-col items-end">
-                        <span id="adminDeptDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">Training & Placement Shell</span>
-                        <input id="adminDeptInput" value="Training & Placement Shell" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminDeptInput')" />
+                        <span id="adminDeptDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">...</span>
+                        <input id="adminDeptInput" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminDeptInput')" />
                         <p id="adminDeptError" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
                 </div>
                 <div class="flex justify-between items-center border-b border-gray-300 pb-2">
                     <span>Office Location</span>
                     <div class="w-1/2 flex flex-col items-end">
-                        <span id="adminLocDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">Office No .27</span>
-                        <input id="adminLocInput" value="Office No .27" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminLocInput')" />
+                        <span id="adminLocDisplay" class="admin-profile-display text-right px-1 border border-transparent w-full">...</span>
+                        <input id="adminLocInput" class="admin-profile-input w-full text-right bg-white border border-gray-400 rounded px-1 hidden" oninput="validateAdminField('adminLocInput')" />
                         <p id="adminLocError" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
                 </div>
@@ -63,21 +63,21 @@
             <div class="space-y-4">
                 <div>
                     <label class="text-sm">Full Name</label>
-                    <input id="adminInfoNameInput" value="Vishal Doshi" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="document.getElementById('adminNameInput').value = this.value; validateAdminField('adminNameInput')" />
+                    <input id="adminInfoNameInput" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="document.getElementById('adminNameInput').value = this.value; validateAdminField('adminNameInput')" />
                 </div>
                 <div>
                     <label class="text-sm">Mobile Number</label>
-                    <input id="adminMobileInput" value="+91 98765 43210" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="validateAdminField('adminMobileInput')" />
+                    <input id="adminMobileInput" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="validateAdminField('adminMobileInput')" />
                     <p id="adminMobileError" class="text-red-500 text-xs mt-1 hidden"></p>
                 </div>
                 <div>
                     <label class="text-sm">Email Address</label>
-                    <input id="adminEmailInput" value="vishal.doshi@rku.ac.in" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="validateAdminField('adminEmailInput')" />
+                    <input id="adminEmailInput" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="validateAdminField('adminEmailInput')" />
                     <p id="adminEmailError" class="text-red-500 text-xs mt-1 hidden"></p>
                 </div>
                 <div>
                     <label class="text-sm">Role</label>
-                    <input id="adminInfoRoleInput" value="TPO Head" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="document.getElementById('adminRoleInput').value = this.value; validateAdminField('adminRoleInput')" />
+                    <input id="adminInfoRoleInput" readonly class="admin-profile-input w-full mt-1 rounded-md p-2 border bg-gray-200 border-transparent outline-none text-gray-700 box-border" oninput="document.getElementById('adminRoleInput').value = this.value; validateAdminField('adminRoleInput')" />
                 </div>
             </div>
         </div>
@@ -91,20 +91,20 @@
             <div class="space-y-4">
                 <div>
                     <label class="text-sm">Enter Email Address</label>
-                    <input placeholder="Enter college verified email" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
+                    <input id="newUserEmail" placeholder="Enter college verified email" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
                 </div>
                 <div>
                     <label class="text-sm">Enter Password</label>
-                    <input type="password" placeholder="Enter new password" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
+                    <input id="newUserPassword" type="password" placeholder="Enter new password" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
                 </div>
                 <div>
                     <label class="text-sm">Confirm Password</label>
-                    <input type="password" placeholder="Re-enter new password" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
+                    <input id="newUserConfirm" type="password" placeholder="Re-enter new password" class="w-full mt-1 p-2 rounded-md bg-white border border-gray-400 outline-none box-border text-sm" />
                 </div>
-                <button class="mt-2 w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 border-none cursor-pointer flex items-center justify-center gap-2 font-semibold transition" onclick="alert('User added successfully!')">
+                <button class="mt-2 w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 border-none cursor-pointer flex items-center justify-center gap-2 font-semibold transition" onclick="addNewPortalUser()">
                     Add
                 </button>
-                <button class="w-full border border-gray-400 bg-transparent py-3 rounded-lg hover:bg-gray-200 cursor-pointer flex items-center justify-center gap-2 font-semibold text-gray-700 transition">
+                <button class="w-full border border-gray-400 bg-transparent py-3 rounded-lg hover:bg-gray-200 cursor-pointer flex items-center justify-center gap-2 font-semibold text-gray-700 transition" onclick="document.getElementById('newUserEmail').value=''; document.getElementById('newUserPassword').value=''; document.getElementById('newUserConfirm').value=''">
                     Cancel
                 </button>
             </div>
@@ -112,12 +112,171 @@
 
         <!-- PasswordActions -->
         <div class="flex flex-col gap-4">
-            <a href="/AdminChangePassword" class="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700 no-underline font-semibold text-sm md:text-base cursor-pointer transition">
+            <a href="/Admin/ChangePassword" class="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700 no-underline font-semibold text-sm md:text-base cursor-pointer transition">
                 <i class="fas fa-edit"></i> Click Here For Change Password
             </a>
-            <a href="/AdminForgotPassword" class="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700 no-underline font-semibold text-sm md:text-base cursor-pointer transition">
+            <a href="/Admin/ForgotPassword" class="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700 no-underline font-semibold text-sm md:text-base cursor-pointer transition">
                 <i class="fas fa-edit"></i> Click Here For Forgot Password
             </a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Admin')) return;
+    loadAdminProfile();
+});
+
+async function loadAdminProfile() {
+    try {
+        const res = await authFetch('/api/auth/me');
+        const result = await res.json();
+        
+        if (result.success && result.data) {
+            const data = result.data;
+            
+            // Display values
+            document.getElementById('adminNameDisplay').innerText = data.fullName;
+            document.getElementById('adminRoleDisplay').innerText = data.role;
+            document.getElementById('adminEmpIdDisplay').innerText = data.empId;
+            document.getElementById('adminDeptDisplay').innerText = data.department;
+            document.getElementById('adminLocDisplay').innerText = data.location;
+            
+            // Input values
+            document.getElementById('adminNameInput').value = data.fullName;
+            document.getElementById('adminRoleInput').value = data.role;
+            document.getElementById('adminEmpIdInput').value = data.empId;
+            document.getElementById('adminDeptInput').value = data.department;
+            document.getElementById('adminLocInput').value = data.location;
+            
+            // Form info values
+            document.getElementById('adminInfoNameInput').value = data.fullName;
+            document.getElementById('adminMobileInput').value = data.mobileNumber;
+            document.getElementById('adminEmailInput').value = data.email;
+            document.getElementById('adminInfoRoleInput').value = data.role;
+            
+            // Initials
+            const initials = data.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('adminInitialsDisplay').innerText = initials;
+        }
+    } catch (err) {
+        console.error('Failed to load profile:', err);
+    }
+}
+
+async function saveAdminProfile() {
+    const payload = {
+        fullName: document.getElementById('adminNameInput').value,
+        mobileNumber: document.getElementById('adminMobileInput').value,
+        role: document.getElementById('adminRoleInput').value,
+        empId: document.getElementById('adminEmpIdInput').value,
+        department: document.getElementById('adminDeptInput').value,
+        location: document.getElementById('adminLocInput').value
+    };
+
+    try {
+        const res = await authFetch('/api/auth/profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        
+        if (result.success) {
+            alert('Profile updated successfully!');
+            toggleAdminProfileEdit(); // Switch back to display mode
+            loadAdminProfile(); // Refresh data
+        } else {
+            alert(result.message || 'Failed to update profile.');
+        }
+    } catch (err) {
+        alert('Network error. Please try again.');
+        console.error(err);
+    }
+}
+
+async function addNewPortalUser() {
+    const email = document.getElementById('newUserEmail').value;
+    const password = document.getElementById('newUserPassword').value;
+    const confirm = document.getElementById('newUserConfirm').value;
+
+    if (!email || !password) {
+        alert('Please fill all fields.');
+        return;
+    }
+
+    if (password !== confirm) {
+        alert('Passwords do not match.');
+        return;
+    }
+
+    try {
+        const res = await authFetch('/api/admin/add-portal-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const result = await res.json();
+
+        if (result.success) {
+            alert('User added successfully!');
+            document.getElementById('newUserEmail').value = '';
+            document.getElementById('newUserPassword').value = '';
+            document.getElementById('newUserConfirm').value = '';
+        } else {
+            alert(result.message || 'Failed to add user.');
+        }
+    } catch (err) {
+        alert('Network error. Please try again.');
+    }
+}
+
+function toggleAdminProfileEdit() {
+    const btn = document.getElementById('editAdminProfileBtn');
+    const isEditing = btn.dataset.editing === 'true';
+    
+    const displays = document.querySelectorAll('.admin-profile-display');
+    const inputs = document.querySelectorAll('.admin-profile-input');
+    
+    if (isEditing) {
+        // Save logic
+        saveAdminProfile();
+        
+        btn.dataset.editing = 'false';
+        btn.innerHTML = '<i class="fas fa-edit"></i> EDIT PROFILE';
+        displays.forEach(d => d.classList.remove('hidden'));
+        inputs.forEach(i => {
+            if (i.id === 'adminInfoNameInput' || i.id === 'adminMobileInput' || i.id === 'adminEmailInput' || i.id === 'adminInfoRoleInput') {
+               // keep readonly
+            } else {
+               i.classList.add('hidden');
+            }
+            i.classList.add('bg-gray-200');
+            i.readOnly = true;
+        });
+    } else {
+        btn.dataset.editing = 'true';
+        btn.innerHTML = '<i class="fas fa-save"></i> SAVE PROFILE';
+        displays.forEach(d => d.classList.add('hidden'));
+        inputs.forEach(i => {
+            i.classList.remove('hidden');
+            i.classList.remove('bg-gray-200');
+            i.readOnly = false;
+        });
+    }
+}
+
+function validateAdminField(id) {
+    const input = document.getElementById(id);
+    const error = document.getElementById(id.replace('Input', 'Error'));
+    if (error && input.value.trim() === '') {
+        error.innerText = 'Field cannot be empty';
+        error.classList.remove('hidden');
+    } else if (error) {
+        error.classList.add('hidden');
+    }
+}
+</script>
+}

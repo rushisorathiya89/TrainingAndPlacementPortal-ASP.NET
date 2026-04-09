@@ -21,45 +21,111 @@
                     <th class="p-4">Status</th>
                 </tr>
             </thead>
-            <tbody>
-                @{
-                    var placements = new[] {
-                        new { Id=1, Company="Multiicon", Role="PHP Developer", Package="₹3.6 LPA", OfferDate="Jan 12, 2026", JoiningDate="July 12, 2026", Selected=5, StatusClass="bg-green-100 text-green-700", StatusLabel="Completed" },
-                        new { Id=2, Company="Gateway Group", Role="Software Engineer", Package="₹4.5 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-blue-100 text-blue-700", StatusLabel="Interview Scheduled" },
-                        new { Id=3, Company="Infinity IT", Role="React Native Developer", Package="₹5 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-indigo-100 text-indigo-700", StatusLabel="On Hold" },
-                        new { Id=4, Company="TCS Ltd", Role="Software Development Engineer", Package="₹8 LPA", OfferDate="-", JoiningDate="-", Selected=12, StatusClass="bg-blue-100 text-blue-600", StatusLabel="Applied" },
-                        new { Id=5, Company="Simform", Role="DotNet Developer", Package="₹5.5 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-red-100 text-red-600", StatusLabel="Rejected" },
-                        new { Id=6, Company="TatvaSoft", Role="Java Developer", Package="₹6.5 LPA", OfferDate="Feb 20, 2026", JoiningDate="Aug 01, 2026", Selected=3, StatusClass="bg-blue-100 text-blue-700", StatusLabel="Approved" },
-                        new { Id=7, Company="Radixweb", Role="QA Engineer", Package="₹4.8 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-indigo-100 text-indigo-600", StatusLabel="In Progress" },
-                        new { Id=8, Company="Wipro", Role="System Analyst", Package="₹6 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-blue-100 text-blue-600", StatusLabel="Applied" },
-                        new { Id=9, Company="Capgemini", Role="Project Engineer", Package="₹4 LPA", OfferDate="Mar 15, 2026", JoiningDate="Sep 01, 2026", Selected=8, StatusClass="bg-green-100 text-green-700", StatusLabel="Completed" },
-                        new { Id=10, Company="Tech Mahindra", Role="Analyst", Package="₹3.8 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-blue-100 text-blue-700", StatusLabel="Interview Scheduled" },
-                        new { Id=11, Company="HCL Tech", Role="Graduate Engineer Trainee", Package="₹4.25 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-indigo-100 text-indigo-700", StatusLabel="On Hold" },
-                        new { Id=12, Company="Accenture", Role="Software Associate", Package="₹4.5 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-red-100 text-red-600", StatusLabel="Rejected" }
-                    };
-                }
-                @foreach (var p in placements)
-                {
-                    <tr class="bg-white border-t hover:bg-gray-50">
-                        <td class="p-4 flex items-center gap-3 font-semibold">
-                            <div class="bg-blue-200 text-blue-700 w-10 h-10 flex items-center justify-center rounded-lg">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            @p.Company
-                        </td>
-                        <td class="p-4">@p.Role</td>
-                        <td class="p-4 font-semibold">@p.Package</td>
-                        <td class="p-4 text-center font-semibold text-gray-700">@p.Selected</td>
-                        <td class="p-4">@p.OfferDate</td>
-                        <td class="p-4">@p.JoiningDate</td>
-                        <td class="p-4">
-                            <span class="px-3 py-1 rounded-full text-sm @p.StatusClass">
-                                @p.StatusLabel
-                            </span>
-                        </td>
-                    </tr>
-                }
+            <tbody id="historyTableBody">
+                <tr id="historyLoading">
+                    <td colspan="7" class="p-8 text-center text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-2xl text-red-500 mb-2 block"></i>
+                        Loading placement history...
+                    </td>
+                </tr>
+                <tr id="historyEmpty" class="hidden">
+                    <td colspan="7" class="p-8 text-center text-gray-500">
+                        <i class="fas fa-folder-open text-4xl text-gray-300 mb-2 block"></i>
+                        No placement records found.
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
 </div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Admin')) return;
+    loadPlacementHistory();
+});
+
+async function loadPlacementHistory() {
+    const loading = document.getElementById('historyLoading');
+    const empty = document.getElementById('historyEmpty');
+    const tbody = document.getElementById('historyTableBody');
+
+    try {
+        const res = await authFetch('/api/admin/placement-history');
+        const result = await res.json();
+        
+        loading.classList.add('hidden');
+        
+        if (!result.success || !result.data || result.data.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        result.data.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.className = 'bg-white border-t hover:bg-gray-50';
+
+            // Determine status label and class
+            let statusClass = "bg-blue-100 text-blue-700";
+            let statusLabel = p.statusLabel;
+
+            if (p.statusLabel === 'Completed') statusClass = "bg-green-100 text-green-700";
+            else if (p.statusLabel === 'Rejected') statusClass = "bg-red-100 text-red-600";
+            else if (statusLabel === 'Approved') statusClass = "bg-blue-100 text-blue-700";
+
+            // Format dates
+            let offerDateDisplay = "-";
+            if (p.offerDate) {
+                const od = new Date(p.offerDate);
+                // check if it's a valid future/past date
+                if (od.getFullYear() > 2000) offerDateDisplay = od.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+            }
+
+            let joiningDateDisplay = "-";
+            if (p.joiningDate) {
+                const jd = new Date(p.joiningDate);
+                if (jd.getFullYear() > 2000) joiningDateDisplay = jd.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+            }
+
+            tr.innerHTML = `
+                <td class="p-4 flex items-center gap-3 font-semibold">
+                    <div class="bg-blue-200 text-blue-700 w-10 h-10 flex items-center justify-center rounded-lg">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    ${escapeHtml(p.companyName || 'N/A')}
+                </td>
+                <td class="p-4">${escapeHtml(p.jobRole || 'N/A')}</td>
+                <td class="p-4 font-semibold">${escapeHtml(p.package || 'N/A')}</td>
+                <td class="p-4 text-center font-semibold text-gray-700">${p.selectedStudents}</td>
+                <td class="p-4">${offerDateDisplay}</td>
+                <td class="p-4">${joiningDateDisplay}</td>
+                <td class="p-4">
+                    <span class="px-3 py-1 rounded-full text-sm ${statusClass}">
+                        ${escapeHtml(statusLabel)}
+                    </span>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+    } catch (err) {
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+        empty.querySelector('td').innerText = 'Failed to load placement history.';
+        console.error('Error fetching history:', err);
+    }
+}
+
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+         .toString()
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+</script>
+}

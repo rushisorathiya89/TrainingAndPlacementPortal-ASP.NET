@@ -128,5 +128,34 @@ namespace TrainingAndPlacementPortal.Controllers.Api
 
             return Ok(new { success = true, hasApplied });
         }
+
+        // ===== ADMIN: Get all students who applied for a specific job =====
+        // GET: api/applications/job/{jobId}/students
+        [HttpGet("job/{jobId}/students")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetStudentsForJob(int jobId)
+        {
+            var applications = await _context.JobApplications
+                .Include(a => a.Student)
+                .ThenInclude(s => s.User)
+                .Where(a => a.JobPostingId == jobId)
+                .Select(a => new
+                {
+                    a.Id,
+                    StudentId = a.Student.Id,
+                    a.Student.FullName,
+                    a.Student.EnrollmentNumber,
+                    a.Student.Branch,
+                    a.Student.Semester,
+                    a.Student.CGPA,
+                    a.Student.MobileNumber,
+                    Email = a.Student.User.Email,
+                    a.ApplicationStatus,
+                    a.AppliedAt
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = applications });
+        }
     }
 }

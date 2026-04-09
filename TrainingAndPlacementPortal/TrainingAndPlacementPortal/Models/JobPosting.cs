@@ -30,6 +30,10 @@ namespace TrainingAndPlacementPortal.Models
 
         public DateTime DateOfJoining { get; set; }
 
+        [Required]
+        [MaxLength(100)]
+        public string JobLocation { get; set; }
+
         public string SelectionProcess { get; set; }
 
         public DateTime CampusDriveDate { get; set; }
@@ -52,5 +56,8 @@ namespace TrainingAndPlacementPortal.Models
         
         public bool IsActive { get; set; } = true;
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation property for applications
+        public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
     }
 }

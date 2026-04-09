@@ -20,11 +20,11 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-sm mb-1">Company Name</label>
-                <input type="text" value="Multiicon" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                <input type="text" id="schedCompanyName" readonly class="w-full p-3 rounded-lg border outline-none bg-gray-100" />
             </div>
             <div>
                 <label class="block text-sm mb-1">HR Name</label>
-                <input type="text" value="Shweta Jethwa" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                <input type="text" id="schedHrName" readonly class="w-full p-3 rounded-lg border outline-none bg-gray-100" />
             </div>
         </div>
     </div>
@@ -51,19 +51,19 @@
                 </div>
                 <div>
                     <label class="block text-sm mb-1">Venue</label>
-                    <input type="text" value="Panel No. 2" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                    <input type="text" placeholder="e.g. Panel No. 2" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
                 <div>
                     <label class="block text-sm mb-1">Waiting Area</label>
-                    <input type="text" value="Krishna Murti hall" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                    <input type="text" placeholder="e.g. Krishna Murti hall" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
                 <div>
                     <label class="block text-sm mb-1">Date</label>
-                    <input type="date" value="2025-05-15" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                    <input type="date" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
                 <div>
                     <label class="block text-sm mb-1">Timing</label>
-                    <input type="time" value="08:00" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                    <input type="time" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
             </div>
         </div>
@@ -80,7 +80,52 @@
     </div>
 </div>
 
+@section Scripts {
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!requireAuth('Admin')) return;
+        
+        const params = new URLSearchParams(window.location.search);
+        const jobId = params.get('jobId');
+        if (jobId) {
+            loadCompanyInfo(jobId);
+        }
+    });
+
+    async function loadCompanyInfo(jobId) {
+        try {
+            const res = await authFetch(`/api/company/job-postings/${jobId}`);
+            const result = await res.json();
+            if (result.success && result.data) {
+                document.getElementById('schedCompanyName').value = result.data.companyName;
+                document.getElementById('schedHrName').value = result.data.contactName || 'TPO Representative';
+            }
+            
+            // Also load existing rounds if any
+            loadExistingRounds(jobId);
+        } catch (err) {
+            console.error('Failed to load company info:', err);
+        }
+    }
+
+    async function loadExistingRounds(jobId) {
+        try {
+            const res = await authFetch(`/api/admin/interview-schedules/${jobId}`);
+            const result = await res.json();
+            
+            if (result.success && result.data && result.data.length > 0) {
+                const container = document.getElementById('roundsContainer');
+                container.innerHTML = ''; // Start fresh
+                
+                result.data.forEach((r, idx) => {
+                    addRound(r);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to load rounds:', err);
+        }
+    }
+
     function updateRoundNumbers() {
         const cards = document.querySelectorAll('.round-card');
         const deleteBtns = document.querySelectorAll('.delete-round-btn');
@@ -97,12 +142,64 @@
         }
     }
 
-    function addRound() {
+    function addRound(data = null) {
         const container = document.getElementById('roundsContainer');
-        const template = container.querySelector('.round-card').cloneNode(true);
+        const cards = container.querySelectorAll('.round-card');
         
-        // Clear inputs on cloned default round
-        template.querySelectorAll('input').forEach(input => input.value = '');
+        // Use first card as template if exists, else we need the HTML
+        let template;
+        if (cards.length > 0) {
+            template = cards[0].cloneNode(true);
+        } else {
+            // Re-create the HTML if container was empty
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div class="round-card bg-[#d8cfc3] p-6 md:p-8 rounded-xl shadow-md mb-6 relative">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="round-title text-lg font-semibold m-0">Round Details</h2>
+                        <button type="button" onclick="deleteRound(this)" class="delete-round-btn text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition-colors hidden cursor-pointer border-none bg-transparent" title="Delete Round">
+                            <i class="fas fa-trash-alt text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm mb-1">Round No</label>
+                            <input type="text" name="roundNo" placeholder="e.g. 1" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Round Name</label>
+                            <input type="text" name="roundName" placeholder="e.g. Aptitude Test" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Venue</label>
+                            <input type="text" name="venue" placeholder="e.g. Panel No. 2" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Waiting Area</label>
+                            <input type="text" name="waitingArea" placeholder="e.g. Krishna Murti hall" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Date</label>
+                            <input type="date" name="date" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Timing</label>
+                            <input type="time" name="timing" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                    </div>
+                </div>
+            `;
+            template = div.firstElementChild;
+        }
+        
+        // Clear or populate inputs
+        template.querySelector('input[name="roundNo"]').value = data ? data.roundNumber : (cards.length + 1);
+        template.querySelector('input[name="roundName"]').value = data ? data.roundName : '';
+        template.querySelector('input[name="venue"]').value = data ? data.venue : '';
+        template.querySelector('input[name="waitingArea"]').value = data ? data.waitingArea : '';
+        template.querySelector('input[name="date"]').value = data ? data.interviewDate.split('T')[0] : '';
+        template.querySelector('input[name="timing"]').value = data ? data.timing : '';
         
         container.appendChild(template);
         updateRoundNumbers();
@@ -114,8 +211,46 @@
         updateRoundNumbers();
     }
 
-    function submitInterviewSchedule() {
-        alert('Interview Schedule submitted successfully!');
-        window.location.href = '/AdminInterviewSchedule';
+    async function submitInterviewSchedule() {
+        const jobId = new URLSearchParams(window.location.search).get('jobId');
+        if (!jobId) return;
+
+        const roundCards = document.querySelectorAll('.round-card');
+        const rounds = [];
+
+        roundCards.forEach(card => {
+            rounds.push({
+                roundNumber: parseInt(card.querySelector('input[name="roundNo"]').value) || 0,
+                roundName: card.querySelector('input[name="roundName"]').value,
+                venue: card.querySelector('input[name="venue"]').value,
+                waitingArea: card.querySelector('input[name="waitingArea"]').value,
+                interviewDate: card.querySelector('input[name="date"]').value,
+                timing: card.querySelector('input[name="timing"]').value
+            });
+        });
+
+        if (rounds.length === 0) {
+            alert('Please add at least one round.');
+            return;
+        }
+
+        try {
+            const res = await authFetch(`/api/admin/interview-schedules/${jobId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(rounds)
+            });
+            const result = await res.json();
+            
+            if (result.success) {
+                alert('Interview Schedule saved successfully!');
+                window.location.href = '/Admin/InterviewSchedule';
+            } else {
+                alert(result.message || 'Failed to save schedule.');
+            }
+        } catch (err) {
+            alert('Network error. Please try again.');
+        }
     }
 </script>
+}

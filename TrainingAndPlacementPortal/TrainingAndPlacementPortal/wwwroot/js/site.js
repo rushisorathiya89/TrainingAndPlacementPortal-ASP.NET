@@ -674,19 +674,54 @@ function clearForm(formId) {
 
 // ---- Active Sidebar Highlight ----
 document.addEventListener('DOMContentLoaded', function () {
-    const path = window.location.pathname;
+    const path = window.location.pathname.toLowerCase();
+    const normalizedPath = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+
+    // Mapping sub-pages to their parent sidebar items
+    const subPageMap = {
+        // Admin sub-pages
+        '/admin/jddetail': '/admincompanymanagement',
+        '/adminjddetail': '/admincompanymanagement',
+        '/admin/appliedstudents': '/admincompanymanagement',
+        '/admin/interviewscheduleform': '/admininterviewschedule',
+        '/admininterviewscheduleform': '/admininterviewschedule',
+        '/admin/forgotpassword': '/adminchangepassword',
+        '/adminforgotpassword': '/adminchangepassword',
+
+        // Student sub-pages
+        '/student/jobdetails': '/studjobs',
+        '/studjobdetails': '/studjobs',
+        '/student/forgotpassword': '/studchangepass',
+        '/studforgotpassword': '/studchangepass',
+        
+        // Normalize common variations between /Student/ and /Stud/
+        '/student/dashboard': '/studdashboard',
+        '/student/profile': '/studprofile',
+        '/student/jobs': '/studjobs',
+        '/student/applications': '/studapplications',
+        '/student/interviewschedule': '/studinterviewschedule',
+        '/student/placementhistory': '/studplacementhistory',
+        '/student/changepassword': '/studchangepass',
+
+        // Normalize common variations between /Admin/ and /Admin
+        '/admin/dashboard': '/admindashboard',
+        '/admin/profile': '/adminprofile',
+        '/admin/companymanagement': '/admincompanymanagement',
+        '/admin/studentsmanagement': '/adminstudentsmanagement',
+        '/admin/interviewschedule': '/admininterviewschedule',
+        '/admin/placementhistory': '/adminplacementhistory',
+        '/admin/changepassword': '/adminchangepassword'
+    };
+
+    const activeHref = subPageMap[normalizedPath] || normalizedPath;
+
     document.querySelectorAll('.sidebar-link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === path) {
+        const href = (link.getAttribute('href') || '').toLowerCase();
+        
+        if (href === activeHref || href === normalizedPath) {
             link.classList.add('active');
             link.classList.remove('bg-white');
         }
-        // Sub-page highlights
-        if (href === '/Student/Jobs' && path === '/Student/JobDetails') { link.classList.add('active'); link.classList.remove('bg-white'); }
-        if (href === '/Student/ChangePassword' && path === '/Student/ForgotPassword') { link.classList.add('active'); link.classList.remove('bg-white'); }
-        if (href === '/Admin/CompanyManagement' && path === '/Admin/JdDetail') { link.classList.add('active'); link.classList.remove('bg-white'); }
-        if (href === '/Admin/InterviewSchedule' && path === '/Admin/InterviewScheduleForm') { link.classList.add('active'); link.classList.remove('bg-white'); }
-        if (href === '/Admin/ChangePassword' && path === '/Admin/ForgotPassword') { link.classList.add('active'); link.classList.remove('bg-white'); }
     });
 
     // Smooth scroll for anchor links on home page

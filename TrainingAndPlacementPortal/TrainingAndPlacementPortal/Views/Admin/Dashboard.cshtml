@@ -8,12 +8,12 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         @{
             var stats = new[] {
-                new { Title = "Total Students", Value = "2,847", Icon = "fa-users", Color = "text-blue-600", Bg = "bg-blue-100" },
-                new { Title = "Pending Approvals", Value = "23", Icon = "fa-clock", Color = "text-red-600", Bg = "bg-red-100" },
-                new { Title = "Active Job Drives", Value = "15", Icon = "fa-briefcase", Color = "text-blue-600", Bg = "bg-blue-100" },
-                new { Title = "Total Applications", Value = "1,256", Icon = "fa-file-alt", Color = "text-blue-600", Bg = "bg-blue-100" },
-                new { Title = "Shortlisted Students", Value = "342", Icon = "fa-check-circle", Color = "text-blue-600", Bg = "bg-blue-100" },
-                new { Title = "Selected Students", Value = "189", Icon = "fa-trophy", Color = "text-blue-600", Bg = "bg-blue-100" }
+                new { Id = "totalStudents", Title = "Total Students", Icon = "fa-users", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Id = "pendingApprovals", Title = "Pending Approvals", Icon = "fa-clock", Color = "text-red-600", Bg = "bg-red-100" },
+                new { Id = "activeJobDrives", Title = "Active Job Drives", Icon = "fa-briefcase", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Id = "totalApplications", Title = "Total Applications", Icon = "fa-file-alt", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Id = "shortlistedStudents", Title = "Shortlisted Students", Icon = "fa-check-circle", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Id = "selectedStudents", Title = "Selected Students", Icon = "fa-trophy", Color = "text-blue-600", Bg = "bg-blue-100" }
             };
         }
         @foreach (var stat in stats)
@@ -21,7 +21,7 @@
             <div class="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm">
                 <div>
                     <p class="text-gray-600 m-0">@stat.Title</p>
-                    <h2 class="text-2xl font-bold text-blue-700 m-0">@stat.Value</h2>
+                    <h2 id="stat-@stat.Id" class="text-2xl font-bold text-blue-700 m-0">...</h2>
                 </div>
                 <div class="p-3 rounded-lg @stat.Bg">
                     <i class="fas @stat.Icon @stat.Color text-xl w-[20px] h-[20px] flex items-center justify-center"></i>
@@ -57,3 +57,30 @@
         }
     </div>
 </div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Admin')) return;
+    loadDashboardStats();
+});
+
+async function loadDashboardStats() {
+    try {
+        const res = await authFetch('/api/admin/dashboard-stats');
+        const result = await res.json();
+        
+        if (result.success && result.data) {
+            document.getElementById('stat-totalStudents').innerText = result.data.totalStudents;
+            document.getElementById('stat-pendingApprovals').innerText = result.data.pendingApprovals;
+            document.getElementById('stat-activeJobDrives').innerText = result.data.activeJobDrives;
+            document.getElementById('stat-totalApplications').innerText = result.data.totalApplications;
+            document.getElementById('stat-shortlistedStudents').innerText = result.data.shortlistedStudents;
+            document.getElementById('stat-selectedStudents').innerText = result.data.selectedStudents;
+        }
+    } catch (err) {
+        console.error('Failed to load stats:', err);
+    }
+}
+</script>
+}

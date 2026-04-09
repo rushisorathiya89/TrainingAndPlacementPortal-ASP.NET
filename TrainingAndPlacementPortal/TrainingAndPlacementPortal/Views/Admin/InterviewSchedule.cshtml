@@ -32,50 +32,175 @@
     </div>
 
     <!-- Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @{
-            var interviews = new[] {
-                new { Name = "Multiicon", Role = "PHP Developer", Salary = "₹3.6 LPA", Location = "Rajkot, Gujarat", Process = "Aptitude + Technical Interview + HR", Status = "Scheduled Interview (Pending)", SColor = "bg-yellow-100 text-yellow-700" },
-                new { Name = "Gateway Group of Companies", Role = "Software Engineer", Salary = "₹4.5 LPA", Location = "Ahmedabad, Gujarat", Process = "Written Test + Technical Round + HR", Status = "Scheduled Interview (Pending)", SColor = "bg-yellow-100 text-yellow-700" },
-                new { Name = "Infinity IT Company", Role = "React Native Developer", Salary = "₹5 LPA", Location = "Surat, Gujarat", Process = "Online Test + Personal Interview", Status = "On Hold", SColor = "bg-gray-100 text-gray-700" },
-                new { Name = "TCS Ltd", Role = "Software Development Engineer", Salary = "₹8 LPA", Location = "Bangalore, Karnataka", Process = "Aptitude Test + Personal Int. + Practical Test + Panel Int.", Status = "Scheduled Interview (Complete)", SColor = "bg-green-100 text-green-700" }
-            };
+    <div id="loading" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-3xl text-red-500"></i>
+        <p class="text-gray-500 mt-3">Loading schedules...</p>
+    </div>
+
+    <div id="emptyState" class="hidden text-center py-12">
+        <i class="fas fa-calendar-times text-5xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500">No Job Drives available for scheduling.</p>
+    </div>
+
+    <div id="scheduleContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Admin')) return;
+    loadSchedules();
+});
+
+async function loadSchedules() {
+    const loading = document.getElementById('loading');
+    const empty = document.getElementById('emptyState');
+    const container = document.getElementById('scheduleContainer');
+
+    try {
+        const res = await authFetch('/api/company/job-postings');
+        const result = await res.json();
+
+        loading.classList.add('hidden');
+
+        if (!result.success || !result.data || result.data.length === 0) {
+            empty.classList.remove('hidden');
+            return;
         }
-        @foreach (var iv in interviews)
-        {
-            <div class="filterable-card bg-[#d8cfc3] p-6 rounded-xl shadow" data-name="@iv.Name" data-role="@iv.Role" data-location="@iv.Location" data-salary="@iv.Salary" data-status="@iv.Status">
+
+        // Only show Approved job drives for scheduling
+        const approvedJobs = result.data.filter(j => j.status === 'Approved');
+
+        if (approvedJobs.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+        container.innerHTML = '';
+
+        approvedJobs.forEach(iv => {
+            // Determine display status based on existing data.
+            // Currently, we don't have full interview rounds data from backend.
+            // We default to "Scheduled Interview (Pending)" or "On Hold".
+            let status = "Scheduled Interview (Pending)";
+            let statusColor = "bg-yellow-100 text-yellow-700";
+
+            // If it's a mock On Hold
+            let isHold = false;
+
+            const card = document.createElement('div');
+            card.className = 'filterable-card bg-[#d8cfc3] p-6 rounded-xl shadow';
+            card.dataset.name = iv.companyName || '';
+            card.dataset.role = iv.jobPosition || '';
+            card.dataset.location = iv.jobLocation || '';
+            card.dataset.salary = iv.annualCTC || '';
+            card.dataset.status = status;
+
+            const initial = iv.companyName ? iv.companyName.charAt(0).toUpperCase() : '?';
+
+            card.innerHTML = `
                 <!-- Header -->
                 <div class="flex items-center gap-4 mb-3">
                     <div class="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold">
-                        @(iv.Name.Substring(0, 1))
+                        ${initial}
                     </div>
                     <div>
-                        <h3 class="font-bold text-lg m-0">@iv.Name</h3>
-                        <p class="text-gray-600 text-sm m-0">@iv.Role</p>
+                        <h3 class="font-bold text-lg m-0">${escapeHtml(iv.companyName)}</h3>
+                        <p class="text-gray-600 text-sm m-0">${escapeHtml(iv.jobPosition)}</p>
                     </div>
                 </div>
 
                 <!-- Salary -->
-                <p class="text-red-600 font-bold text-lg mb-2 m-0">@iv.Salary</p>
+                <p class="text-red-600 font-bold text-lg mb-2 m-0">${escapeHtml(iv.annualCTC)}</p>
                 
                 <!-- Location -->
                 <p class="flex items-center gap-2 text-gray-600 text-sm mb-2 m-0">
-                    <i class="fas fa-map-marker-alt"></i>@iv.Location
+                    <i class="fas fa-map-marker-alt"></i>${escapeHtml(iv.jobLocation || 'N/A')}
                 </p>
                 
                 <!-- Process -->
-                <p class="text-gray-600 text-sm mb-4 m-0">@iv.Process</p>
+                <p class="text-gray-600 text-sm mb-4 m-0">${escapeHtml(iv.selectionProcess || 'Not specified')}</p>
 
                 <!-- Buttons -->
                 <div class="grid grid-cols-2 gap-4">
-                    <button onclick="toggleOnHold(this)" class="bg-orange-500 hover:bg-orange-600 text-white py-2 rounded cursor-pointer border-none font-semibold transition" data-hold="false">
-                        ON HOLD
+                    <button onclick="toggleOnHold(this)" class="bg-orange-500 hover:bg-orange-600 text-white py-2 rounded cursor-pointer border-none font-semibold transition" data-hold="${isHold}">
+                        ${isHold ? 'RESUME' : 'ON HOLD'}
                     </button>
-                    <a href="/AdminInterviewScheduleForm" class="bg-blue-600 text-white py-2 flex items-center justify-center rounded hover:bg-blue-700 cursor-pointer border-none font-semibold transition no-underline text-center text-sm md:text-base">
+                    <a href="/AdminInterviewScheduleForm?jobId=${iv.id}" class="bg-blue-600 text-white py-2 flex items-center justify-center rounded hover:bg-blue-700 cursor-pointer border-none font-semibold transition no-underline text-center text-sm md:text-base">
                         SCHEDULE INTERVIEW
                     </a>
                 </div>
-            </div>
+            `;
+            container.appendChild(card);
+        });
+
+    } catch (err) {
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+        empty.querySelector('p').innerText = 'Failed to load schedules. Please try again.';
+        console.error('Error:', err);
+    }
+}
+
+function toggleOnHold(btn) {
+    const isHold = btn.dataset.hold === 'true';
+    if (isHold) {
+        btn.dataset.hold = 'false';
+        btn.innerText = 'ON HOLD';
+        btn.classList.remove('bg-green-500', 'hover:bg-green-600');
+        btn.classList.add('bg-orange-500', 'hover:bg-orange-600');
+        // Update status logic here if connected to backend
+    } else {
+        btn.dataset.hold = 'true';
+        btn.innerText = 'RESUME';
+        btn.classList.remove('bg-orange-500', 'hover:bg-orange-600');
+        btn.classList.add('bg-green-500', 'hover:bg-green-600');
+    }
+}
+
+function filterCards() {
+    // Existing logic or simple client-side filter
+    const input = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('searchCategory').value;
+    const statusFilter = document.getElementById('filterStatus').value;
+    const cards = document.querySelectorAll('.filterable-card');
+
+    cards.forEach(card => {
+        const name = card.dataset.name.toLowerCase();
+        const role = card.dataset.role.toLowerCase();
+        const loc = card.dataset.location.toLowerCase();
+        const sal = card.dataset.salary.toLowerCase();
+        const status = card.dataset.status; // e.g. "Scheduled Interview (Pending)"
+
+        let textMatch = false;
+        if (category === 'All') {
+            textMatch = name.includes(input) || role.includes(input) || loc.includes(input) || sal.includes(input);
+        } else if (category === 'Company') { textMatch = name.includes(input); }
+        else if (category === 'Role') { textMatch = role.includes(input); }
+        else if (category === 'Location') { textMatch = loc.includes(input); }
+        else if (category === 'Salary') { textMatch = sal.includes(input); }
+
+        let statusMatch = (statusFilter === 'All') || (status === statusFilter);
+
+        if (textMatch && statusMatch) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
         }
-    </div>
-</div>
+    });
+}
+
+function escapeHtml(unsafe) {
+    if (!unsafe) return '';
+    return unsafe
+         .toString()
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+</script>
+}
