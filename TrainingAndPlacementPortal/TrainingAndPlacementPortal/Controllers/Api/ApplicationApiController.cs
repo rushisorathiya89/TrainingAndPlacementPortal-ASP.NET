@@ -128,5 +128,44 @@ namespace TrainingAndPlacementPortal.Controllers.Api
 
             return Ok(new { success = true, hasApplied });
         }
+        // ===== STUDENT: Get dashboard stats =====
+        // GET: api/applications/stats
+        [HttpGet("stats")]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> GetStudentDashboardStats()
+        {
+            var userId = GetUserId();
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == userId);
+
+            if (student == null)
+            {
+                return BadRequest(new { success = false, message = "Student profile not found." });
+            }
+
+            var totalApplications = await _context.JobApplications
+                .CountAsync(a => a.StudentId == student.Id);
+
+            var shortlisting = await _context.JobApplications
+                .CountAsync(a => a.StudentId == student.Id && (a.ApplicationStatus == "Shortlisted" || a.ApplicationStatus == "Interview"));
+
+            var selections = await _context.JobApplications
+                .CountAsync(a => a.StudentId == student.Id && (a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired"));
+
+            // Upcoming interviews count from InterviewSchedules
+            var upcomingInterviews = await _context.InterviewSchedules
+                .CountAsync(i => i.InterviewDate >= DateTime.UtcNow && i.Status == "Pending");
+
+            return Ok(new
+            {
+                success = true,
+                data = new
+                {
+                    totalApplications,
+                    shortlisting,
+                    selections,
+                    upcomingInterviews
+                }
+            });
+        }
     }
 }

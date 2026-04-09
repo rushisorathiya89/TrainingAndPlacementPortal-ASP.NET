@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TrainingAndPlacementPortal.Data;
+using TrainingAndPlacementPortal.Models;
+using System.Collections.Generic;
 
 namespace TrainingAndPlacementPortal.Controllers.Api
 {
@@ -17,6 +19,41 @@ namespace TrainingAndPlacementPortal.Controllers.Api
         {
             _context = context;
             _env = env;
+        }
+
+        // GET: api/admin/stats
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetDashboardStats()
+        {
+            try
+            {
+                var totalStudents = await _context.Students.CountAsync();
+                var pendingApprovals = await _context.Users.CountAsync(u => u.Role == "Student" && !u.IsApproved);
+                var activeJobDrives = await _context.JobPostings.CountAsync(j => j.Status == "Approved" && j.IsActive);
+                var totalApplications = await _context.JobApplications.CountAsync();
+                
+                // For demonstration, these might rely on specific application statuses
+                var shortlisted = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Shortlisted" || a.ApplicationStatus == "Interview");
+                var placed = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired");
+
+                return Ok(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        totalStudents,
+                        pendingApprovals,
+                        activeJobDrives,
+                        totalApplications,
+                        shortlisted,
+                        placed
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Failed to fetch stats.", error = ex.Message });
+            }
         }
 
         // GET: api/admin/students
@@ -132,7 +169,6 @@ namespace TrainingAndPlacementPortal.Controllers.Api
             return Ok(new { success = true, message = $"{student.FullName} has been rejected." });
         }
 
-        // DELETE: api/admin/students/{id}
         [HttpDelete("students/{id}")]
         public async Task<IActionResult> DeleteStudent(int id)
         {
@@ -163,6 +199,81 @@ namespace TrainingAndPlacementPortal.Controllers.Api
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, message = $"{studentName} has been deleted successfully." });
+        }
+
+        // --- Interview Scheduling ---
+
+        // GET: api/admin/interview-schedules
+        [HttpGet("interview-schedules")]
+        public async Task<IActionResult> GetInterviewSchedules()
+        {
+            var schedules = await _context.InterviewSchedules
+                .Include(i => i.JobPosting)
+                .ThenInclude(j => j.Company)
+                .OrderByDescending(i => i.InterviewDate)
+                .Select(i => new
+                {
+                    i.Id,
+                    i.JobPostingId,
+                    CompanyName = i.JobPosting.Company.CompanyName,
+                    JobRole = i.JobPosting.JobPosition,
+                    i.RoundNumber,
+                    i.RoundName,
+                    i.InterviewDate,
+                    i.InterviewType,
+                    i.LocationOrLink,
+                    i.WaitingArea,
+                    i.Instructions,
+                    i.Status,
+                    AnnualCTC = i.JobPosting.AnnualCTC
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = schedules });
+        }
+
+        // POST: api/admin/interview-schedules
+        [HttpPost("interview-schedules")]
+        public async Task<IActionResult> CreateInterviewSchedules([FromBody] List<InterviewSchedule> schedules)
+        {
+            if (schedules == null || schedules.Count == 0)
+                return BadRequest(new { success = false, message = "No schedules provided." });
+
+            foreach (var s in schedules)
+            {
+                s.CreatedAt = DateTime.UtcNow;
+                _context.InterviewSchedules.Add(s);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { success = true, message = $"{schedules.Count} rounds scheduled successfully." });
+        }
+
+        // --- Placement History ---
+
+        // GET: api/admin/placement-history
+        [HttpGet("placement-history")]
+        public async Task<IActionResult> GetPlacementHistory()
+        {
+            var history = await _context.JobPostings
+                .Include(j => j.Company)
+                .Include(j => j.JobApplications)
+                .Where(j => j.Status == "Approved")
+                .OrderByDescending(j => j.PostedAt)
+                .Select(j => new
+                {
+                    j.Id,
+                    CompanyName = j.Company.CompanyName,
+                    JobRole = j.JobPosition,
+                    Package = j.AnnualCTC,
+                    SelectedCount = j.JobApplications.Count(a => a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired"),
+                    j.CampusDriveDate,
+                    j.DateOfJoining,
+                    Status = j.IsActive ? "In Progress" : "Completed"
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = history });
         }
     }
 }

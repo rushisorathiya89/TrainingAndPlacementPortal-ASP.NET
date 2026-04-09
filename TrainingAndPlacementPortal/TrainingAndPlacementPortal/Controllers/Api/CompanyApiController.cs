@@ -228,6 +228,8 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 jobPosting.Company.Status = "Verified";
             else if (dto.Status == "Rejected")
                 jobPosting.Company.Status = "Rejected";
+            else if (dto.Status == "OnHold")
+                jobPosting.Company.Status = "OnHold";
             else
                 jobPosting.Company.Status = "Pending";
 

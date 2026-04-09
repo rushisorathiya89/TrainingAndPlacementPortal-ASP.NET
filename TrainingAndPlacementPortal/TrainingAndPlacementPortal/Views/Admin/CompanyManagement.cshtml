@@ -33,71 +33,211 @@
 
     <!-- Company Cards -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        @{
-            var companies = new[] {
-                new { Id = "comp1", Name = "Multiicon", Role = "PHP Developer", Salary = "₹3.6 LPA", Location = "Rajkot, Gujarat", Process = "Aptitude + Technical Interview + HR", Status = "pending" },
-                new { Id = "comp2", Name = "Gateway Group of Companies", Role = "Software Engineer", Salary = "₹4.5 LPA", Location = "Ahmedabad, Gujarat", Process = "Written Test + Technical Round + HR", Status = "pending" },
-                new { Id = "comp3", Name = "Infinity IT Company", Role = "React Native Developer", Salary = "₹5 LPA", Location = "Surat, Gujarat", Process = "Online Test + Personal Interview", Status = "pending" },
-                new { Id = "comp4", Name = "TCS Ltd", Role = "Software Development Engineer", Salary = "₹8 LPA", Location = "Bangalore, Karnataka", Process = "Aptitude Test + Personal Interview + Practical Test + Panel Interview", Status = "pending" }
-            };
-        }
-        @foreach (var c in companies)
-        {
-            <div id="@c.Id" class="filterable-card bg-[#d8cfc3] p-6 rounded-xl shadow" data-name="@c.Name" data-role="@c.Role" data-location="@c.Location" data-salary="@c.Salary" data-status="@c.Status">
+        <div id="loadingIndicator" class="col-span-full flex justify-center items-center py-10">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        </div>
+        <!-- Cards will be dynamically inserted here -->
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Admin')) return;
+            await loadJobPostings();
+        });
+
+        let allJobPostings = [];
+
+        async function loadJobPostings() {
+            try {
+                const res = await authFetch('/api/company/job-postings');
+                if (!res || !res.ok) throw new Error('Failed to fetch');
+                const data = await res.json();
                 
-                <!-- Header -->
-                <div class="flex items-center gap-4 mb-3">
-                    <div class="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold">
-                        @(c.Name.Substring(0, 1))
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg m-0">@c.Name</h3>
-                        <p class="text-gray-600 text-sm m-0">@c.Role</p>
-                    </div>
-                </div>
-
-                <!-- Salary -->
-                <p class="text-red-600 font-bold text-lg mb-2 m-0">@c.Salary</p>
-
-                <!-- Location -->
-                <p class="flex items-center gap-2 text-gray-600 text-sm mb-2 m-0">
-                    <i class="fas fa-map-marker-alt"></i>@c.Location
-                </p>
-
-                <!-- Selection Process -->
-                <p class="text-gray-600 text-sm mb-4 m-0">@c.Process</p>
-
-                <!-- Buttons Top Row (Accept/Decline) -->
-                <div class="status-buttons-container grid grid-cols-2 gap-3 mb-3">
-                    <button onclick="changeCompanyStatus('@c.Id', 'rejected')" class="bg-red-600 text-white py-2 rounded hover:bg-red-700 transition cursor-pointer border-none font-semibold">
-                        ✕ DECLINE
-                    </button>
-                    <button onclick="changeCompanyStatus('@c.Id', 'verified')" class="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition cursor-pointer border-none font-semibold">
-                        ✓ ACCEPT
-                    </button>
-                </div>
-
-                <!-- Undo Button (Initially Hidden) -->
-                <div class="undo-container hidden grid grid-cols-2 gap-2 mb-3">
-                    <button disabled class="status-indicator bg-green-600 flex-1 text-white py-2 rounded cursor-not-allowed border-none font-semibold">
-                        ✓ ACCEPTED
-                    </button>
-                    <button onclick="undoCompanyStatus('@c.Id')" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition cursor-pointer border-none font-semibold text-center mt-0">
-                        Undo
-                    </button>
-                </div>
-
-                <!-- Buttons Bottom Row (View/Edit) -->
-                <div class="grid grid-cols-2 gap-3">
-                    <a href="/AdminJdDetail" class="border flex items-center justify-center border-black py-2 rounded hover:bg-gray-50 transition text-black font-semibold no-underline text-center text-sm md:text-base cursor-pointer">
-                        VIEW DETAILS
-                    </a>
-                    <a href="/AdminJdDetail" class="bg-blue-600 text-white flex items-center justify-center py-2 rounded border-none hover:bg-blue-700 transition font-semibold text-center text-sm md:text-base no-underline cursor-pointer">
-                        EDIT DETAILS
-                    </a>
-                </div>
-
-            </div>
+                allJobPostings = data.data || [];
+                renderCards(allJobPostings);
+            } catch (err) {
+                console.error('Error loading job postings:', err);
+                document.getElementById('loadingIndicator').innerHTML = '<p class="text-red-500 font-semibold">Failed to load postings. Please try again later.</p>';
+            }
         }
+
+        function renderCards(postings) {
+            const container = document.querySelector('.grid-cols-1.lg\\:grid-cols-2');
+            const loading = document.getElementById('loadingIndicator');
+            if (loading) loading.remove();
+            
+            // Remove existing cards
+            container.querySelectorAll('.filterable-card').forEach(c => c.remove());
+
+            if (postings.length === 0) {
+                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-500 font-medium">No job postings found.</div>';
+                return;
+            }
+
+            let html = '';
+            postings.forEach(c => {
+                const firstLetter = c.companyName ? c.companyName.charAt(0).toUpperCase() : 'C';
+                
+                // Set button UI based on status
+                let statusButtonsHtml = '';
+                
+                if (c.status === 'Pending' || c.status === 'OnHold') {
+                    const statusBadge = c.status === 'OnHold' ? 
+                        `<span class="bg-[#fefce8] text-[#854d0e] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#fef08a]"><i class="fas fa-pause-circle"></i> On Hold</span>` :
+                        `<span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fas fa-clock"></i> Pending</span>`;
+                    
+                    statusButtonsHtml = `
+                    <div class="mb-4">
+                        <div class="flex justify-end mb-2">${statusBadge}</div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="updateStatus(${c.id}, 'Rejected')" class="bg-[#e7000b] text-white py-2 rounded-md hover:opacity-90 transition cursor-pointer border-none font-bold text-xs uppercase flex items-center justify-center gap-1">
+                                <i class="fas fa-times"></i> DECLINE
+                            </button>
+                            <button onclick="updateStatus(${c.id}, 'OnHold')" class="bg-[#f97316] text-white py-2 rounded-md hover:opacity-90 transition cursor-pointer border-none font-bold text-xs uppercase flex items-center justify-center gap-1">
+                                <i class="fas fa-pause"></i> HOLD
+                            </button>
+                            <button onclick="updateStatus(${c.id}, 'Approved')" class="bg-[#22c55e] text-white py-2 rounded-md hover:opacity-90 transition cursor-pointer border-none font-bold text-xs uppercase flex items-center justify-center gap-1">
+                                <i class="fas fa-check"></i> ACCEPT
+                            </button>
+                        </div>
+                    </div>`;
+                } else {
+                    const statusClass = c.status === 'Approved' ? 'bg-[#22c55e]' : 'bg-[#ef4444]';
+                    const statusText = c.status === 'Approved' ? '✓ APPROVED' : '✕ DECLINED';
+                    const badgeColor = c.status === 'Approved' ? 'bg-[#f0fdf4] text-[#166534]' : 'bg-[#fef2f2] text-[#991b1b]';
+                    
+                    statusButtonsHtml = `
+                    <div class="mb-4">
+                        <div class="flex justify-end mb-2">
+                             <span class="${badgeColor} text-[10px] font-bold px-2 py-0.5 rounded-full">${statusText}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="${statusClass} text-white py-2 rounded-md font-bold text-xs uppercase flex items-center justify-center gap-1 opacity-90 cursor-default">
+                                ${statusText}
+                            </div>
+                            <button onclick="updateStatus(${c.id}, 'Pending')" class="bg-[#64748b] text-white py-2 rounded-md hover:opacity-90 transition cursor-pointer border-none font-bold text-xs uppercase flex items-center justify-center">
+                                Undo
+                            </button>
+                        </div>
+                    </div>`;
+                }
+
+                html += `
+                <div id="card-${c.id}" class="filterable-card bg-[#d1c2b5] p-5 rounded-2xl shadow-sm border border-[#c4b5a6] transition-all hover:shadow-md" 
+                     data-name="${c.companyName}" data-role="${c.jobPosition}" data-location="${c.jobLocation}" data-salary="${c.annualCTC}" data-status="${c.status.toLowerCase()}">
+                    
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="bg-[#2563eb] text-white w-12 h-12 flex items-center justify-center rounded-xl text-xl font-bold shrink-0 shadow-sm">
+                            ${firstLetter}
+                        </div>
+                        <div class="overflow-hidden">
+                            <h3 class="font-bold text-gray-900 text-base m-0 truncate">${c.companyName}</h3>
+                            <p class="text-gray-700 text-sm font-medium m-0 truncate">${c.jobPosition}</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="text-[#e7000b] font-extrabold text-xl mb-1 m-0">${c.annualCTC || 'N/A'}</p>
+                        <p class="flex items-center gap-1.5 text-gray-800 text-sm font-semibold mb-1 m-0">
+                            <i class="fas fa-map-marker-alt text-gray-500"></i>${c.jobLocation || 'N/A'}
+                        </p>
+                        <p class="text-gray-800 text-xs font-medium m-0 limit-lines-1" title="${c.selectionProcess}">
+                             ${c.selectionProcess || 'N/A'}
+                        </p>
+                    </div>
+
+                    ${statusButtonsHtml}
+
+                    <div class="grid grid-cols-2 gap-3 pt-2 border-t border-[#c4b5a6]/50">
+                        <a href="/AdminJdDetail?id=${c.id}" class="bg-transparent border border-gray-900 text-gray-900 py-2 rounded-lg hover:bg-white/30 transition font-bold text-xs text-center no-underline uppercase tracking-tight">
+                            VIEW DETAILS
+                        </a>
+                        <a href="/AdminJdDetail?id=${c.id}&edit=true" class="bg-[#3b82f6] text-white py-2 rounded-lg hover:opacity-90 transition font-bold text-xs text-center no-underline uppercase tracking-tight border-none">
+                            EDIT DETAILS
+                        </a>
+                    </div>
+                </div>`;
+            });
+
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        async function updateStatus(id, newStatus) {
+            try {
+                const res = await authFetch(`/api/company/job-postings/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (res && res.ok) {
+                    const result = await res.json();
+                    if (result.success) {
+                        // Re-fetch to guarantee sync with DB
+                        await loadJobPostings();
+                        // Re-apply filters
+                        filterCards();
+                    } else {
+                        alert(result.message || 'Update failed');
+                    }
+                } else {
+                    alert('Update request failed.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred.');
+            }
+        }
+        
+        // Override filterCards since we don't have static IDs anymore
+        function filterCards() {
+            const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
+            const searchCategory = document.getElementById('searchCategory')?.value || 'All';
+            const filterStatus = document.getElementById('filterStatus')?.value || 'All';
+            
+            // Map our specific backend statuses to frontend filter statuses
+            let mappedFilterStatus = filterStatus;
+            
+            const cards = document.querySelectorAll('.filterable-card');
+            cards.forEach(card => {
+                const name = (card.dataset.name || '').toLowerCase();
+                const role = (card.dataset.role || '').toLowerCase();
+                const location = (card.dataset.location || '').toLowerCase();
+                const salary = (card.dataset.salary || '').toLowerCase();
+                const status = (card.dataset.status || '').toLowerCase();
+
+                let statusMatch = true;
+                if (filterStatus === 'pending') {
+                    statusMatch = (status === 'pending');
+                } else if (filterStatus === 'verified') {
+                    statusMatch = (status === 'approved'); // mapped to approved
+                } else if (filterStatus === 'rejected') {
+                    statusMatch = (status === 'rejected');
+                }
+
+                if (!statusMatch) { card.style.display = 'none'; return; }
+
+                let textMatch = true;
+                if (searchTerm) {
+                    if (searchCategory === 'All') {
+                        textMatch = name.includes(searchTerm) || role.includes(searchTerm) || location.includes(searchTerm) || salary.includes(searchTerm);
+                    } else if (searchCategory === 'Company') {
+                        textMatch = name.includes(searchTerm);
+                    } else if (searchCategory === 'Role') {
+                        textMatch = role.includes(searchTerm);
+                    } else if (searchCategory === 'Location') {
+                        textMatch = location.includes(searchTerm);
+                    } else if (searchCategory === 'Salary') {
+                        textMatch = salary.includes(searchTerm);
+                    }
+                }
+
+                card.style.display = textMatch ? '' : 'none';
+            });
+        }
+    </script>
+}
     </div>
 </div>

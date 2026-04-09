@@ -7,39 +7,99 @@
     </header>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @{
-            var jobs = new[] {
-                new { Id = "1", Company = "TCS", Role = "Software Development Engineer", Salary = "₹8.0 LPA", Location = "Pune, Maharashtra", Cgpa = "7.5", Applied = false },
-                new { Id = "2", Company = "Infosys", Role = "Systems Engineer", Salary = "₹6.5 LPA", Location = "Bangalore, Karnataka", Cgpa = "7.0", Applied = true },
-                new { Id = "3", Company = "Wipro", Role = "Project Engineer", Salary = "₹7.0 LPA", Location = "Hyderabad, Telangana", Cgpa = "6.5", Applied = true },
-                new { Id = "4", Company = "HCL Technologies", Role = "Software Engineer", Salary = "₹8.5 LPA", Location = "Noida, Uttar Pradesh", Cgpa = "7.0", Applied = false },
-                new { Id = "5", Company = "Tech Mahindra", Role = "Software Developer", Salary = "₹6.0 LPA", Location = "Pune, Maharashtra", Cgpa = "6.0", Applied = false },
-                new { Id = "6", Company = "Larsen & Toubro", Role = "Embedded Engineer", Salary = "₹9.0 LPA", Location = "Chennai, Tamil Nadu", Cgpa = "7.5", Applied = true }
-            };
-        }
-        @foreach (var job in jobs)
-        {
-            <div class="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex flex-col">
-                <div class="flex items-start gap-4 mb-5">
-                    <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-2xl shrink-0">@job.Company[0]</div>
-                    <div>
-                        <h2 class="text-xl font-bold m-0 mb-1 text-gray-900">@job.Company</h2>
-                        <p class="text-gray-600 text-sm font-medium m-0">@job.Role</p>
-                    </div>
-                </div>
-                <div class="text-[#e7000b] text-2xl font-bold mb-4">@job.Salary</div>
-                <div class="mb-6">
-                    <div class="flex items-center gap-2 text-gray-600 text-sm mb-2"><span>📍</span><span>@job.Location</span></div>
-                    <div class="flex items-center gap-2 text-green-700 text-sm font-semibold"><span>✅</span><span>CGPA ≥ @job.Cgpa ✔</span></div>
-                </div>
-                <div class="flex gap-3 mt-auto">
-                    <a href="/StudJobDetails" class="btn-outline flex-1">View Details</a>
-                    @if (job.Applied)
-                    { <button class="btn-disabled flex-1" disabled>Applied</button> }
-                    else
-                    { <button id="applyBtn@(job.Id)" class="btn-primary flex-1" onclick="applyJob('applyBtn@(job.Id)')">Apply</button> }
-                </div>
-            </div>
-        }
+        <div id="loadingIndicator" class="col-span-full flex justify-center items-center py-10">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        </div>
+        <!-- Jobs will be loaded here -->
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Student')) return;
+            await loadApprovedJobs();
+        });
+
+        async function loadApprovedJobs() {
+            try {
+                // Fetch approved jobs and student's applications in parallel
+                const [jobsRes, appsRes] = await Promise.all([
+                    authFetch('/api/company/approved-jobs'),
+                    authFetch('/api/applications/my-applications')
+                ]);
+                
+                if (!jobsRes || !jobsRes.ok) throw new Error('Failed to fetch jobs');
+                
+                const jobsData = await jobsRes.json();
+                let appliedJobIds = new Set();
+                
+                if (appsRes && appsRes.ok) {
+                   const appsData = await appsRes.json();
+                   if (appsData.success && appsData.data) {
+                       appsData.data.forEach(app => appliedJobIds.add(app.jobPostingId));
+                   }
+                }
+                
+                renderJobs(jobsData.data || [], appliedJobIds);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingIndicator').innerHTML = '<p class="text-red-500 font-semibold">Failed to load jobs.</p>';
+            }
+        }
+
+        function renderJobs(jobs, appliedJobIds) {
+            const container = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2');
+            document.getElementById('loadingIndicator')?.remove();
+
+            if (jobs.length === 0) {
+                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-500 font-medium">No jobs are currently available for apply.</div>';
+                return;
+            }
+
+            let html = '';
+            jobs.forEach(job => {
+                const firstLetter = job.companyName ? job.companyName.charAt(0).toUpperCase() : 'J';
+                const cgpaText = job.minCGPA > 0 ? `CGPA ≥ ${job.minCGPA}` : 'No Min CGPA Limit';
+                const location = job.jobLocation || 'N/A';
+                const btnId = 'applyBtn' + job.id;
+
+                html += `
+                <div class="bg-[#ece6da] p-6 rounded-2xl border border-[#e0dacd] shadow-sm flex flex-col transition-all hover:shadow-md">
+                    <div class="flex items-start gap-4 mb-5">
+                        <div class="w-12 h-12 bg-[#2563eb] rounded-xl flex items-center justify-center text-white font-bold text-2xl shrink-0 shadow-sm">${firstLetter}</div>
+                        <div class="overflow-hidden">
+                            <h2 class="text-xl font-bold m-0 mb-1 text-gray-900 truncate">${job.companyName}</h2>
+                            <p class="text-gray-600 text-sm font-semibold m-0 truncate">${job.jobPosition}</p>
+                        </div>
+                    </div>
+                    <div class="text-[#e7000b] text-2xl font-extrabold mb-4 tracking-tight">${job.annualCTC || 'N/A'}</div>
+                    <div class="mb-6 space-y-2">
+                        <div class="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                            <i class="fas fa-map-marker-alt text-gray-400 w-4"></i>
+                            <span>${location}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-[#16a34a] text-sm font-bold">
+                            <i class="fas fa-check-circle w-4"></i>
+                            <span>${cgpaText}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 mt-auto pt-4 border-t border-gray-200/50">
+                        <a href="/StudJobDetails?id=${job.id}" class="flex-1 bg-white border border-gray-900 text-gray-900 py-2.5 rounded-xl font-bold text-xs text-center no-underline uppercase transition-colors hover:bg-gray-50">
+                            VIEW DETAILS
+                        </a>
+                        ${appliedJobIds.has(job.id) ? 
+                            '<button class="flex-1 bg-[#d1fae5] text-[#065f46] py-2.5 rounded-xl font-bold text-xs uppercase border-none cursor-default">APPLIED ✓</button>' : 
+                            '<button id="' + btnId + '" class="flex-1 bg-[#2563eb] text-white py-2.5 rounded-xl font-bold text-xs uppercase border-none cursor-pointer hover:bg-blue-700 transition-colors" onclick="applyJob(' + job.id + ')">APPLY NOW</button>'
+                        }
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+    </script>
+}
+    </div>
+</div>
+

@@ -1,6 +1,52 @@
 [
   {
     "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "GetInterviewSchedules",
+    "RelativePath": "api/admin/interview-schedules",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "CreateInterviewSchedules",
+    "RelativePath": "api/admin/interview-schedules",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "schedules",
+        "Type": "System.Collections.Generic.List\u00601[[TrainingAndPlacementPortal.Models.InterviewSchedule, TrainingAndPlacementPortal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "GetPlacementHistory",
+    "RelativePath": "api/admin/placement-history",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
+    "Method": "GetDashboardStats",
+    "RelativePath": "api/admin/stats",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
     "Method": "GetAllStudents",
     "RelativePath": "api/admin/students",
     "HttpMethod": "GET",
@@ -114,6 +160,16 @@
     "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.ApplicationApiController",
     "Method": "GetMyApplications",
     "RelativePath": "api/applications/my-applications",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.ApplicationApiController",
+    "Method": "GetStudentDashboardStats",
+    "RelativePath": "api/applications/stats",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

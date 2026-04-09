@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TrainingAndPlacementPortal.Models
@@ -53,5 +54,8 @@ namespace TrainingAndPlacementPortal.Models
         
         public bool IsActive { get; set; } = true;
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation property for applications
+        public virtual ICollection<JobApplication> JobApplications { get; set; } = new List<JobApplication>();
     }
 }

@@ -607,13 +607,45 @@ function toggleProfileEdit() {
 }
 
 // ---- Job Apply ----
-function applyJob(btnId) {
+async function applyJob(jobId) {
+    const btnId = 'applyBtn' + jobId;
     const btn = document.getElementById(btnId);
+    
+    if (!requireAuth('Student')) return;
+
     if (btn) {
-        btn.textContent = 'Applied';
-        btn.className = 'btn-disabled flex-1';
+        const originalText = btn.textContent;
+        btn.textContent = 'Applying...';
         btn.disabled = true;
-        alert('Application submitted successfully!');
+
+        try {
+            const res = await authFetch('/api/applications/apply/' + jobId, {
+                method: 'POST'
+            });
+
+            if (res && res.ok) {
+                const result = await res.json();
+                if (result.success) {
+                    btn.textContent = 'Applied';
+                    btn.className = 'btn-disabled flex-1';
+                    alert(result.message || 'Application submitted successfully!');
+                } else {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    alert('Error: ' + result.message);
+                }
+            } else {
+                const errorData = await res.json();
+                btn.textContent = originalText;
+                btn.disabled = false;
+                alert('Failed to apply. ' + (errorData?.message || ''));
+            }
+        } catch (err) {
+            console.error(err);
+            btn.textContent = originalText;
+            btn.disabled = false;
+            alert('An error occurred while applying.');
+        }
     }
 }
 

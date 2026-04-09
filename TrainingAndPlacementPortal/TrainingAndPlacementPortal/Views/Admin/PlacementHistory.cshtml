@@ -7,59 +7,95 @@
         <p class="text-gray-600 text-sm md:text-base">Manage And maintain A Placement Records</p>
     </div>
 
-    <!-- Table -->
-    <div class="bg-white rounded-xl shadow overflow-x-auto">
-        <table class="w-full text-left min-w-[900px]">
-            <thead class="bg-gray-200">
-                <tr>
-                    <th class="p-4">Company Name</th>
-                    <th class="p-4">Job Role</th>
-                    <th class="p-4">Package</th>
-                    <th class="p-4 text-center">Selected Students</th>
-                    <th class="p-4">Offer Date</th>
-                    <th class="p-4">Joining Date</th>
-                    <th class="p-4">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    var placements = new[] {
-                        new { Id=1, Company="Multiicon", Role="PHP Developer", Package="₹3.6 LPA", OfferDate="Jan 12, 2026", JoiningDate="July 12, 2026", Selected=5, StatusClass="bg-green-100 text-green-700", StatusLabel="Completed" },
-                        new { Id=2, Company="Gateway Group", Role="Software Engineer", Package="₹4.5 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-blue-100 text-blue-700", StatusLabel="Interview Scheduled" },
-                        new { Id=3, Company="Infinity IT", Role="React Native Developer", Package="₹5 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-indigo-100 text-indigo-700", StatusLabel="On Hold" },
-                        new { Id=4, Company="TCS Ltd", Role="Software Development Engineer", Package="₹8 LPA", OfferDate="-", JoiningDate="-", Selected=12, StatusClass="bg-blue-100 text-blue-600", StatusLabel="Applied" },
-                        new { Id=5, Company="Simform", Role="DotNet Developer", Package="₹5.5 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-red-100 text-red-600", StatusLabel="Rejected" },
-                        new { Id=6, Company="TatvaSoft", Role="Java Developer", Package="₹6.5 LPA", OfferDate="Feb 20, 2026", JoiningDate="Aug 01, 2026", Selected=3, StatusClass="bg-blue-100 text-blue-700", StatusLabel="Approved" },
-                        new { Id=7, Company="Radixweb", Role="QA Engineer", Package="₹4.8 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-indigo-100 text-indigo-600", StatusLabel="In Progress" },
-                        new { Id=8, Company="Wipro", Role="System Analyst", Package="₹6 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-blue-100 text-blue-600", StatusLabel="Applied" },
-                        new { Id=9, Company="Capgemini", Role="Project Engineer", Package="₹4 LPA", OfferDate="Mar 15, 2026", JoiningDate="Sep 01, 2026", Selected=8, StatusClass="bg-green-100 text-green-700", StatusLabel="Completed" },
-                        new { Id=10, Company="Tech Mahindra", Role="Analyst", Package="₹3.8 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-blue-100 text-blue-700", StatusLabel="Interview Scheduled" },
-                        new { Id=11, Company="HCL Tech", Role="Graduate Engineer Trainee", Package="₹4.25 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-indigo-100 text-indigo-700", StatusLabel="On Hold" },
-                        new { Id=12, Company="Accenture", Role="Software Associate", Package="₹4.5 LPA", OfferDate="-", JoiningDate="-", Selected=0, StatusClass="bg-red-100 text-red-600", StatusLabel="Rejected" }
-                    };
-                }
-                @foreach (var p in placements)
-                {
-                    <tr class="bg-white border-t hover:bg-gray-50">
-                        <td class="p-4 flex items-center gap-3 font-semibold">
-                            <div class="bg-blue-200 text-blue-700 w-10 h-10 flex items-center justify-center rounded-lg">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            @p.Company
-                        </td>
-                        <td class="p-4">@p.Role</td>
-                        <td class="p-4 font-semibold">@p.Package</td>
-                        <td class="p-4 text-center font-semibold text-gray-700">@p.Selected</td>
-                        <td class="p-4">@p.OfferDate</td>
-                        <td class="p-4">@p.JoiningDate</td>
-                        <td class="p-4">
-                            <span class="px-3 py-1 rounded-full text-sm @p.StatusClass">
-                                @p.StatusLabel
-                            </span>
+    <!-- Dynamic Table Container -->
+    <div id="historyTableContainer" class="bg-white rounded-2xl shadow-sm border border-[#c4b5a6] overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left min-w-[1000px] border-collapse">
+                <thead class="bg-gray-100/50 text-[10px] font-extrabold uppercase tracking-widest text-gray-500 border-b border-[#c4b5a6]">
+                    <tr>
+                        <th class="p-5">Company Details</th>
+                        <th class="p-5">Job Role</th>
+                        <th class="p-5">Annual CTC</th>
+                        <th class="p-5 text-center">Placed Studs</th>
+                        <th class="p-5 text-center">Drive Date</th>
+                        <th class="p-5 text-center">Joining Date</th>
+                        <th class="p-5 text-center">Selection Status</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <tr id="historyPlaceholder">
+                        <td colspan="7" class="p-12 text-center text-gray-400 font-bold uppercase tracking-widest">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Loading Placement Records...
                         </td>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Admin')) return;
+            await loadPlacementHistory();
+        });
+
+        async function loadPlacementHistory() {
+            try {
+                const res = await authFetch('/api/admin/placement-history');
+                if (!res || !res.ok) throw new Error('Failed to fetch history');
+                const result = await res.json();
+                
+                if (result.success) {
+                    renderHistory(result.data);
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('historyTableBody').innerHTML = '<tr><td colspan="7" class="p-12 text-center text-red-500 font-bold">Failed to load placement history.</td></tr>';
+            }
+        }
+
+        function renderHistory(data) {
+            const tbody = document.getElementById('historyTableBody');
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-12 text-center text-gray-500 font-bold uppercase tracking-widest">No placement records found yet.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            data.forEach(p => {
+                const driveDate = p.campusDriveDate ? new Date(p.campusDriveDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+                const joiningDate = p.dateOfJoining ? new Date(p.dateOfJoining).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+                const statusColor = p.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700';
+
+                html += `
+                <tr class="border-b border-[#c4b5a6]/30 text-sm transition-colors hover:bg-white/40">
+                    <td class="p-5 font-bold text-gray-900 flex items-center gap-3">
+                        <div class="w-10 h-10 bg-[#2563eb] rounded-xl flex items-center justify-center text-white shadow-sm font-bold text-lg">
+                           ${p.companyName.charAt(0).toUpperCase()}
+                        </div>
+                        ${p.companyName}
+                    </td>
+                    <td class="p-5 text-gray-600 font-semibold">${p.jobRole}</td>
+                    <td class="p-5 font-extrabold text-[#e7000b] tracking-tight">${p.package}</td>
+                    <td class="p-5 text-center">
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-50 text-blue-700 font-extrabold text-xs shadow-sm border border-blue-200">
+                            ${p.selectedCount}
+                        </span>
+                    </td>
+                    <td class="p-5 text-center text-gray-600 font-bold text-xs capitalize">${driveDate}</td>
+                    <td class="p-5 text-center text-gray-600 font-bold text-xs capitalize">${joiningDate}</td>
+                    <td class="p-5 text-center">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${statusColor} shadow-sm border border-current/20">
+                            ${p.status}
+                        </span>
+                    </td>
+                </tr>`;
+            });
+
+            tbody.innerHTML = html;
+        }
+    </script>
+}
 </div>
