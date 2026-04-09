@@ -279,4 +279,3 @@ D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlac
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\TrainingAndPlacementPortal.pdb
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\TrainingAndPlacementPortal.genruntimeconfig.cache
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\ref\TrainingAndPlacementPortal.dll
-D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
