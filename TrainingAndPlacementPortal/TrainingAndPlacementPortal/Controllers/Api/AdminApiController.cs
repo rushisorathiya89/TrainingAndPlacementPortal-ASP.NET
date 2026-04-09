@@ -34,7 +34,7 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 
                 // For demonstration, these might rely on specific application statuses
                 var shortlisted = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Shortlisted" || a.ApplicationStatus == "Interview");
-                var placed = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired");
+                var placed = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired" || a.ApplicationStatus == "Selected");
 
                 return Ok(new
                 {

@@ -126,6 +126,53 @@
   },
   {
     "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.ApplicationApiController",
+    "Method": "UpdateApplicationStatus",
+    "RelativePath": "api/applications/admin/{applicationId}/status",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "applicationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.UpdateApplicationStatusDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.ApplicationApiController",
+    "Method": "GetAppliedCompanies",
+    "RelativePath": "api/applications/admin/applied-companies",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.ApplicationApiController",
+    "Method": "GetAppliedStudents",
+    "RelativePath": "api/applications/admin/job/{jobId}/students",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "jobId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.ApplicationApiController",
     "Method": "ApplyForJob",
     "RelativePath": "api/applications/apply/{jobId}",
     "HttpMethod": "POST",

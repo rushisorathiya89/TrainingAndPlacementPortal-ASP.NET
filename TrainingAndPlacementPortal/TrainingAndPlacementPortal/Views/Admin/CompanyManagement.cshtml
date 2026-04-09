@@ -79,82 +79,83 @@
             let html = '';
             postings.forEach(c => {
                 const firstLetter = c.companyName ? c.companyName.charAt(0).toUpperCase() : 'C';
+                const status = c.status || 'Pending';
                 
-                // Set button UI based on status
-                let statusButtonsHtml = '';
-                
-                if (c.status === 'Pending' || c.status === 'OnHold') {
-                    const statusBadge = c.status === 'OnHold' ? 
-                        `<span class="bg-[#fefce8] text-[#854d0e] text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#fef08a]"><i class="fas fa-pause-circle"></i> On Hold</span>` :
-                        `<span class="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fas fa-clock"></i> Pending</span>`;
-                    
-                    statusButtonsHtml = `
-                    <div class="mb-4">
-                        <div class="flex justify-end mb-2">${statusBadge}</div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="updateStatus(${c.id}, 'Rejected')" class="bg-[#e7000b] text-white py-2 rounded-md hover:opacity-90 transition cursor-pointer border-none font-bold text-xs uppercase flex items-center justify-center gap-1">
-                                <i class="fas fa-times"></i> DECLINE
-                            </button>
-                            <button onclick="updateStatus(${c.id}, 'OnHold')" class="bg-[#f97316] text-white py-2 rounded-md hover:opacity-90 transition cursor-pointer border-none font-bold text-xs uppercase flex items-center justify-center gap-1">
-                                <i class="fas fa-pause"></i> HOLD
-                            </button>
-                            <button onclick="updateStatus(${c.id}, 'Approved')" class="bg-[#22c55e] text-white py-2 rounded-md hover:opacity-90 transition cursor-pointer border-none font-bold text-xs uppercase flex items-center justify-center gap-1">
-                                <i class="fas fa-check"></i> ACCEPT
-                            </button>
-                        </div>
-                    </div>`;
+                // Status Badge Logic
+                let badgeHtml = '';
+                if (status === 'Approved') {
+                    badgeHtml = `<span class="bg-[#f0fdf4] text-[#166534] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#bbf7d0] flex items-center gap-1"><i class="fas fa-check"></i> Approved</span>`;
+                } else if (status === 'OnHold') {
+                    badgeHtml = `<span class="bg-[#fffbeb] text-[#d97706] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#fef3c7] flex items-center gap-1"><i class="fas fa-pause-circle"></i> On Hold</span>`;
                 } else {
-                    const statusClass = c.status === 'Approved' ? 'bg-[#22c55e]' : 'bg-[#ef4444]';
-                    const statusText = c.status === 'Approved' ? '✓ APPROVED' : '✕ DECLINED';
-                    const badgeColor = c.status === 'Approved' ? 'bg-[#f0fdf4] text-[#166534]' : 'bg-[#fef2f2] text-[#991b1b]';
-                    
-                    statusButtonsHtml = `
-                    <div class="mb-4">
-                        <div class="flex justify-end mb-2">
-                             <span class="${badgeColor} text-[10px] font-bold px-2 py-0.5 rounded-full">${statusText}</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="${statusClass} text-white py-2 rounded-md font-bold text-xs uppercase flex items-center justify-center gap-1 opacity-90 cursor-default">
-                                ${statusText}
+                    badgeHtml = `<span class="bg-[#fffbeb] text-[#ca8a04] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#fef3c7] flex items-center gap-1">⌛ Pending</span>`;
+                }
+
+                // Action Buttons Logic
+                let actionButtonsHtml = '';
+                if (status === 'Approved') {
+                    actionButtonsHtml = `
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <div class="bg-[#10b981] text-white py-2 round-md text-center font-bold text-xs flex items-center justify-center gap-1 rounded-md">
+                                <i class="fas fa-check"></i> APPROVED
                             </div>
-                            <button onclick="updateStatus(${c.id}, 'Pending')" class="bg-[#64748b] text-white py-2 rounded-md hover:opacity-90 transition cursor-pointer border-none font-bold text-xs uppercase flex items-center justify-center">
+                            <button onclick="updateStatus(${c.id}, 'Pending')" class="bg-[#6b7280] text-white py-2 rounded-md hover:bg-[#4b5563] transition font-bold text-xs uppercase cursor-pointer border-none shadow-sm">
                                 Undo
                             </button>
-                        </div>
-                    </div>`;
+                        </div>`;
+                } else {
+                    actionButtonsHtml = `
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <button onclick="updateStatus(${c.id}, 'Rejected')" class="bg-[#dc2626] text-white py-2 rounded-md hover:bg-red-700 transition font-bold text-xs uppercase cursor-pointer border-none shadow-sm flex items-center justify-center gap-1">
+                                <i class="fas fa-times"></i> DECLINE
+                            </button>
+                            <button onclick="updateStatus(${c.id}, 'OnHold')" class="bg-[#f97316] text-white py-2 rounded-md hover:bg-orange-600 transition font-bold text-xs uppercase cursor-pointer border-none shadow-sm flex items-center justify-center gap-1">
+                                <i class="fas fa-pause"></i> HOLD
+                            </button>
+                            <button onclick="updateStatus(${c.id}, 'Approved')" class="bg-[#10b981] text-white py-2 rounded-md hover:bg-[#059669] transition font-bold text-xs uppercase cursor-pointer border-none shadow-sm flex items-center justify-center gap-1">
+                                <i class="fas fa-check"></i> ACCEPT
+                            </button>
+                        </div>`;
                 }
 
                 html += `
-                <div id="card-${c.id}" class="filterable-card bg-[#d1c2b5] p-5 rounded-2xl shadow-sm border border-[#c4b5a6] transition-all hover:shadow-md" 
+                <div id="card-${c.id}" class="filterable-card bg-[#e5dcd3] p-5 rounded-2xl shadow-sm border border-[#d6c9bc] transition-all hover:shadow-md flex flex-col" 
                      data-name="${c.companyName}" data-role="${c.jobPosition}" data-location="${c.jobLocation}" data-salary="${c.annualCTC}" data-status="${c.status.toLowerCase()}">
                     
-                    <div class="flex items-start gap-4 mb-4">
-                        <div class="bg-[#2563eb] text-white w-12 h-12 flex items-center justify-center rounded-xl text-xl font-bold shrink-0 shadow-sm">
-                            ${firstLetter}
+                    <!-- Header: Icon, Info, Badge -->
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-[#2563eb] text-white w-12 h-12 flex items-center justify-center rounded-xl text-xl font-bold shrink-0 shadow-sm">
+                                ${firstLetter}
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-[#1f2937] text-base leading-tight">${c.companyName}</h3>
+                                <p class="text-[#4b5563] text-sm font-medium mt-0.5">${c.jobPosition}</p>
+                            </div>
                         </div>
-                        <div class="overflow-hidden">
-                            <h3 class="font-bold text-gray-900 text-base m-0 truncate">${c.companyName}</h3>
-                            <p class="text-gray-700 text-sm font-medium m-0 truncate">${c.jobPosition}</p>
-                        </div>
+                        ${badgeHtml}
                     </div>
 
-                    <div class="mb-4">
-                        <p class="text-[#e7000b] font-extrabold text-xl mb-1 m-0">${c.annualCTC || 'N/A'}</p>
-                        <p class="flex items-center gap-1.5 text-gray-800 text-sm font-semibold mb-1 m-0">
-                            <i class="fas fa-map-marker-alt text-gray-500"></i>${c.jobLocation || 'N/A'}
+                    <!-- Details: Salary, Location, Process -->
+                    <div class="mb-5">
+                        <p class="text-[#dc2626] font-bold text-xl mb-1">${c.annualCTC || 'N/A'}</p>
+                        <p class="flex items-center gap-1.5 text-[#4b5563] text-sm font-semibold mb-2">
+                            <i class="fas fa-map-marker-alt opacity-70"></i> ${c.jobLocation || 'N/A'}
                         </p>
-                        <p class="text-gray-800 text-xs font-medium m-0 limit-lines-1" title="${c.selectionProcess}">
+                        <p class="text-[#4b5563] text-xs font-medium leading-relaxed">
                              ${c.selectionProcess || 'N/A'}
                         </p>
                     </div>
 
-                    ${statusButtonsHtml}
+                    <!-- Lifecycle Actions -->
+                    ${actionButtonsHtml}
 
-                    <div class="grid grid-cols-2 gap-3 pt-2 border-t border-[#c4b5a6]/50">
-                        <a href="/AdminJdDetail?id=${c.id}" class="bg-transparent border border-gray-900 text-gray-900 py-2 rounded-lg hover:bg-white/30 transition font-bold text-xs text-center no-underline uppercase tracking-tight">
+                    <!-- Footer Details -->
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <a href="/Admin/JdDetail?id=${c.id}" class="bg-[#efe5d9] border border-[#d1c2b1] text-[#374151] py-2.5 rounded-lg hover:bg-white/50 transition font-bold text-xs text-center no-underline uppercase tracking-tight shadow-sm">
                             VIEW DETAILS
                         </a>
-                        <a href="/AdminJdDetail?id=${c.id}&edit=true" class="bg-[#3b82f6] text-white py-2 rounded-lg hover:opacity-90 transition font-bold text-xs text-center no-underline uppercase tracking-tight border-none">
+                        <a href="/Admin/JdDetail?id=${c.id}&edit=true" class="bg-[#2563eb] text-white py-2.5 rounded-lg hover:bg-[#1d4ed8] transition font-bold text-xs text-center no-underline uppercase tracking-tight border-none shadow-sm">
                             EDIT DETAILS
                         </a>
                     </div>

@@ -40,6 +40,10 @@ namespace TrainingAndPlacementPortal.Controllers
         [HttpGet("/Admin/ChangePassword")]
         public IActionResult ChangePassword() => View();
 
+        [HttpGet("/AdminManageApplications")]
+        [HttpGet("/Admin/ManageApplications")]
+        public IActionResult ManageApplications() => View();
+
         [HttpGet("/AdminForgotPassword")]
         [HttpGet("/Admin/ForgotPassword")]
         public IActionResult ForgotPassword() => View();

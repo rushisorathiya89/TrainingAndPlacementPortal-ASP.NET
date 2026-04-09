@@ -149,7 +149,7 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .CountAsync(a => a.StudentId == student.Id && (a.ApplicationStatus == "Shortlisted" || a.ApplicationStatus == "Interview"));
 
             var selections = await _context.JobApplications
-                .CountAsync(a => a.StudentId == student.Id && (a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired"));
+                .CountAsync(a => a.StudentId == student.Id && (a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired" || a.ApplicationStatus == "Selected"));
 
             // Upcoming interviews count from InterviewSchedules
             var upcomingInterviews = await _context.InterviewSchedules
@@ -167,5 +167,84 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 }
             });
         }
+
+        // ===== ADMIN: Get all companies that have applications =====
+        // GET: api/applications/admin/applied-companies
+        [HttpGet("admin/applied-companies")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAppliedCompanies()
+        {
+            var companies = await _context.JobPostings
+                .Include(j => j.Company)
+                .Include(j => j.JobApplications)
+                .Where(j => j.JobApplications.Any() && j.Status == "Approved")
+                .Select(j => new
+                {
+                    JobPostingId = j.Id,
+                    CompanyName = j.Company.CompanyName,
+                    CompanyId = j.Company.Id,
+                    JobRole = j.JobPosition,
+                    ApplicationCount = j.JobApplications.Count
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = companies });
+        }
+
+        // ===== ADMIN: Get students who applied for a specific job/company =====
+        // GET: api/applications/admin/job/{jobId}/students
+        [HttpGet("admin/job/{jobId}/students")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetAppliedStudents(int jobId)
+        {
+            var students = await _context.JobApplications
+                .Include(a => a.Student)
+                .Where(a => a.JobPostingId == jobId)
+                .Select(a => new
+                {
+                    ApplicationId = a.Id,
+                    a.StudentId,
+                    StudentName = a.Student.FullName,
+                    a.Student.EnrollmentNumber,
+                    a.Student.Branch,
+                    a.Student.Semester,
+                    a.Student.CGPA,
+                    a.ApplicationStatus,
+                    a.AppliedAt
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = students });
+        }
+
+        // ===== ADMIN: Update student application status =====
+        // PUT: api/applications/admin/{applicationId}/status
+        [HttpPut("admin/{applicationId}/status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateApplicationStatus(int applicationId, [FromBody] UpdateApplicationStatusDto dto)
+        {
+            var application = await _context.JobApplications.FindAsync(applicationId);
+
+            if (application == null)
+            {
+                return NotFound(new { success = false, message = "Application not found." });
+            }
+
+            var validStatuses = new[] { "Applied", "Shortlisted", "Selected", "Rejected" };
+            if (!validStatuses.Contains(dto.Status))
+            {
+                return BadRequest(new { success = false, message = "Invalid status." });
+            }
+
+            application.ApplicationStatus = dto.Status;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Application status updated successfully." });
+        }
+    }
+
+    public class UpdateApplicationStatusDto
+    {
+        public string Status { get; set; } = string.Empty;
     }
 }
