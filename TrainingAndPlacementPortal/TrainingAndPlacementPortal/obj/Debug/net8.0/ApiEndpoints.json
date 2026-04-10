@@ -225,6 +225,22 @@
   },
   {
     "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/auth/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.ChangePasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController",
     "Method": "Login",
     "RelativePath": "api/auth/login",
     "HttpMethod": "POST",
@@ -512,6 +528,32 @@
       {
         "Name": "request",
         "Type": "TrainingAndPlacementPortal.Controllers.Api.CreateOrderRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.StudentProfileApiController",
+    "Method": "GetProfile",
+    "RelativePath": "api/student/profile",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.StudentProfileApiController",
+    "Method": "UpdateProfile",
+    "RelativePath": "api/student/profile",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.UpdateProfileDto",
         "IsRequired": true
       }
     ],

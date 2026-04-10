@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using TrainingAndPlacementPortal.Data;
 using TrainingAndPlacementPortal.Models;
 using TrainingAndPlacementPortal.Services;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrainingAndPlacementPortal.Controllers.Api
 {
@@ -232,6 +234,41 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 Message = "Login successful!"
             });
         }
+
+        // POST: api/auth/change-password
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, message = "Please fill all required fields." });
+
+            if (dto.NewPassword != dto.ConfirmPassword)
+                return BadRequest(new { success = false, message = "New passwords do not match." });
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+                return Unauthorized(new { success = false, message = "User not found." });
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return NotFound(new { success = false, message = "User not found." });
+
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+                return BadRequest(new { success = false, message = "Current password is incorrect." });
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Password updated successfully!" });
+        }
+    }
+
+    public class ChangePasswordDto
+    {
+        public string CurrentPassword { get; set; } = "";
+        public string NewPassword { get; set; } = "";
+        public string ConfirmPassword { get; set; } = "";
     }
 
     /// <summary>

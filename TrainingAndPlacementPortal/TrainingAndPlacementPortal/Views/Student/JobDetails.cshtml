@@ -180,15 +180,25 @@
                         document.getElementById('regLinkContainer').textContent = 'N/A';
                     }
 
-                    // Check if already applied
+                    // Check if already applied or already placed
                     if (appRes && appRes.ok) {
                         const appData = await appRes.json();
-                        const isApplied = appData.data?.some(a => a.jobPostingId == currentJobId);
+                        const applications = appData.data || [];
+                        const isApplied = applications.some(a => a.jobPostingId == currentJobId);
+                        const isPlaced = applications.some(a => a.applicationStatus === 'Selected');
+                        
+                        const btn = document.getElementById('applyBtn');
+                        
                         if (isApplied) {
-                            const btn = document.getElementById('applyBtn');
                             btn.textContent = 'APPLIED ✓';
                             btn.classList.add('bg-[#d1fae5]', 'text-[#065f46]', 'cursor-default');
                             btn.classList.remove('bg-[#e7000b]', 'hover:bg-red-700', 'cursor-pointer');
+                            btn.onclick = null;
+                        } else if (isPlaced) {
+                            btn.textContent = 'PLACEMENT COMPLETED';
+                            btn.classList.add('bg-gray-200', 'text-gray-500', 'cursor-not-allowed');
+                            btn.classList.remove('bg-[#e7000b]', 'hover:bg-red-700', 'cursor-pointer');
+                            btn.title = "You have already been selected for a placement.";
                             btn.onclick = null;
                         }
                     }

@@ -42,6 +42,15 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 return BadRequest(new { success = false, message = "Student profile not found." });
             }
 
+            // check if user is already selected
+            var isAlreadySelected = await _context.JobApplications
+                .AnyAsync(a => a.StudentId == student.Id && a.ApplicationStatus == "Selected");
+
+            if (isAlreadySelected)
+            {
+                return BadRequest(new { success = false, message = "You have already been selected for a job and cannot apply for more." });
+            }
+
             // Verify job exists and is approved and active
             var job = await _context.JobPostings
                 .FirstOrDefaultAsync(j => j.Id == jobId && j.Status == "Approved" && j.IsActive);

@@ -38,6 +38,8 @@ namespace TrainingAndPlacementPortal.Models
         [MaxLength(15)]
         public string MobileNumber { get; set; } = string.Empty;
 
+        public DateTime? DateOfBirth { get; set; }
+
         // Academic Details
         [Required]
         public double TenthPercentage { get; set; }
