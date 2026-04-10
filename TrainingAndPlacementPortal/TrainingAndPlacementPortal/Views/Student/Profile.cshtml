@@ -2,32 +2,32 @@
 
 <div class="w-full max-w-6xl mx-auto">
     <header class="page-header">
-        <h1 class="page-title">Your Profile</h1>
-        <p class="page-subtitle">Read All Information Properly If Any Mistakes You can Edit It</p>
+        <h1 class="page-title text-red-600 font-bold mb-2">Your Profile</h1>
+        <p class="page-subtitle text-gray-600">Review and keep your profile information up to date.</p>
     </header>
 
     <div class="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-8 mb-10">
         <!-- Left: Identity Card -->
         <div class="bg-white rounded-xl py-10 px-8 text-center flex flex-col items-center border border-gray-200 shadow-sm">
-            <div class="w-24 h-24 bg-[#e7000b] rounded-full text-white flex items-center justify-center text-4xl font-bold mb-5 shadow-md">RP</div>
-            <h2 id="studFullNameDisplay" class="text-[22px] mb-1 text-gray-900 font-bold">Raj Patel</h2>
-            <p class="text-gray-400 text-sm mb-8 font-medium">Computer Science Student</p>
+            <div id="profileInitials" class="w-24 h-24 bg-[#e7000b] rounded-full text-white flex items-center justify-center text-4xl font-bold mb-5 shadow-md">--</div>
+            <h2 id="studFullNameDisplay" class="text-[22px] mb-1 text-gray-900 font-bold">Loading...</h2>
+            <p id="studRoleDisplay" class="text-gray-400 text-sm mb-8 font-medium">Student</p>
 
             <div class="w-full border-t border-[#e7000b] pt-4 pb-4 flex justify-between items-center text-sm">
                 <span class="text-gray-500 font-medium">Enrollment No.</span>
-                <span class="font-bold text-gray-900">2023CS001</span>
+                <span id="enrollmentDisplay" class="font-bold text-gray-900">--</span>
             </div>
             <div class="w-full border-t border-gray-200 pt-4 pb-4 flex justify-between items-center text-sm">
                 <span class="text-gray-500 font-medium">Branch</span>
-                <span class="font-bold text-gray-900">Computer Engineering</span>
+                <span id="branchDisplay" class="font-bold text-gray-900">--</span>
             </div>
             <div class="w-full border-t border-b border-gray-200 pt-4 pb-4 flex justify-between items-center text-sm">
                 <span class="text-gray-500 font-medium">CGPA</span>
-                <span class="font-bold text-green-700 text-base">8.2</span>
+                <span id="cgpaDisplay" class="font-bold text-green-700 text-base">--</span>
             </div>
 
-            <button id="editProfileBtn" data-editing="false" onclick="toggleProfileEdit()" class="bg-[#c72027] text-white rounded-md mt-6 w-full py-3 px-4 font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-red-800 transition shadow-sm border-none cursor-pointer">
-                <i class="fas fa-edit"></i> EDIT CONTACT
+            <button id="editProfileBtn" onclick="toggleProfileEdit()" class="bg-[#c72027] text-white rounded-md mt-6 w-full py-3 px-4 font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-red-800 transition shadow-sm border-none cursor-pointer">
+                <i class="fas fa-edit"></i> <span id="btnText">EDIT PROFILE</span>
             </button>
         </div>
 
@@ -38,59 +38,51 @@
                 <!-- Full Name -->
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-medium text-gray-500">Full Name</label>
-                    <input id="studFullNameInput" type="text" value="Raj Patel" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studFullNameInput')" />
-                    <p id="studFullNameInputError" class="text-red-500 text-xs hidden"></p>
+                    <input id="studFullNameInput" type="text" disabled class="profile-input p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" />
                 </div>
                 <!-- Mobile Number -->
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-medium text-gray-500">Mobile Number</label>
-                    <input id="studMobileInput" type="tel" value="+91 98765 43210" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studMobileInput')" />
-                    <p id="studMobileInputError" class="text-red-500 text-xs hidden"></p>
+                    <input id="studMobileInput" type="tel" disabled class="profile-input p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" />
                 </div>
                 <!-- Parents Name -->
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-medium text-gray-500">Parents Name</label>
-                    <input id="studParentNameInput" type="text" value="Aman Patel" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studParentNameInput')" />
-                    <p id="studParentNameInputError" class="text-red-500 text-xs hidden"></p>
+                    <input id="studParentNameInput" type="text" disabled class="profile-input p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" />
                 </div>
                 <!-- Parents Mobile Number -->
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-medium text-gray-500">Parents Mobile Number</label>
-                    <input id="studParentMobileInput" type="tel" value="+91 98765 43210" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studParentMobileInput')" />
-                    <p id="studParentMobileInputError" class="text-red-500 text-xs hidden"></p>
+                    <input id="studParentMobileInput" type="tel" disabled class="profile-input p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" />
                 </div>
                 <!-- Email Address -->
                 <div class="flex flex-col gap-2">
-                    <label class="text-xs font-medium text-gray-500">Email Address</label>
-                    <input id="studEmailInput" type="email" value="raj.patel@rku.ac.in" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studEmailInput')" />
-                    <p id="studEmailInputError" class="text-red-500 text-xs hidden"></p>
+                    <label class="text-xs font-medium text-gray-500">Email Address (Login)</label>
+                    <input id="studEmailDisplay" type="email" disabled class="p-3.5 rounded-lg border-none bg-gray-100 opacity-60 text-sm font-medium text-gray-800 shadow-sm outline-none cursor-not-allowed" title="Email cannot be changed" />
+                </div>
+                <!-- Personal Email -->
+                <div class="flex flex-col gap-2">
+                    <label class="text-xs font-medium text-gray-500">Personal Email</label>
+                    <input id="studPersonalEmailInput" type="email" disabled class="profile-input p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" />
                 </div>
                 <!-- Date of Birth -->
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-medium text-gray-500">Date of Birth</label>
-                    <input id="studDobInput" type="date" value="2001-08-15" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studDobInput')" />
-                    <p id="studDobInputError" class="text-red-500 text-xs hidden"></p>
-                </div>
-                <!-- Academic Year -->
-                <div class="flex flex-col gap-2">
-                    <label class="text-xs font-medium text-gray-500">Academic Year</label>
-                    <input id="studYearInput" type="text" value="2023-2024" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" oninput="validateStudentProfileField('studYearInput')" />
-                    <p id="studYearInputError" class="text-red-500 text-xs hidden"></p>
+                    <input id="studDobInput" type="date" disabled class="profile-input p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" />
                 </div>
                 <!-- Semester -->
                 <div class="flex flex-col gap-2">
                     <label class="text-xs font-medium text-gray-500">Semester</label>
-                    <select id="studSemesterInput" disabled class="profile-editable p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600" onchange="validateStudentProfileField('studSemesterInput')">
-                        <option>1st Semester</option>
-                        <option>2nd Semester</option>
-                        <option selected>3rd Semester</option>
-                        <option>4th Semester</option>
-                        <option>5th Semester</option>
-                        <option>6th Semester</option>
-                        <option>7th Semester</option>
-                        <option>8th Semester</option>
+                    <select id="studSemesterInput" disabled class="profile-input p-3.5 rounded-lg border-none bg-gray-100 opacity-95 text-sm font-medium text-gray-800 shadow-sm outline-none focus:ring-2 focus:ring-red-600">
+                        <option value="1st Semester">1st Semester</option>
+                        <option value="2nd Semester">2nd Semester</option>
+                        <option value="3rd Semester">3rd Semester</option>
+                        <option value="4th Semester">4th Semester</option>
+                        <option value="5th Semester">5th Semester</option>
+                        <option value="6th Semester">6th Semester</option>
+                        <option value="7th Semester">7th Semester</option>
+                        <option value="8th Semester">8th Semester</option>
                     </select>
-                    <p id="studSemesterInputError" class="text-red-500 text-xs hidden"></p>
                 </div>
             </div>
         </div>
@@ -98,22 +90,188 @@
 
     <!-- Recent Applications -->
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mb-6 shadow-sm">
-        <div class="px-8 py-6 pb-4"><h3 class="m-0 text-lg font-bold text-gray-900">Recent Applications</h3></div>
+        <div class="px-8 py-6 pb-4 flex justify-between items-center">
+            <h3 class="m-0 text-lg font-bold text-gray-900">Recent Applications</h3>
+            <a href="/StudentApplications" class="text-[#e7000b] text-sm font-bold hover:underline">View All</a>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full border-collapse">
                 <thead>
                     <tr class="bg-gray-50">
-                        <th class="text-center md:text-left py-4 px-8 text-xs text-gray-800 font-bold border-b border-gray-200">Job Position</th>
-                        <th class="text-center md:text-left py-4 px-8 text-xs text-gray-800 font-bold border-b border-gray-200">Company</th>
-                        <th class="text-center md:text-left py-4 px-8 text-xs text-gray-800 font-bold border-b border-gray-200">Status</th>
+                        <th class="text-left py-4 px-8 text-[11px] text-gray-500 font-bold uppercase tracking-wider border-b border-gray-100">Job Position</th>
+                        <th class="text-left py-4 px-8 text-[11px] text-gray-500 font-bold uppercase tracking-wider border-b border-gray-100">Company</th>
+                        <th class="text-left py-4 px-8 text-[11px] text-gray-500 font-bold uppercase tracking-wider border-b border-gray-100">Applied Date</th>
+                        <th class="text-left py-4 px-8 text-[11px] text-gray-500 font-bold uppercase tracking-wider border-b border-gray-100">Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                    <tr class="bg-white"><td class="py-5 px-8"><p class="font-bold text-sm text-gray-900 m-0">Software Developer</p><p class="text-xs font-medium text-gray-400 mt-1 m-0">Full-time</p></td><td class="py-5 px-8 text-center md:text-left"><span class="font-bold text-sm text-gray-800">TechCorp Solutions</span></td><td class="py-5 px-8 text-center md:text-left"><span class="font-semibold text-xs text-yellow-700">Interview Scheduled</span></td></tr>
-                    <tr class="bg-white"><td class="py-5 px-8"><p class="font-bold text-sm text-gray-900 m-0">Frontend Developer</p><p class="text-xs font-medium text-gray-400 mt-1 m-0">Internship</p></td><td class="py-5 px-8 text-center md:text-left"><span class="font-bold text-sm text-gray-800">Digital Innovations</span></td><td class="py-5 px-8 text-center md:text-left"><span class="font-semibold text-xs text-blue-600">Under Review</span></td></tr>
-                    <tr class="bg-white"><td class="py-5 px-8"><p class="font-bold text-sm text-gray-900 m-0">Data Analyst</p><p class="text-xs font-medium text-gray-400 mt-1 m-0">Full-time</p></td><td class="py-5 px-8 text-center md:text-left"><span class="font-bold text-sm text-gray-800">Analytics Pro</span></td><td class="py-5 px-8 text-center md:text-left"><span class="font-semibold text-xs text-red-600">Not Selected</span></td></tr>
+                <tbody id="recentApplicationsBody" class="divide-y divide-gray-100">
+                    <tr><td colspan="4" class="py-10 text-center text-gray-400 font-medium">Loading applications...</td></tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Student')) return;
+            await loadProfile();
+        });
+
+        let isEditing = false;
+
+        async function loadProfile() {
+            try {
+                const res = await authFetch('/api/student/profile');
+                if (!res || !res.ok) throw new Error('Fetch failed');
+                const result = await res.json();
+                
+                if (result.success) {
+                    fillProfileData(result.data);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function fillProfileData(data) {
+            // Display Fields
+            document.getElementById('studFullNameDisplay').textContent = data.fullName;
+            document.getElementById('enrollmentDisplay').textContent = data.enrollmentNumber;
+            document.getElementById('branchDisplay').textContent = data.branch;
+            document.getElementById('cgpaDisplay').textContent = data.cgpa;
+            
+            // Initials logic
+            const names = data.fullName.split(' ');
+            const initials = names.length > 1 ? names[0][0] + names[names.length-1][0] : names[0] ? names[0][0] : '--';
+            document.getElementById('profileInitials').textContent = initials.toUpperCase();
+
+            // Form Inputs
+            document.getElementById('studFullNameInput').value = data.fullName;
+            document.getElementById('studMobileInput').value = data.mobileNumber;
+            document.getElementById('studParentNameInput').value = data.parentName || '';
+            document.getElementById('studParentMobileInput').value = data.parentMobile || '';
+            document.getElementById('studEmailDisplay').value = data.email;
+            document.getElementById('studPersonalEmailInput').value = data.personalEmail || '';
+            document.getElementById('studSemesterInput').value = data.semester;
+            
+            if (data.dateOfBirth) {
+                document.getElementById('studDobInput').value = data.dateOfBirth.split('T')[0];
+            }
+
+            // Recent Applications
+            renderRecentApps(data.recentApplications);
+        }
+
+        function renderRecentApps(apps) {
+            const tbody = document.getElementById('recentApplicationsBody');
+            if (!apps || apps.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="py-10 text-center text-gray-400 font-medium uppercase text-xs">No recent applications found</td></tr>';
+                return;
+            }
+
+            let html = '';
+            apps.forEach(app => {
+                const appliedDate = new Date(app.appliedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                
+                let statusClass = "text-blue-600";
+                if (app.status === 'Selected') statusClass = "text-green-600";
+                if (app.status === 'Rejected') statusClass = "text-red-600";
+                if (app.status === 'Shortlisted') statusClass = "text-purple-600";
+
+                html += `
+                <tr class="bg-white hover:bg-gray-50/50 transition-colors">
+                    <td class="py-5 px-8">
+                        <p class="font-bold text-sm text-gray-900 m-0">${app.jobPosition}</p>
+                        <p class="text-[10px] font-bold text-gray-400 mt-1 m-0 uppercase tracking-tighter">${app.jobType}</p>
+                    </td>
+                    <td class="py-5 px-8">
+                        <span class="font-bold text-sm text-gray-800">${app.companyName}</span>
+                    </td>
+                    <td class="py-5 px-8">
+                        <span class="text-xs font-semibold text-gray-500">${appliedDate}</span>
+                    </td>
+                    <td class="py-5 px-8">
+                        <span class="font-bold text-xs ${statusClass} uppercase tracking-tight">${app.status}</span>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        async function toggleProfileEdit() {
+            const btn = document.getElementById('editProfileBtn');
+            const inputs = document.querySelectorAll('.profile-input');
+            const btnText = document.getElementById('btnText');
+
+            if (!isEditing) {
+                // Switch to Edit Mode
+                isEditing = true;
+                inputs.forEach(input => {
+                    input.disabled = false;
+                    input.classList.remove('bg-gray-100', 'opacity-95');
+                    input.classList.add('bg-white', 'border', 'border-gray-300');
+                });
+                btnText.textContent = 'SAVE CHANGES';
+                btn.classList.add('bg-green-600', 'hover:bg-green-700');
+                btn.classList.remove('bg-[#c72027]', 'hover:bg-red-800');
+            } else {
+                // Save Changes
+                await saveProfile();
+            }
+        }
+
+        async function saveProfile() {
+            const formData = {
+                fullName: document.getElementById('studFullNameInput').value,
+                mobileNumber: document.getElementById('studMobileInput').value,
+                parentName: document.getElementById('studParentNameInput').value,
+                parentMobile: document.getElementById('studParentMobileInput').value,
+                personalEmail: document.getElementById('studPersonalEmailInput').value,
+                semester: document.getElementById('studSemesterInput').value,
+                dateOfBirth: document.getElementById('studDobInput').value || null
+            };
+
+            try {
+                const res = await authFetch('/api/student/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (res && res.ok) {
+                    const result = await res.json();
+                    if (result.success) {
+                        // Exit Edit Mode
+                        isEditing = false;
+                        const btn = document.getElementById('editProfileBtn');
+                        const inputs = document.querySelectorAll('.profile-input');
+                        const btnText = document.getElementById('btnText');
+
+                        inputs.forEach(input => {
+                            input.disabled = true;
+                            input.classList.add('bg-gray-100', 'opacity-95');
+                            input.classList.remove('bg-white', 'border', 'border-gray-300');
+                        });
+                        btnText.textContent = 'EDIT PROFILE';
+                        btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        btn.classList.add('bg-[#c72027]', 'hover:bg-red-800');
+
+                        // Refresh UI Display fields
+                        document.getElementById('studFullNameDisplay').textContent = formData.fullName;
+                        
+                        // Show success message (using site.js notify if exists, or alert)
+                        alert('Profile updated successfully!');
+                    }
+                } else {
+                    alert('Failed to update profile.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while saving.');
+            }
+        }
+    </script>
+}
+
