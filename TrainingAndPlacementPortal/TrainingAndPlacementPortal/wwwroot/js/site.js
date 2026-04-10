@@ -260,8 +260,40 @@ function validateForgotPassword() {
     else { setBorderError('confirmPassword', false); }
 
     if (valid) {
-        alert('Password successfully verified and updated!');
-        window.location.href = '/Auth/Login';
+        // Find the button and show loading
+        const btn = document.querySelector('button[type="submit"]') || document.querySelector('button[onclick^="validateForgotPassword"]');
+        const originalText = btn ? btn.textContent : 'Update Password';
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Updating...';
+        }
+
+        fetch('/api/auth/forgot-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, newPassword: newPass })
+        })
+        .then(res => res.json())
+        .then(result => {
+            if (result.success) {
+                alert(result.message);
+                window.location.href = '/Auth/Login';
+            } else {
+                alert(result.message || 'Failed to update password.');
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                }
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('An error occurred. Please try again.');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        });
     }
     return false;
 }

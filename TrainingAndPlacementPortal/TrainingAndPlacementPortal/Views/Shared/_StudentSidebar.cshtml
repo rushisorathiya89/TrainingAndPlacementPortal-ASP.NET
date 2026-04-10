@@ -10,13 +10,25 @@
 
     <!-- Menu -->
     <ul id="sidebarMenu" class="space-y-3 hidden md:block mt-4 md:mt-0 list-none p-0">
-        <li><a href="/StudDashboard" class="sidebar-link"><i class="fas fa-th-large text-xl"></i><span class="font-medium">Dashboard</span></a></li>
-        <li><a href="/StudProfile" class="sidebar-link"><i class="fas fa-user text-xl"></i><span class="font-medium">Profile</span></a></li>
-        <li><a href="/StudJobs" class="sidebar-link"><i class="fas fa-briefcase text-xl"></i><span class="font-medium">Jobs</span></a></li>
-        <li><a href="/StudApplications" class="sidebar-link"><i class="fas fa-file-alt text-xl"></i><span class="font-medium">My Applications</span></a></li>
-        <li><a href="/StudInterviewSchedule" class="sidebar-link"><i class="fas fa-calendar-check text-xl"></i><span class="font-medium">Interview Schedule</span></a></li>
-        <li><a href="/StudPlacementHistory" class="sidebar-link"><i class="fas fa-history text-xl"></i><span class="font-medium">Placement History</span></a></li>
-        <li><a href="/StudChangePass" class="sidebar-link"><i class="fas fa-lock text-xl"></i><span class="font-medium">Change Password</span></a></li>
+        @{
+            var currentPath = Context.Request.Path.ToString().ToLower();
+            string GetActiveClass(string path) => currentPath.StartsWith(path.ToLower()) ? "active-sidebar-link" : "";
+        }
+        <li><a href="/StudDashboard" class="sidebar-link @GetActiveClass("/StudDashboard")"><i class="fas fa-th-large text-xl"></i><span class="font-medium">Dashboard</span></a></li>
+        <li><a href="/StudProfile" class="sidebar-link @GetActiveClass("/StudProfile")"><i class="fas fa-user text-xl"></i><span class="font-medium">Profile</span></a></li>
+        <li><a href="/StudJobs" class="sidebar-link @GetActiveClass("/StudJobs")"><i class="fas fa-briefcase text-xl"></i><span class="font-medium">Jobs</span></a></li>
+        <li><a href="/StudApplications" class="sidebar-link @GetActiveClass("/StudApplications")"><i class="fas fa-file-alt text-xl"></i><span class="font-medium">My Applications</span></a></li>
+        <li><a href="/StudInterviewSchedule" class="sidebar-link @GetActiveClass("/StudInterviewSchedule")"><i class="fas fa-calendar-check text-xl"></i><span class="font-medium">Interview Schedule</span></a></li>
+        <li><a href="/StudPlacementHistory" class="sidebar-link @GetActiveClass("/StudPlacementHistory")"><i class="fas fa-history text-xl"></i><span class="font-medium">Placement History</span></a></li>
+        <li><a href="/StudChangePass" class="sidebar-link @GetActiveClass("/StudChangePass")"><i class="fas fa-lock text-xl"></i><span class="font-medium">Change Password</span></a></li>
         <li><a href="javascript:void(0)" onclick="logout()" class="sidebar-link"><i class="fas fa-sign-out-alt text-xl"></i><span class="font-medium">Logout</span></a></li>
     </ul>
 </div>
+
+<style>
+    .active-sidebar-link {
+        background-color: #4b5563 !important;
+        color: white !important;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+</style>

@@ -10,14 +10,26 @@
 
     <!-- Menu -->
     <ul id="sidebarMenu" class="space-y-3 hidden md:block mt-4 md:mt-0 list-none p-0">
-        <li><a href="/AdminDashboard" class="sidebar-link"><i class="fas fa-th-large text-xl"></i><span class="font-medium">Dashboard</span></a></li>
-        <li><a href="/AdminProfile" class="sidebar-link"><i class="fas fa-user text-xl"></i><span class="font-medium">Profile</span></a></li>
-        <li><a href="/AdminCompanyManagement" class="sidebar-link"><i class="fas fa-building text-xl"></i><span class="font-medium">Company Management</span></a></li>
-        <li><a href="/AdminStudentsManagement" class="sidebar-link"><i class="fas fa-users text-xl"></i><span class="font-medium">Student Management</span></a></li>
-        <li><a href="/AdminManageApplications" class="sidebar-link"><i class="fas fa-tasks text-xl"></i><span class="font-medium">Manage Applications</span></a></li>
-        <li><a href="/AdminInterviewSchedule" class="sidebar-link"><i class="fas fa-calendar-alt text-xl"></i><span class="font-medium">Interview Schedule</span></a></li>
-        <li><a href="/AdminPlacementHistory" class="sidebar-link"><i class="fas fa-history text-xl"></i><span class="font-medium">Placement History</span></a></li>
-        <li><a href="/AdminChangePassword" class="sidebar-link"><i class="fas fa-lock text-xl"></i><span class="font-medium">Change Password</span></a></li>
+        @{
+            var currentPath = Context.Request.Path.ToString().ToLower();
+            string GetActiveClass(string path) => currentPath.StartsWith(path.ToLower()) ? "active-sidebar-link" : "";
+        }
+        <li><a href="/AdminDashboard" class="sidebar-link @GetActiveClass("/AdminDashboard")"><i class="fas fa-th-large text-xl"></i><span class="font-medium">Dashboard</span></a></li>
+        <li><a href="/AdminProfile" class="sidebar-link @GetActiveClass("/AdminProfile")"><i class="fas fa-user text-xl"></i><span class="font-medium">Profile</span></a></li>
+        <li><a href="/AdminCompanyManagement" class="sidebar-link @GetActiveClass("/AdminCompanyManagement")"><i class="fas fa-building text-xl"></i><span class="font-medium">Company Management</span></a></li>
+        <li><a href="/AdminStudentsManagement" class="sidebar-link @GetActiveClass("/AdminStudentsManagement")"><i class="fas fa-users text-xl"></i><span class="font-medium">Student Management</span></a></li>
+        <li><a href="/AdminManageApplications" class="sidebar-link @GetActiveClass("/AdminManageApplications")"><i class="fas fa-tasks text-xl"></i><span class="font-medium">Manage Applications</span></a></li>
+        <li><a href="/AdminInterviewSchedule" class="sidebar-link @GetActiveClass("/AdminInterviewSchedule")"><i class="fas fa-calendar-alt text-xl"></i><span class="font-medium">Interview Schedule</span></a></li>
+        <li><a href="/AdminPlacementHistory" class="sidebar-link @GetActiveClass("/AdminPlacementHistory")"><i class="fas fa-history text-xl"></i><span class="font-medium">Placement History</span></a></li>
+        <li><a href="/AdminChangePassword" class="sidebar-link @GetActiveClass("/AdminChangePassword")"><i class="fas fa-lock text-xl"></i><span class="font-medium">Change Password</span></a></li>
         <li><a href="javascript:void(0)" onclick="logout()" class="sidebar-link"><i class="fas fa-sign-out-alt text-xl"></i><span class="font-medium">Logout</span></a></li>
     </ul>
 </div>
+
+<style>
+    .active-sidebar-link {
+        background-color: #4b5563 !important;
+        color: white !important;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+</style>

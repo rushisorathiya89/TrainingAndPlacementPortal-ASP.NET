@@ -157,6 +157,30 @@ namespace TrainingAndPlacementPortal.Controllers.Api
             return Ok(new { success = true, data = postings });
         }
 
+        // ===== ADMIN: Get jobs eligible for interview scheduling (Approved + Has Applications) =====
+        // GET: api/company/admin/schedulable-jobs
+        [HttpGet("admin/schedulable-jobs")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetSchedulableJobs()
+        {
+            var jobs = await _context.JobPostings
+                .Include(j => j.Company)
+                .Include(j => j.JobApplications)
+                .Where(j => j.Status == "Approved" && j.JobApplications.Any())
+                .OrderByDescending(j => j.PostedAt)
+                .Select(j => new
+                {
+                    j.Id,
+                    CompanyName = j.Company.CompanyName,
+                    JobRole = j.JobPosition,
+                    Package = j.AnnualCTC,
+                    ApplicationCount = j.JobApplications.Count
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = jobs });
+        }
+
         // ===== ADMIN: Get single job posting detail =====
         // GET: api/company/job-postings/{id}
         [HttpGet("job-postings/{id}")]
