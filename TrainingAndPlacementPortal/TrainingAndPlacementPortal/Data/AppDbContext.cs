@@ -30,6 +30,13 @@ namespace TrainingAndPlacementPortal.Data
                 .HasForeignKey<Student>(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // 1:1 User <-> Company relationship
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Company)
+                .WithOne(c => c.User)
+                .HasForeignKey<Company>(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // 1:N Company -> JobPostings relationship
             modelBuilder.Entity<Company>()
                 .HasMany(c => c.JobPostings)

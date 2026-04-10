@@ -27,6 +27,7 @@ namespace TrainingAndPlacementPortal.Controllers.Api
         {
             var students = await _context.Students
                 .Include(s => s.User)
+                .Where(s => s.User.Role == "Student")
                 .OrderByDescending(s => s.RegisteredAt)
                 .Select(s => new
                 {
@@ -131,7 +132,7 @@ namespace TrainingAndPlacementPortal.Controllers.Api
         [HttpGet("dashboard-stats")]
         public async Task<IActionResult> GetDashboardStats()
         {
-            var totalStudents = await _context.Students.CountAsync();
+            var totalStudents = await _context.Students.Include(s => s.User).CountAsync(s => s.User.Role == "Student");
             var pendingApprovals = await _context.JobPostings.CountAsync(j => j.Status == "Pending");
             var activeJobDrives = await _context.JobPostings.CountAsync(j => j.Status == "Approved" && j.IsActive);
             var totalApplications = await _context.JobApplications.CountAsync();

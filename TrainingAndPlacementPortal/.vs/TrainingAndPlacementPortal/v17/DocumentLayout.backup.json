@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|d:\\trainingandplacementportal-asp.net\\trainingandplacementportal\\trainingandplacementportal\\controllers\\api\\applicationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|solutionrelative:trainingandplacementportal\\controllers\\api\\applicationapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|d:\\trainingandplacementportal-asp.net\\trainingandplacementportal\\trainingandplacementportal\\controllers\\api\\adminapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5E4BC29C-E693-4F75-9A31-FAAD95FFCD79}|TrainingAndPlacementPortal\\TrainingAndPlacementPortal.csproj|solutionrelative:trainingandplacementportal\\controllers\\api\\adminapicontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -39,19 +43,30 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "AdminApiController.cs",
-              "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\Api\\AdminApiController.cs",
-              "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Controllers\\Api\\AdminApiController.cs",
-              "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\Api\\AdminApiController.cs*",
-              "RelativeToolTip": "TrainingAndPlacementPortal\\Controllers\\Api\\AdminApiController.cs*",
-              "ViewState": "AgIAAAQBAAAAAAAAAAAqwAUBAAAEAAAAAAAAAA==",
+              "Title": "ApplicationApiController.cs",
+              "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\Api\\ApplicationApiController.cs",
+              "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Controllers\\Api\\ApplicationApiController.cs",
+              "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\Api\\ApplicationApiController.cs",
+              "RelativeToolTip": "TrainingAndPlacementPortal\\Controllers\\Api\\ApplicationApiController.cs",
+              "ViewState": "AgIAAMkAAAAAAAAAAAD4v80AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-09T11:24:15.83Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-09T15:45:24.587Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "AdminApiController.cs",
+              "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\Api\\AdminApiController.cs",
+              "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Controllers\\Api\\AdminApiController.cs",
+              "ToolTip": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Controllers\\Api\\AdminApiController.cs",
+              "RelativeToolTip": "TrainingAndPlacementPortal\\Controllers\\Api\\AdminApiController.cs",
+              "ViewState": "AgIAAAQBAAAAAAAAAAAqwAUBAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-09T11:24:15.83Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Models\\User.cs",
               "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Models\\User.cs",
@@ -63,7 +78,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "_AdminLayout.cshtml",
               "DocumentMoniker": "D:\\TrainingAndPlacementPortal-ASP.NET\\TrainingAndPlacementPortal\\TrainingAndPlacementPortal\\Views\\Shared\\_AdminLayout.cshtml",
               "RelativeDocumentMoniker": "TrainingAndPlacementPortal\\Views\\Shared\\_AdminLayout.cshtml",

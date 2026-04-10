@@ -1,0 +1,144 @@
+@{ ViewData["Title"] = "Student Applicants"; }
+
+<div class="w-full">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-red-600">Job Applicants</h1>
+            <p class="text-gray-600">Review students who applied for your position.</p>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="history.back()" class="bg-white border border-gray-300 px-6 py-2 rounded-lg font-bold text-gray-700 hover:bg-gray-50 transition cursor-pointer">← Back</button>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-3xl text-red-500"></i>
+        <p class="text-gray-500 mt-3 font-medium">Fetching applicant data...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty" class="hidden text-center py-12 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+        <i class="fas fa-users-slash text-5xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500 font-bold">No students have applied yet.</p>
+    </div>
+
+    <!-- Applicants Table -->
+    <div id="tableContainer" class="hidden bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[900px]">
+            <thead class="bg-red-600 text-white">
+                <tr>
+                    <th class="p-4 rounded-tl-xl">Student Details</th>
+                    <th class="p-4">Enrollment</th>
+                    <th class="p-4">Branch / CGPA</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4 rounded-tr-xl">Applied On</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Company')) return;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const jobId = urlParams.get('jobId');
+    if (jobId) loadApplicants(jobId);
+    else document.getElementById('loading').classList.add('hidden'), document.getElementById('empty').classList.remove('hidden');
+});
+
+async function loadApplicants(jobId) {
+    try {
+        const res = await authFetch(`/api/applications/job/${jobId}/students`);
+        const result = await res.json();
+
+        document.getElementById('loading').classList.add('hidden');
+
+        if (!result.success || !result.data || result.data.length === 0) {
+            document.getElementById('empty').classList.remove('hidden');
+            return;
+        }
+
+        const tbody = document.getElementById('tableBody');
+        document.getElementById('tableContainer').classList.remove('hidden');
+        tbody.innerHTML = '';
+
+        result.data.forEach(a => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-t border-gray-100 hover:bg-gray-50 transition group';
+            
+            const appliedDate = new Date(a.appliedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+            
+            let badgeClass = 'bg-blue-100 text-blue-700';
+            if (a.applicationStatus === 'Selected') badgeClass = 'bg-green-100 text-green-700';
+            if (a.applicationStatus === 'Rejected') badgeClass = 'bg-red-100 text-red-700';
+            if (a.applicationStatus === 'Shortlisted') badgeClass = 'bg-yellow-100 text-yellow-700';
+
+            tr.innerHTML = `
+                <td class="p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center font-bold text-sm shadow-sm">
+                            ${a.fullName.split(' ').map(n=>n[0]).join('')}
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-gray-800">${a.fullName}</span>
+                            <span class="text-xs text-gray-500">${a.email}</span>
+                            <span class="text-xs text-gray-500">${a.mobileNumber}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="p-4 text-gray-700 font-medium">${a.enrollmentNumber}</td>
+                <td class="p-4">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-bold text-gray-700">${a.branch} (Sem ${a.semester})</span>
+                        <span class="text-xs text-gray-500 font-bold uppercase tracking-widest mt-1">CGPA: ${a.cgpa}</span>
+                    </div>
+                </td>
+                <td class="p-4">
+                    <select onchange="updateStatus(${a.id}, this.value, this)" class="p-2 rounded-lg border focus:ring-2 focus:ring-red-100 outline-none text-xs font-bold uppercase transition cursor-pointer ${badgeClass}">
+                        <option value="Applied" ${a.applicationStatus === 'Applied' ? 'selected' : ''}>Applied</option>
+                        <option value="Shortlisted" ${a.applicationStatus === 'Shortlisted' ? 'selected' : ''}>Shortlisted</option>
+                        <option value="Selected" ${a.applicationStatus === 'Selected' ? 'selected' : ''}>Selected</option>
+                        <option value="Rejected" ${a.applicationStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                    </select>
+                </td>
+                <td class="p-4 text-gray-500 text-sm font-medium tracking-tight">${appliedDate}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error('Error:', err);
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('empty').classList.remove('hidden');
+    }
+}
+
+async function updateStatus(appId, newStatus, selectElement) {
+    try {
+        const res = await authFetch(`/api/applications/${appId}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newStatus)
+        });
+        const result = await res.json();
+        if (result.success) {
+            // Update badge class dynamically
+            selectElement.classList.remove('bg-blue-100', 'text-blue-700', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700', 'bg-yellow-100', 'text-yellow-700');
+            if (newStatus === 'Selected') selectElement.classList.add('bg-green-100', 'text-green-700');
+            else if (newStatus === 'Rejected') selectElement.classList.add('bg-red-100', 'text-red-700');
+            else if (newStatus === 'Shortlisted') selectElement.classList.add('bg-yellow-100', 'text-yellow-700');
+            else selectElement.classList.add('bg-blue-100', 'text-blue-700');
+        } else alert(result.message || 'Failed to update status.');
+    } catch (err) {
+        console.error(err);
+        alert('Network error.');
+    }
+}
+</script>
+}

@@ -103,9 +103,12 @@ async function loadAppliedStudents(jobId) {
                 <td class="p-4 text-gray-700">${escapeHtml(s.branch || 'N/A')} (Sem ${s.semester || 'N/A'})</td>
                 <td class="p-4 font-bold text-gray-800">${s.cgpa || 'N/A'}</td>
                 <td class="p-4">
-                    <span class="px-3 py-1 rounded-full text-xs font-bold ${badgeColor}">
-                        ${escapeHtml(s.applicationStatus || 'Applied')}
-                    </span>
+                    <select onchange="updateApplicationStatus(${s.id}, this.value)" class="p-2 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-sm font-semibold ${badgeColor}">
+                        <option value="Applied" ${s.applicationStatus === 'Applied' ? 'selected' : ''}>Applied</option>
+                        <option value="Shortlisted" ${s.applicationStatus === 'Shortlisted' ? 'selected' : ''}>Shortlisted</option>
+                        <option value="Selected" ${s.applicationStatus === 'Selected' ? 'selected' : ''}>Selected</option>
+                        <option value="Rejected" ${s.applicationStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                    </select>
                 </td>
                 <td class="p-4 text-gray-500 text-sm">${appliedDate}</td>
             `;
@@ -117,6 +120,26 @@ async function loadAppliedStudents(jobId) {
         empty.classList.remove('hidden');
         empty.querySelector('p').innerText = 'Failed to load students. Please try again.';
         console.error('Error:', err);
+    }
+}
+
+async function updateApplicationStatus(appId, newStatus) {
+    try {
+        const res = await authFetch(`/api/applications/${appId}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newStatus)
+        });
+        const result = await res.json();
+        if (result.success) {
+            // Optional: Show a subtle toast
+            console.log('Status updated successfully');
+        } else {
+            alert(result.message || 'Failed to update status.');
+        }
+    } catch (err) {
+        console.error('Error updating status:', err);
+        alert('Failed to update status due to network error.');
     }
 }
 

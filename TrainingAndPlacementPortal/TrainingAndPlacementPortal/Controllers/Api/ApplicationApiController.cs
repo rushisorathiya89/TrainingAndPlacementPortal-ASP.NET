@@ -129,12 +129,29 @@ namespace TrainingAndPlacementPortal.Controllers.Api
             return Ok(new { success = true, hasApplied });
         }
 
-        // ===== ADMIN: Get all students who applied for a specific job =====
+        private async Task<int> GetCompanyId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int userId)) return 0;
+            
+            var company = await _context.Companies.FirstOrDefaultAsync(c => c.UserId == userId);
+            return company?.Id ?? 0;
+        }
+
+        // ===== ADMIN/COMPANY: Get all students who applied for a specific job =====
         // GET: api/applications/job/{jobId}/students
         [HttpGet("job/{jobId}/students")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Company")]
         public async Task<IActionResult> GetStudentsForJob(int jobId)
         {
+            // Security check for Company: only allow their own jobs
+            if (User.IsInRole("Company"))
+            {
+                var companyId = await GetCompanyId();
+                var ownsJob = await _context.JobPostings.AnyAsync(j => j.Id == jobId && j.CompanyId == companyId);
+                if (!ownsJob) return Forbid();
+            }
+
             var applications = await _context.JobApplications
                 .Include(a => a.Student)
                 .ThenInclude(s => s.User)
@@ -156,6 +173,34 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .ToListAsync();
 
             return Ok(new { success = true, data = applications });
+        }
+
+        // ===== ADMIN/COMPANY: Update student application status =====
+        // PUT: api/applications/{id}/status
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = "Admin,Company")]
+        public async Task<IActionResult> UpdateApplicationStatus(int id, [FromBody] string status)
+        {
+            var application = await _context.JobApplications
+                .Include(a => a.JobPosting)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (application == null)
+            {
+                return NotFound(new { success = false, message = "Application not found." });
+            }
+
+            // Security check for Company: only allow their own applicants
+            if (User.IsInRole("Company"))
+            {
+                var companyId = await GetCompanyId();
+                if (application.JobPosting.CompanyId != companyId) return Forbid();
+            }
+
+            application.ApplicationStatus = status;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = $"Status updated to {status}." });
         }
     }
 }

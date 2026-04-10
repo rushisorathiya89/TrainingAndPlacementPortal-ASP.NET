@@ -273,10 +273,10 @@ D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlac
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\staticwebassets.build.json.cache
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\staticwebassets.development.json
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\Training.6BC1998E.Up2Date
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\TrainingAndPlacementPortal.dll
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\refint\TrainingAndPlacementPortal.dll
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\TrainingAndPlacementPortal.pdb
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\TrainingAndPlacementPortal.genruntimeconfig.cache
 D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\ref\TrainingAndPlacementPortal.dll
-D:\TrainingAndPlacementPortal-ASP.NET\TrainingAndPlacementPortal\TrainingAndPlacementPortal\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

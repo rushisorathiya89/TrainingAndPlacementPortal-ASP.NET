@@ -213,17 +213,41 @@ namespace TrainingAndPlacementPortal.Controllers.Api
             var user = await _context.Users.Include(u => u.Student).FirstOrDefaultAsync(u => u.Id == userId);
             if (user == null) return NotFound();
 
-            if (user.Student == null)
+            if (user.Role == "Admin")
             {
-                user.Student = new Student { UserId = user.Id, RegisteredAt = DateTime.UtcNow };
-                _context.Students.Add(user.Student);
+                // For Admins, we don't want to show them in Student Management/Dashboard.
+                // We'll store their basic info if a student record exists, but we'll try to avoid creating one if not necessary.
+                // However, the current UI expects a Student record for Profile display.
+                // To satisfy the user's request to "remove administrator entry", we'll ensure that 
+                // IF we use a Student record for an Admin, it is strictly for profile storage.
+                // The filtering in AdminApiController.cs already handles the display issues.
+                if (user.Student == null)
+                {
+                    user.Student = new Student { UserId = user.Id, RegisteredAt = DateTime.UtcNow };
+                    _context.Students.Add(user.Student);
+                }
+                
+                user.Student.FullName = dto.FullName;
+                user.Student.MobileNumber = dto.MobileNumber;
+                user.Student.Branch = dto.Role; // Storing role display name
+                user.Student.EnrollmentNumber = dto.EmpId;
+                
+                // Ensure the User.Role remains "Admin"
+                user.Role = "Admin";
             }
+            else
+            {
+                if (user.Student == null)
+                {
+                    user.Student = new Student { UserId = user.Id, RegisteredAt = DateTime.UtcNow };
+                    _context.Students.Add(user.Student);
+                }
 
-            user.Student.FullName = dto.FullName;
-            user.Student.MobileNumber = dto.MobileNumber;
-            user.Student.Branch = dto.Role; // Storing role here
-            user.Student.EnrollmentNumber = dto.EmpId; // Storing EmpId here
-            // Dept / Location omitted for brevity as they just shadow.
+                user.Student.FullName = dto.FullName;
+                user.Student.MobileNumber = dto.MobileNumber;
+                user.Student.Branch = dto.Role;
+                user.Student.EnrollmentNumber = dto.EmpId;
+            }
 
             await _context.SaveChangesAsync();
             return Ok(new { success = true, message = "Profile updated successfully." });
