@@ -1,7 +1,23 @@
 [
   {
-    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
-    "Method": "GetInterviewSchedules",
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.InterviewApiController",
+    "Method": "SaveSchedule",
+    "RelativePath": "api/admin/interview-schedules",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dtos",
+        "Type": "System.Collections.Generic.List\u00601[[TrainingAndPlacementPortal.Controllers.Api.SaveInterviewScheduleDto, TrainingAndPlacementPortal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.InterviewApiController",
+    "Method": "GetAllSchedules",
     "RelativePath": "api/admin/interview-schedules",
     "HttpMethod": "GET",
     "IsController": true,
@@ -10,16 +26,21 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AdminApiController",
-    "Method": "CreateInterviewSchedules",
-    "RelativePath": "api/admin/interview-schedules",
-    "HttpMethod": "POST",
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.InterviewApiController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/admin/interview-schedules/{id}/status",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "schedules",
-        "Type": "System.Collections.Generic.List\u00601[[TrainingAndPlacementPortal.Models.InterviewSchedule, TrainingAndPlacementPortal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.UpdateStatusRequest",
         "IsRequired": true
       }
     ],
@@ -241,6 +262,22 @@
   },
   {
     "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController",
+    "Method": "ForgotPassword",
+    "RelativePath": "api/auth/forgot-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "TrainingAndPlacementPortal.Controllers.Api.ForgotPasswordDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.AuthApiController",
     "Method": "Login",
     "RelativePath": "api/auth/login",
     "HttpMethod": "POST",
@@ -393,6 +430,16 @@
   },
   {
     "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.CompanyApiController",
+    "Method": "GetSchedulableJobs",
+    "RelativePath": "api/company/admin/schedulable-jobs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.CompanyApiController",
     "Method": "GetApprovedJobs",
     "RelativePath": "api/company/approved-jobs",
     "HttpMethod": "GET",
@@ -531,6 +578,16 @@
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TrainingAndPlacementPortal.Controllers.Api.InterviewApiController",
+    "Method": "GetStudentSchedules",
+    "RelativePath": "api/student/interview-schedules",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {

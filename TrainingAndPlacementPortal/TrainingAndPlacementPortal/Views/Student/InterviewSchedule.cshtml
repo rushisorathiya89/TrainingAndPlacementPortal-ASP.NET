@@ -6,46 +6,99 @@
         <p class="page-subtitle">View your upcoming and completed interview details.</p>
     </header>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @{
-            var interviews = new[] {
-                new { Company = "TCS", Role = "Software Developer", Date = "March 18, 2024", Time = "11:00 AM - 12:00 PM", Type = "Online Interview", Location = "Zoom", Round = "Final Round", Status = "Pending", StatusColor = "bg-red-700" },
-                new { Company = "Infosys", Role = "Software Developer", Date = "March 10, 2024", Time = "2:00 PM - 3:30 PM", Type = "Offline Interview", Location = "College Auditorium", Round = "HR Round", Status = "Completed", StatusColor = "bg-green-700" },
-                new { Company = "Wipro", Role = "Software Developer", Date = "March 15, 2024", Time = "10:00 AM - 11:30 AM", Type = "Online Interview", Location = "Microsoft Teams", Round = "Technical Round", Status = "Completed", StatusColor = "bg-green-700" },
-                new { Company = "Accenture", Role = "Software Developer", Date = "March 8, 2024", Time = "3:00 PM - 4:00 PM", Type = "Offline Interview", Location = "Conference Room A", Round = "Technical Round", Status = "Completed", StatusColor = "bg-green-700" }
-            };
-        }
-        @foreach (var iv in interviews)
-        {
-            <div class="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm relative flex flex-col pb-20 md:pb-6">
-                <div class="flex flex-row items-center gap-4 mb-6">
-                    <div class="w-14 h-14 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-2xl shrink-0">
-                        @iv.Company.Substring(0, 1)
-                    </div>
-                    <div class="flex flex-col justify-center">
-                        <h3 class="m-0 text-xl font-bold text-gray-900">@iv.Company</h3>
-                        <p class="m-0 text-gray-700 text-sm font-medium">@iv.Role</p>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-2 text-gray-600 text-sm font-medium mb-16 md:mb-12">
-                    <div class="flex items-center gap-3"><i class="fas fa-calendar text-gray-600 w-5"></i>@iv.Date</div>
-                    <div class="flex items-center gap-3"><i class="fas fa-clock text-gray-600 w-5"></i>@iv.Time</div>
-                    <div class="flex items-center gap-3">
-                        <i class="fas @(iv.Type.Contains("Online") ? "fa-video" : "fa-building") text-gray-600 w-5"></i>@iv.Type
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <i class="fas @(iv.Location.Contains("Room") || iv.Location.Contains("Auditorium") ? "fa-location-dot" : "fa-link") text-gray-600 w-5"></i>@iv.Location
-                    </div>
-                    <div class="flex items-center gap-3 md:col-span-2"><i class="fas fa-layer-group text-gray-600 w-5"></i>@iv.Round</div>
-                </div>
-
-                <div class="absolute bottom-6 right-6 mt-auto flex justify-end inset-x-auto">
-                    <span class="px-4 py-2 rounded text-white font-bold text-sm tracking-wide inline-block shadow-sm @iv.StatusColor">
-                        @iv.Status
-                    </span>
-                </div>
-            </div>
-        }
+    <div id="interviewContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="col-span-full py-12 text-center text-gray-500 bg-[#d1c2b5]/30 rounded-2xl border border-[#c4b5a6]/50 shadow-sm">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto mb-4"></div>
+            <p class="font-bold">Loading your interview schedule...</p>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Student')) return;
+            await loadInterviewSchedules();
+        });
+
+        async function loadInterviewSchedules() {
+            const container = document.getElementById('interviewContainer');
+            try {
+                const res = await authFetch('/api/student/interview-schedules');
+                if (!res || !res.ok) throw new Error('Failed to fetch schedule');
+                const result = await res.json();
+
+                if (result.success && result.data.length > 0) {
+                    renderInterviews(result.data);
+                } else {
+                    container.innerHTML = `
+                        <div class="col-span-full py-16 text-center bg-[#d1c2b5]/30 rounded-2xl border border-[#c4b5a6]/50 shadow-sm">
+                            <i class="fas fa-calendar-times text-gray-400 text-5xl mb-4"></i>
+                            <p class="text-gray-600 text-lg font-bold">No interviews scheduled for you yet.</p>
+                            <p class="text-gray-500 text-sm mt-1">Schedules will appear here once the admin updates your applied job drives.</p>
+                        </div>`;
+                }
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p class="text-red-500 col-span-full">Error loading interview schedules. Please try again later.</p>';
+            }
+        }
+
+        function renderInterviews(interviews) {
+            const container = document.getElementById('interviewContainer');
+            let html = '';
+
+            interviews.forEach(iv => {
+                const date = new Date(iv.interviewDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                const time = new Date(iv.interviewDate).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                
+                let statusClass = 'bg-yellow-100 text-yellow-700';
+                if (iv.status === 'Complete') statusClass = 'bg-green-100 text-green-700';
+                if (iv.status === 'Pending') statusClass = 'bg-yellow-100 text-yellow-700';
+                if (iv.status === 'Canceled') statusClass = 'bg-red-100 text-red-700';
+                
+                const firstLetter = iv.companyName ? iv.companyName.charAt(0).toUpperCase() : 'C';
+
+                html += `
+                <div class="bg-[#d1c2b5] p-6 rounded-2xl shadow-sm border border-[#c4b5a6] transition-all hover:shadow-md flex flex-col">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-[#2563eb] rounded-xl flex items-center justify-center text-white font-bold text-2xl shrink-0 shadow-sm">
+                                ${firstLetter}
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-900 m-0">${iv.companyName}</h4>
+                                <p class="text-gray-600 text-sm font-semibold m-0">${iv.jobRole}</p>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${statusClass}">${iv.status}</span>
+                    </div>
+
+                    <div class="text-[#e7000b] text-xl font-extrabold mb-4 tracking-tight">${iv.annualCTC || 'N/A'}</div>
+
+                    <div class="space-y-3 mb-6">
+                        <div class="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                            <i class="fas fa-calendar-alt text-gray-400 w-4"></i>
+                            <span>${date} at ${time}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                            <i class="fas ${iv.interviewType === 'Online' ? 'fa-video' : 'fa-map-marker-alt'} text-gray-400 w-4"></i>
+                            <span class="truncate" title="${iv.locationOrLink}">${iv.locationOrLink}</span>
+                        </div>
+                        <div class="inline-block px-3 py-1 bg-white/50 rounded-lg border border-gray-300">
+                             <span class="text-gray-800 text-xs font-bold uppercase">Round ${iv.roundNumber}: ${iv.roundName}</span>
+                        </div>
+                    </div>
+
+                    ${(iv.instructions || iv.waitingArea) ? `
+                    <div class="bg-white/30 p-4 rounded-xl border border-gray-400/20 space-y-2">
+                        ${iv.waitingArea ? `<p class="text-xs text-gray-700 m-0 font-bold flex items-center gap-2"><i class="fas fa-couch text-gray-400"></i> ${iv.waitingArea}</p>` : ''}
+                        ${iv.instructions ? `<p class="text-xs text-gray-700 m-0 font-bold italic flex items-start gap-2"><i class="fas fa-info-circle text-red-500 mt-0.5"></i> <span>Note: ${iv.instructions}</span></p>` : ''}
+                    </div>` : ''}
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+    </script>
+}
