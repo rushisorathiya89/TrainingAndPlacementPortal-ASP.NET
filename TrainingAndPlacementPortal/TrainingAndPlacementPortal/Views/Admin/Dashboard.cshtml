@@ -5,9 +5,29 @@
     <p class="text-gray-600 mb-8">Overview of placement activities and statistics.</p>
 
     <!-- Statistics -->
-    <div id="statsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        <!-- Stats will load here -->
-        <div class="col-span-full py-10 text-center text-gray-400">Loading statistics...</div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        @{
+            var stats = new[] {
+                new { Id = "totalStudents", Title = "Total Students", Icon = "fa-users", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Id = "pendingApprovals", Title = "Pending Approvals", Icon = "fa-clock", Color = "text-red-600", Bg = "bg-red-100" },
+                new { Id = "activeJobDrives", Title = "Active Job Drives", Icon = "fa-briefcase", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Id = "totalApplications", Title = "Total Applications", Icon = "fa-file-alt", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Id = "shortlistedStudents", Title = "Shortlisted Students", Icon = "fa-check-circle", Color = "text-blue-600", Bg = "bg-blue-100" },
+                new { Id = "selectedStudents", Title = "Selected Students", Icon = "fa-trophy", Color = "text-blue-600", Bg = "bg-blue-100" }
+            };
+        }
+        @foreach (var stat in stats)
+        {
+            <div class="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm">
+                <div>
+                    <p class="text-gray-600 m-0">@stat.Title</p>
+                    <h2 id="stat-@stat.Id" class="text-2xl font-bold text-blue-700 m-0">...</h2>
+                </div>
+                <div class="p-3 rounded-lg @stat.Bg">
+                    <i class="fas @stat.Icon @stat.Color text-xl w-[20px] h-[20px] flex items-center justify-center"></i>
+                </div>
+            </div>
+        }
     </div>
 
     <!-- Quick Actions -->
@@ -24,13 +44,13 @@
         }
         @foreach (var a in actions)
         {
-            <div class="bg-[#d1c2b5] p-8 rounded-xl shadow text-center border border-[#c4b5a6] transition-transform hover:scale-[1.02]">
+            <div class="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
                 <div class="flex justify-center mb-4 text-3xl">
                     <i class="fas @a.Icon @a.Color"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-1 m-0">@a.Title</h3>
-                <p class="text-gray-700 text-sm m-0">@a.Desc</p>
-                <a href="@a.Href" class="mt-4 font-bold @a.Color inline-block cursor-pointer border-none bg-transparent no-underline uppercase tracking-tight text-xs">
+                <h3 class="text-lg font-semibold mb-1 m-0">@a.Title</h3>
+                <p class="text-gray-600 text-sm m-0">@a.Desc</p>
+                <a href="@a.Href" class="mt-4 font-semibold @a.Color inline-block cursor-pointer border-none bg-transparent no-underline">
                     @a.Btn
                 </a>
             </div>
@@ -39,52 +59,28 @@
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!requireAuth('Admin')) return;
-            await loadDashboardStats();
-        });
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Admin')) return;
+    loadDashboardStats();
+});
 
-        async function loadDashboardStats() {
-            try {
-                const res = await authFetch('/api/admin/stats');
-                if (!res || !res.ok) throw new Error('Failed to fetch stats');
-                const result = await res.json();
-                
-                if (result.success) {
-                    renderStats(result.data);
-                }
-            } catch (err) {
-                console.error(err);
-                document.getElementById('statsGrid').innerHTML = '<p class="text-red-500 col-span-full">Failed to load statistics.</p>';
-            }
+async function loadDashboardStats() {
+    try {
+        const res = await authFetch('/api/admin/dashboard-stats');
+        const result = await res.json();
+        
+        if (result.success && result.data) {
+            document.getElementById('stat-totalStudents').innerText = result.data.totalStudents;
+            document.getElementById('stat-pendingApprovals').innerText = result.data.pendingApprovals;
+            document.getElementById('stat-activeJobDrives').innerText = result.data.activeJobDrives;
+            document.getElementById('stat-totalApplications').innerText = result.data.totalApplications;
+            document.getElementById('stat-shortlistedStudents').innerText = result.data.shortlistedStudents;
+            document.getElementById('stat-selectedStudents').innerText = result.data.selectedStudents;
         }
-
-        function renderStats(data) {
-            const stats = [
-                { title: "Total Students", value: data.totalStudents, icon: "fa-users", color: "text-blue-600", bg: "bg-blue-100" },
-                { title: "Pending Approvals", value: data.pendingApprovals, icon: "fa-clock", color: "text-red-600", bg: "bg-red-100" },
-                { title: "Active Job Drives", value: data.activeJobDrives, icon: "fa-briefcase", color: "text-blue-600", bg: "bg-blue-100" },
-                { title: "Total Applications", value: data.totalApplications, icon: "fa-file-alt", color: "text-blue-600", bg: "bg-blue-100" },
-                { title: "Shortlisted Students", value: data.shortlisted, icon: "fa-check-circle", color: "text-blue-600", bg: "bg-blue-100" },
-                { title: "Selected Students", value: data.placed, icon: "fa-trophy", color: "text-blue-600", bg: "bg-blue-100" }
-            ];
-
-            let html = '';
-            stats.forEach(s => {
-                html += `
-                <div class="flex justify-between items-center bg-[#d1c2b5] p-6 rounded-xl shadow-sm border border-[#c4b5a6]">
-                    <div>
-                        <p class="text-gray-700 text-sm font-bold uppercase tracking-wider m-0 mb-1">${s.title}</p>
-                        <h2 class="text-3xl font-extrabold text-[#e7000b] m-0">${s.value.toLocaleString()}</h2>
-                    </div>
-                    <div class="p-3 rounded-xl ${s.bg} shadow-sm">
-                        <i class="fas ${s.icon} ${s.color} text-xl w-[20px] h-[20px] flex items-center justify-center"></i>
-                    </div>
-                </div>`;
-            });
-
-            document.getElementById('statsGrid').innerHTML = html;
-        }
-    </script>
+    } catch (err) {
+        console.error('Failed to load stats:', err);
+    }
+}
+</script>
 }

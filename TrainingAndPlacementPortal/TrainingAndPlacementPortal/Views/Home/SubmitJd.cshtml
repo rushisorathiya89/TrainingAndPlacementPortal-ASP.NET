@@ -3,19 +3,25 @@
     Layout = "_AuthLayout";
 }
 
-<section class="bg-gray-100 min-h-screen py-12">
+<section class="bg-gray-100 min-h-screen py-12 relative">
+    <!-- Back to Home Button -->
+    <a href="/" class="absolute top-6 right-6 bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md shadow-sm hover:bg-gray-50 transition flex items-center font-medium text-sm no-underline">
+        <i class="fas fa-arrow-left mr-2"></i> Back to Home
+    </a>
+
     <div class="max-w-4xl mx-auto px-6">
         <div class="text-center mb-8">
             <h2 class="text-2xl font-bold text-gray-800">Campus Placement Registration</h2>
             <p class="text-gray-500 text-sm mt-2">RK University, Rajkot – Training &amp; Placement Cell</p>
         </div>
 
-        <form id="jdForm" onsubmit="event.preventDefault(); submitJdToApi();" class="space-y-6">
+        <!-- Success/Error Message -->
+        <div id="jdSubmitMessage" class="hidden mb-6 p-4 rounded-lg text-center font-medium"></div>
+
+        <form id="companyRegForm" onsubmit="return handleJdSubmit()" class="space-y-6">
             <!-- Contact Information -->
             <div class="bg-white rounded-xl shadow-sm p-6">
-                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
-                    <i class="fas fa-address-book"></i> Contact Information
-                </h3>
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-address-book"></i> Contact Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="bg-gray-100 p-4 rounded-lg">
                         <p class="font-semibold">Dr. Vishal Doshi</p>
@@ -32,145 +38,188 @@
 
             <!-- Company Details -->
             <div class="bg-white rounded-xl shadow-sm p-6">
-                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
-                    <i class="fas fa-building"></i> Company Details
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Company Name *</label>
-                        <input type="text" id="companyName" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. Multiicon" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Company Primary Email *</label>
-                        <input type="email" id="email" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. info@multiicon.in" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Website *</label>
-                        <input type="url" id="website" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. https://multiicon.in" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Job Location</label>
-                        <input type="text" id="jobLocation" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. Rajkot / Remote" />
-                    </div>
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-building"></i> Company Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Email *</label><input type="email" id="compEmail" class="w-full p-3 border rounded-lg" oninput="validateCompField('compEmail')" /><p id="compEmailError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Company Name *</label><input type="text" id="companyName" class="w-full p-3 border rounded-lg" oninput="validateCompField('companyName')" /><p id="companyNameError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Job Location *</label><input type="text" id="jobLocation" class="w-full p-3 border rounded-lg" oninput="validateCompField('jobLocation')" /><p id="jobLocationError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Company Website *</label><input type="url" id="website" class="w-full p-3 border rounded-lg" oninput="validateCompField('website')" /><p id="websiteError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Short Company Description</label><textarea id="description" class="w-full p-3 border rounded-lg" rows="3"></textarea></div>
                 </div>
             </div>
 
-            <!-- Contact Person Details -->
+            <!-- Job Role & Compensation -->
             <div class="bg-white rounded-xl shadow-sm p-6">
-                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
-                    <i class="fas fa-user-tie"></i> HR / Contact Person
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Name *</label>
-                        <input type="text" id="contactName" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. Shweta Jethwa" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Email *</label>
-                        <input type="email" id="contactEmail" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. hr@multiicon.in" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Mobile *</label>
-                        <input type="text" id="contactMobile" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. 9876543210" required />
-                    </div>
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-briefcase"></i> Job Role &amp; Compensation</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Job Position *</label><input type="text" id="jobPosition" class="w-full p-3 border rounded-lg" oninput="validateCompField('jobPosition')" /><p id="jobPositionError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Annual CTC *</label><input type="text" id="ctc" class="w-full p-3 border rounded-lg" oninput="validateCompField('ctc')" /><p id="ctcError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Internship Duration</label><input type="text" id="internshipDuration" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Stipend</label><input type="text" id="stipend" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Bond</label><input type="text" id="bond" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Date of Joining *</label><input type="date" id="joinDate" class="w-full p-3 border rounded-lg" onchange="validateCompField('joinDate')" /><p id="joinDateError" class="text-red-500 text-xs mt-1 hidden"></p></div>
                 </div>
             </div>
 
-            <!-- Job Details -->
+            <!-- Eligibility -->
             <div class="bg-white rounded-xl shadow-sm p-6">
-                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2">
-                    <i class="fas fa-briefcase"></i> Job details & Dates
-                </h3>
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-check-circle"></i> Eligibility Criteria</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Job Position *</label>
-                        <input type="text" id="jobPosition" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. PHP Developer" required />
+                        <p class="font-semibold text-sm mb-2">Eligible Batch</p>
+                        <div class="flex flex-wrap gap-3">
+                            @foreach (var b in new[] { "2025", "2024", "2023" }) { <label class="flex items-center gap-2"><input type="checkbox" name="eligibleBatch" value="@b" /> @b</label> }
+                        </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Annual CTC *</label>
-                        <input type="text" id="annualCtc" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. ₹3.6 LPA" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Expected Date of Joining *</label>
-                        <input type="date" id="dateOfJoining" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Preferred Campus Drive Date *</label>
-                        <input type="date" id="campusDriveDate" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Internship Duration</label>
-                        <input type="text" id="internshipDuration" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. 6 Months" />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Stipend</label>
-                        <input type="text" id="stipend" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. ₹10,000" />
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Selection Process *</label>
-                        <textarea id="selectionProcess" rows="3" class="w-full p-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-red-500" placeholder="e.g. Aptitude Test + Technical Round + HR" required></textarea>
+                        <p class="font-semibold text-sm mb-2">Eligible Courses</p>
+                        <div class="flex flex-wrap gap-3">
+                            @foreach (var c in new[] { "B.Tech CS", "B.Tech IT", "Mechanical", "Civil", "Electrical", "BCA", "MCA", "MBA" }) { <label class="flex items-center gap-2"><input type="checkbox" name="eligibleCourse" value="@c" /> @c</label> }
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="w-full bg-red-600 text-white font-bold py-4 rounded-xl hover:bg-red-700 transition shadow-lg">
-                Submit Job Description
-            </button>
+            <!-- Selection Process -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-clipboard-list"></i> Selection Process</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Selection Process *</label><textarea id="selectionProcess" class="w-full p-3 border rounded-lg" rows="3" oninput="validateCompField('selectionProcess')"></textarea><p id="selectionProcessError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Campus Drive Date *</label><input type="date" id="driveDate" class="w-full p-3 border rounded-lg" onchange="validateCompField('driveDate')" /><p id="driveDateError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Registration Link (Optional)</label><input type="url" id="registrationLink" class="w-full p-3 border rounded-lg" /></div>
+                </div>
+            </div>
+
+            <!-- Contact Person -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-user-tie"></i> Contact Person Details</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Name *</label><input type="text" id="contactName" class="w-full p-3 border rounded-lg" oninput="validateCompField('contactName')" /><p id="contactNameError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Email *</label><input type="email" id="contactEmail" class="w-full p-3 border rounded-lg" oninput="validateCompField('contactEmail')" /><p id="contactEmailError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Contact Mobile *</label><input type="text" id="contactMobile" class="w-full p-3 border rounded-lg" oninput="validateCompField('contactMobile')" /><p id="contactMobileError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                </div>
+            </div>
+
+            <!-- Additional Details -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-info-circle"></i> Additional Details</h3>
+                <textarea id="additionalNotes" class="w-full p-3 border rounded-lg" rows="4" placeholder="Any additional information or special requirements"></textarea>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col items-center gap-3 pb-6">
+                <div class="flex flex-col sm:flex-row justify-center gap-3 w-full sm:w-auto">
+                    <button type="button" onclick="clearForm('companyRegForm')" class="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto bg-white cursor-pointer">Clear Form</button>
+                    <button type="submit" id="jdSubmitBtn" class="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto border-none cursor-pointer">Submit Form</button>
+                </div>
+                <p class="text-xs text-gray-400 mt-3 text-center max-w-md mx-auto">After registration, admin will verify your details and eligibility. After verification you will receive further instructions.</p>
+            </div>
         </form>
     </div>
 </section>
 
 @section Scripts {
-    <script>
-        async function submitJdToApi() {
-            const dto = {
-                companyName: document.getElementById('companyName').value,
-                email: document.getElementById('email').value,
-                website: document.getElementById('website').value,
-                jobLocation: document.getElementById('jobLocation').value,
-                contactName: document.getElementById('contactName').value,
-                contactEmail: document.getElementById('contactEmail').value,
-                contactMobile: document.getElementById('contactMobile').value,
-                jobPosition: document.getElementById('jobPosition').value,
-                annualCtc: document.getElementById('annualCtc').value,
-                internshipDuration: document.getElementById('internshipDuration').value,
-                stipend: document.getElementById('stipend').value,
-                dateOfJoining: document.getElementById('dateOfJoining').value,
-                campusDriveDate: document.getElementById('campusDriveDate').value,
-                selectionProcess: document.getElementById('selectionProcess').value,
-                bond: "N/A",
-                registrationLink: "N/A",
-                additionalNotes: "N/A"
-            };
+<script>
+async function handleJdSubmit() {
+    // Run field validations first
+    let valid = true;
+    const requiredFields = [
+        { id: 'compEmail', msg: 'Email is required' },
+        { id: 'companyName', msg: 'Company name is required' },
+        { id: 'jobLocation', msg: 'Job location is required' },
+        { id: 'website', msg: 'Website is required' },
+        { id: 'jobPosition', msg: 'Job position is required' },
+        { id: 'ctc', msg: 'Annual CTC is required' },
+        { id: 'joinDate', msg: 'Date of joining is required' },
+        { id: 'selectionProcess', msg: 'Selection process is required' },
+        { id: 'driveDate', msg: 'Campus drive date is required' },
+        { id: 'contactName', msg: 'Contact name is required' },
+        { id: 'contactEmail', msg: 'Contact email is required' },
+        { id: 'contactMobile', msg: 'Contact mobile is required' }
+    ];
 
-            try {
-                const submitBtn = document.querySelector('button[type="submit"]');
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'Submitting...';
-                submitBtn.disabled = true;
+    requiredFields.forEach(f => {
+        clearError(f.id + 'Error');
+        const el = document.getElementById(f.id);
+        if (el && !el.value) { showError(f.id + 'Error', f.msg); setBorderError(f.id, true); valid = false; }
+        else if (el) { setBorderError(f.id, false); }
+    });
 
-                const response = await fetch('/api/company/submit-jd', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dto)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert(result.message);
-                    window.location.href = '/Home/Index';
-                } else {
-                    alert('Error: ' + (result.message || 'Validation failed.'));
-                }
-            } catch (err) {
-                alert('An error occurred while submitting JD.');
-                console.error(err);
-            } finally {
-                const submitBtn = document.querySelector('button[type="submit"]');
-                submitBtn.textContent = 'Submit Job Description';
-                submitBtn.disabled = false;
-            }
+    if (!valid) return false;
+
+    // Collect checkbox values
+    const batches = Array.from(document.querySelectorAll('input[name="eligibleBatch"]:checked')).map(cb => cb.value).join(',');
+    const courses = Array.from(document.querySelectorAll('input[name="eligibleCourse"]:checked')).map(cb => cb.value).join(',');
+
+    const payload = {
+        companyName: document.getElementById('companyName').value,
+        email: document.getElementById('compEmail').value,
+        website: document.getElementById('website').value,
+        jobLocation: document.getElementById('jobLocation').value,
+        description: document.getElementById('description').value,
+        jobPosition: document.getElementById('jobPosition').value,
+        annualCTC: document.getElementById('ctc').value,
+        internshipDuration: document.getElementById('internshipDuration').value,
+        stipend: document.getElementById('stipend').value,
+        bond: document.getElementById('bond').value,
+        dateOfJoining: document.getElementById('joinDate').value,
+        eligibleBatches: batches,
+        eligibleCourses: courses,
+        selectionProcess: document.getElementById('selectionProcess').value,
+        campusDriveDate: document.getElementById('driveDate').value,
+        registrationLink: document.getElementById('registrationLink').value,
+        additionalNotes: document.getElementById('additionalNotes').value,
+        contactName: document.getElementById('contactName').value,
+        contactEmail: document.getElementById('contactEmail').value,
+        contactMobile: document.getElementById('contactMobile').value
+    };
+
+    const btn = document.getElementById('jdSubmitBtn');
+    const msgDiv = document.getElementById('jdSubmitMessage');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    try {
+        const res = await fetch('/api/company/submit-jd', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        msgDiv.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+
+        if (data.success) {
+            msgDiv.classList.add('bg-green-100', 'text-green-700');
+            msgDiv.textContent = 'You Submitted a SubmitJD form Now Administator Reacing You Shortly';
+            
+            // Comprehensive form clear
+            const form = document.getElementById('companyRegForm');
+            form.reset();
+            // Clear custom checked states (checkboxes)
+            Array.from(form.querySelectorAll('input[type="checkbox"]')).forEach(cb => cb.checked = false);
+            
+            // Reset button to allow another submission
+            btn.disabled = false;
+            btn.textContent = 'Submit Another JD';
+            
+            // Scroll to message
+            msgDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            msgDiv.classList.add('bg-red-100', 'text-red-700');
+            msgDiv.textContent = data.message || 'Submission failed.';
+            btn.disabled = false;
+            btn.textContent = 'Submit Form';
         }
-    </script>
+    } catch (err) {
+        msgDiv.classList.remove('hidden', 'bg-green-100', 'text-green-700');
+        msgDiv.classList.add('bg-red-100', 'text-red-700');
+        msgDiv.textContent = 'Network error. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Submit Form';
+    }
+
+    return false;
+}
+</script>
 }

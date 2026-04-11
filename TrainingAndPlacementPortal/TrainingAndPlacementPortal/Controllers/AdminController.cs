@@ -24,6 +24,9 @@ namespace TrainingAndPlacementPortal.Controllers
         [HttpGet("/Admin/StudentsManagement")]
         public IActionResult StudentsManagement() => View();
 
+        [HttpGet("/Admin/AppliedStudents")]
+        public IActionResult AppliedStudents() => View();
+
         [HttpGet("/AdminInterviewSchedule")]
         [HttpGet("/Admin/InterviewSchedule")]
         public IActionResult InterviewSchedule() => View();
@@ -39,10 +42,6 @@ namespace TrainingAndPlacementPortal.Controllers
         [HttpGet("/AdminChangePassword")]
         [HttpGet("/Admin/ChangePassword")]
         public IActionResult ChangePassword() => View();
-
-        [HttpGet("/AdminManageApplications")]
-        [HttpGet("/Admin/ManageApplications")]
-        public IActionResult ManageApplications() => View();
 
         [HttpGet("/AdminForgotPassword")]
         [HttpGet("/Admin/ForgotPassword")]

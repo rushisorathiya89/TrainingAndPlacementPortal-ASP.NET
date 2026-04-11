@@ -38,8 +38,6 @@ namespace TrainingAndPlacementPortal.Models
         [MaxLength(15)]
         public string MobileNumber { get; set; } = string.Empty;
 
-        public DateTime? DateOfBirth { get; set; }
-
         // Academic Details
         [Required]
         public double TenthPercentage { get; set; }
@@ -71,18 +69,9 @@ namespace TrainingAndPlacementPortal.Models
         [MaxLength(10)]
         public string? Pincode { get; set; }
 
-        // Documents paths (stored on server filesystem)
+        // Documents paths
         public string? ConsentFormPath { get; set; }
         public string? PaymentProofPath { get; set; }
-
-        // Razorpay Payment
-        [MaxLength(100)]
-        public string? RazorpayOrderId { get; set; }
-        [MaxLength(100)]
-        public string? RazorpayPaymentId { get; set; }
-        [MaxLength(20)]
-        public string PaymentStatus { get; set; } = "Pending"; // Pending, Paid, Failed
-        public decimal PaymentAmount { get; set; } = 0;
 
         public bool IsApproved { get; set; } = false;
         public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;

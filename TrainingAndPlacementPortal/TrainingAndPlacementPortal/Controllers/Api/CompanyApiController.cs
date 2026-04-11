@@ -19,6 +19,42 @@ namespace TrainingAndPlacementPortal.Controllers.Api
             _context = context;
         }
 
+        private async Task<int> GetCompanyId()
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int userId)) return 0;
+            
+            var company = await _context.Companies.FirstOrDefaultAsync(c => c.UserId == userId);
+            return company?.Id ?? 0;
+        }
+
+        // ===== COMPANY: Get my own job postings =====
+        // GET: api/company/my-jobs
+        [HttpGet("my-jobs")]
+        [Authorize(Roles = "Company")]
+        public async Task<IActionResult> GetMyJobs()
+        {
+            var companyId = await GetCompanyId();
+            if (companyId == 0) return NotFound(new { success = false, message = "Company profile not found." });
+
+            var postings = await _context.JobPostings
+                .Where(j => j.CompanyId == companyId)
+                .OrderByDescending(j => j.PostedAt)
+                .Select(j => new
+                {
+                    j.Id,
+                    j.JobPosition,
+                    j.AnnualCTC,
+                    j.Status,
+                    j.IsActive,
+                    j.PostedAt,
+                    ApplicantCount = _context.JobApplications.Count(a => a.JobPostingId == j.Id)
+                })
+                .ToListAsync();
+
+            return Ok(new { success = true, data = postings });
+        }
+
         // ===== PUBLIC: Recruiter submits JD =====
         // POST: api/company/submit-jd
         [HttpPost("submit-jd")]
@@ -54,9 +90,39 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 }
                 else
                 {
-                    // Create new company
+                    // Check if a user with this email already exists
+                    var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+                    User user;
+                    
+                    if (existingUser == null)
+                    {
+                        // Create a new User account for the company
+                        user = new User
+                        {
+                            Email = dto.Email,
+                            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Company@123"), // Default password
+                            Role = "Company",
+                            IsApproved = true, // Auto-approve for JD submission for now
+                            CreatedAt = DateTime.UtcNow
+                        };
+                        _context.Users.Add(user);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        user = existingUser;
+                        // Ensure user has Company role if they are submitting a JD
+                        if (user.Role == "Student") 
+                        {
+                             return BadRequest(new { success = false, message = "Email is already registered as a student." });
+                        }
+                        user.Role = "Company";
+                    }
+
+                    // Create new company linked to user
                     company = new Company
                     {
+                        UserId = user.Id,
                         CompanyName = dto.CompanyName,
                         Email = dto.Email,
                         Website = dto.Website ?? "",
@@ -69,7 +135,7 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                         RegisteredAt = DateTime.UtcNow
                     };
                     _context.Companies.Add(company);
-                    await _context.SaveChangesAsync(); // Save to get company Id
+                    await _context.SaveChangesAsync(); 
                 }
 
                 // Create job posting linked to company
@@ -252,8 +318,6 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 jobPosting.Company.Status = "Verified";
             else if (dto.Status == "Rejected")
                 jobPosting.Company.Status = "Rejected";
-            else if (dto.Status == "OnHold")
-                jobPosting.Company.Status = "OnHold";
             else
                 jobPosting.Company.Status = "Pending";
 

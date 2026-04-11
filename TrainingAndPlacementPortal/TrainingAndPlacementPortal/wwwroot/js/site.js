@@ -493,33 +493,10 @@ function validateStudentRegistration() {
 }
 
 // ---- Company Registration Validation ----
+// Now handled by handleJdSubmit() in SubmitJd.cshtml via API
 function validateCompanyRegistration() {
-    let valid = true;
-    const fields = [
-        { id: 'compEmail', msg: 'Email is required' },
-        { id: 'companyName', msg: 'Company name is required' },
-        { id: 'jobLocation', msg: 'Job location is required' },
-        { id: 'website', msg: 'Website is required' },
-        { id: 'jobPosition', msg: 'Job position is required' },
-        { id: 'ctc', msg: 'Annual CTC is required' },
-        { id: 'joinDate', msg: 'Date of joining is required' },
-        { id: 'selectionProcess', msg: 'Selection process is required' },
-        { id: 'driveDate', msg: 'Campus drive date is required' },
-        { id: 'contactName', msg: 'Contact name is required' },
-        { id: 'contactEmail', msg: 'Contact email is required' },
-        { id: 'contactMobile', msg: 'Contact mobile is required' }
-    ];
-
-    fields.forEach(f => {
-        clearError(f.id + 'Error');
-        const el = document.getElementById(f.id);
-        if (el && !el.value) { showError(f.id + 'Error', f.msg); setBorderError(f.id, true); valid = false; }
-        else if (el) { setBorderError(f.id, false); }
-    });
-
-    if (valid) {
-        alert('JD submitted successfully! Our T&P team will review it.');
-        window.location.href = '/';
+    if (typeof handleJdSubmit === 'function') {
+        return handleJdSubmit();
     }
     return false;
 }
@@ -571,47 +548,15 @@ function filterStudentTable() {
 }
 
 // ---- Company Status Management ----
+// Now handled by updateJpStatus() in CompanyManagement.cshtml via API
 function changeCompanyStatus(cardId, newStatus) {
-    const card = document.getElementById(cardId);
-    if (!card) return;
-
-    // The exact React UI has two button sets:
-    const statusContainer = card.querySelector('.status-buttons-container');
-    const undoContainer = card.querySelector('.undo-container');
-    const statusIndicator = card.querySelector('.status-indicator');
-
-    if (statusContainer && undoContainer && statusIndicator) {
-        statusContainer.classList.add('hidden');
-        undoContainer.classList.remove('hidden');
-
-        if (newStatus === 'verified') {
-            statusIndicator.innerHTML = '✓ ACCEPTED';
-            statusIndicator.className = 'status-indicator bg-green-600 flex-1 text-white py-2 rounded border-none font-semibold cursor-not-allowed';
-        } else if (newStatus === 'rejected') {
-            statusIndicator.innerHTML = '✕ DECLINED';
-            statusIndicator.className = 'status-indicator bg-red-600 flex-1 text-white py-2 rounded border-none font-semibold cursor-not-allowed';
-        }
-    }
-
-    card.dataset.status = newStatus;
-
-    // Store previous status for undo (assuming pending)
-    card.dataset.prevStatus = "pending";
+    // Legacy stub — company status is now managed via API in CompanyManagement.cshtml
+    console.log('changeCompanyStatus is deprecated. Use updateJpStatus() instead.');
 }
 
 function undoCompanyStatus(cardId) {
-    const card = document.getElementById(cardId);
-    if (!card) return;
-
-    const statusContainer = card.querySelector('.status-buttons-container');
-    const undoContainer = card.querySelector('.undo-container');
-
-    if (statusContainer && undoContainer) {
-        statusContainer.classList.remove('hidden');
-        undoContainer.classList.add('hidden');
-    }
-
-    card.dataset.status = card.dataset.prevStatus || 'pending';
+    // Legacy stub — company status is now managed via API in CompanyManagement.cshtml
+    console.log('undoCompanyStatus is deprecated. Use updateJpStatus() instead.');
 }
 
 // ---- Student Profile Edit Toggle ----
@@ -639,45 +584,39 @@ function toggleProfileEdit() {
 }
 
 // ---- Job Apply ----
-async function applyJob(jobId) {
-    const btnId = 'applyBtn' + jobId;
+async function applyJobApi(jobId, btnId) {
     const btn = document.getElementById(btnId);
-    
-    if (!requireAuth('Student')) return;
-
     if (btn) {
-        const originalText = btn.textContent;
         btn.textContent = 'Applying...';
         btn.disabled = true;
+    }
 
-        try {
-            const res = await authFetch('/api/applications/apply/' + jobId, {
-                method: 'POST'
-            });
+    try {
+        const res = await authFetch(`/api/applications/apply/${jobId}`, {
+            method: 'POST'
+        });
+        const result = await res.json();
 
-            if (res && res.ok) {
-                const result = await res.json();
-                if (result.success) {
-                    btn.textContent = 'Applied';
-                    btn.className = 'btn-disabled flex-1';
-                    alert(result.message || 'Application submitted successfully!');
-                } else {
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    alert('Error: ' + result.message);
-                }
-            } else {
-                const errorData = await res.json();
-                btn.textContent = originalText;
-                btn.disabled = false;
-                alert('Failed to apply. ' + (errorData?.message || ''));
+        if (result.success) {
+            if (btn) {
+                btn.textContent = 'Applied ✅';
+                btn.className = 'btn-disabled flex-1 bg-green-100 text-green-800 cursor-not-allowed border-none font-bold py-3 rounded-lg text-center';
             }
-        } catch (err) {
-            console.error(err);
-            btn.textContent = originalText;
-            btn.disabled = false;
-            alert('An error occurred while applying.');
+            alert('Application submitted successfully!');
+        } else {
+            if (btn) {
+                btn.textContent = 'Apply';
+                btn.disabled = false;
+            }
+            alert(result.message || 'Failed to apply.');
         }
+    } catch (err) {
+        if (btn) {
+            btn.textContent = 'Apply';
+            btn.disabled = false;
+        }
+        alert('Network error. Please try again.');
+        console.error(err);
     }
 }
 
@@ -767,19 +706,54 @@ function clearForm(formId) {
 
 // ---- Active Sidebar Highlight ----
 document.addEventListener('DOMContentLoaded', function () {
-    const path = window.location.pathname;
+    const path = window.location.pathname.toLowerCase();
+    const normalizedPath = path.endsWith('/') && path.length > 1 ? path.slice(0, -1) : path;
+
+    // Mapping sub-pages to their parent sidebar items
+    const subPageMap = {
+        // Admin sub-pages
+        '/admin/jddetail': '/admincompanymanagement',
+        '/adminjddetail': '/admincompanymanagement',
+        '/admin/appliedstudents': '/admincompanymanagement',
+        '/admin/interviewscheduleform': '/admininterviewschedule',
+        '/admininterviewscheduleform': '/admininterviewschedule',
+        '/admin/forgotpassword': '/adminchangepassword',
+        '/adminforgotpassword': '/adminchangepassword',
+
+        // Student sub-pages
+        '/student/jobdetails': '/studjobs',
+        '/studjobdetails': '/studjobs',
+        '/student/forgotpassword': '/studchangepass',
+        '/studforgotpassword': '/studchangepass',
+        
+        // Normalize common variations between /Student/ and /Stud/
+        '/student/dashboard': '/studdashboard',
+        '/student/profile': '/studprofile',
+        '/student/jobs': '/studjobs',
+        '/student/applications': '/studapplications',
+        '/student/interviewschedule': '/studinterviewschedule',
+        '/student/placementhistory': '/studplacementhistory',
+        '/student/changepassword': '/studchangepass',
+
+        // Normalize common variations between /Admin/ and /Admin
+        '/admin/dashboard': '/admindashboard',
+        '/admin/profile': '/adminprofile',
+        '/admin/companymanagement': '/admincompanymanagement',
+        '/admin/studentsmanagement': '/adminstudentsmanagement',
+        '/admin/interviewschedule': '/admininterviewschedule',
+        '/admin/placementhistory': '/adminplacementhistory',
+        '/admin/changepassword': '/adminchangepassword'
+    };
+
+    const activeHref = subPageMap[normalizedPath] || normalizedPath;
+
     document.querySelectorAll('.sidebar-link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === path) {
+        const href = (link.getAttribute('href') || '').toLowerCase();
+        
+        if (href === activeHref || href === normalizedPath) {
             link.classList.add('active');
             link.classList.remove('bg-white');
         }
-        // Sub-page highlights
-        if (href === '/Student/Jobs' && path === '/Student/JobDetails') { link.classList.add('active'); link.classList.remove('bg-white'); }
-        if (href === '/Student/ChangePassword' && path === '/Student/ForgotPassword') { link.classList.add('active'); link.classList.remove('bg-white'); }
-        if (href === '/Admin/CompanyManagement' && path === '/Admin/JdDetail') { link.classList.add('active'); link.classList.remove('bg-white'); }
-        if (href === '/Admin/InterviewSchedule' && path === '/Admin/InterviewScheduleForm') { link.classList.add('active'); link.classList.remove('bg-white'); }
-        if (href === '/Admin/ChangePassword' && path === '/Admin/ForgotPassword') { link.classList.add('active'); link.classList.remove('bg-white'); }
     });
 
     // Smooth scroll for anchor links on home page

@@ -24,7 +24,8 @@ namespace TrainingAndPlacementPortal.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation property
+        // Navigation properties
         public Student? Student { get; set; }
+        public Company? Company { get; set; }
     }
 }

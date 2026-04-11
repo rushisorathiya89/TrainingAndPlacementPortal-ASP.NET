@@ -10,6 +10,7 @@
 
     <!-- Menu -->
     <ul id="sidebarMenu" class="space-y-3 hidden md:block mt-4 md:mt-0 list-none p-0">
+<<<<<<< HEAD
         @{
             var currentPath = Context.Request.Path.ToString().ToLower();
             string GetActiveClass(string path) => currentPath.StartsWith(path.ToLower()) ? "active-sidebar-link" : "";
@@ -22,6 +23,15 @@
         <li><a href="/AdminInterviewSchedule" class="sidebar-link @GetActiveClass("/AdminInterviewSchedule")"><i class="fas fa-calendar-alt text-xl"></i><span class="font-medium">Interview Schedule</span></a></li>
         <li><a href="/AdminPlacementHistory" class="sidebar-link @GetActiveClass("/AdminPlacementHistory")"><i class="fas fa-history text-xl"></i><span class="font-medium">Placement History</span></a></li>
         <li><a href="/AdminChangePassword" class="sidebar-link @GetActiveClass("/AdminChangePassword")"><i class="fas fa-lock text-xl"></i><span class="font-medium">Change Password</span></a></li>
+=======
+        <li><a href="/AdminDashboard" class="sidebar-link"><i class="fas fa-th-large text-xl"></i><span class="font-medium">Dashboard</span></a></li>
+        <li><a href="/AdminProfile" class="sidebar-link"><i class="fas fa-user text-xl"></i><span class="font-medium">Profile</span></a></li>
+        <li><a href="/AdminCompanyManagement" class="sidebar-link"><i class="fas fa-building text-xl"></i><span class="font-medium">Company Management</span></a></li>
+        <li><a href="/AdminStudentsManagement" class="sidebar-link"><i class="fas fa-users text-xl"></i><span class="font-medium">Student Management</span></a></li>
+        <li><a href="/AdminInterviewSchedule" class="sidebar-link"><i class="fas fa-calendar-alt text-xl"></i><span class="font-medium">Interview Schedule</span></a></li>
+        <li><a href="/AdminPlacementHistory" class="sidebar-link"><i class="fas fa-history text-xl"></i><span class="font-medium">Placement History</span></a></li>
+        <li><a href="/AdminChangePassword" class="sidebar-link"><i class="fas fa-lock text-xl"></i><span class="font-medium">Change Password</span></a></li>
+>>>>>>> 851760d24f17ea08d5a29a3df5f5dab26368342f
         <li><a href="javascript:void(0)" onclick="logout()" class="sidebar-link"><i class="fas fa-sign-out-alt text-xl"></i><span class="font-medium">Logout</span></a></li>
     </ul>
 </div>

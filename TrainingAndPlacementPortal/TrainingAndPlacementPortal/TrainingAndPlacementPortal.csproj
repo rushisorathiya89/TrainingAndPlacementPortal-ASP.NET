@@ -19,7 +19,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-    <PackageReference Include="Razorpay" Version="3.3.2" />
   </ItemGroup>
 
 </Project>

@@ -23,222 +23,251 @@
         <div class="relative w-full md:w-72 flex-shrink-0">
             <select id="filterStatus" onchange="filterCards()" class="w-full appearance-none p-3 pr-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-gray-700 shadow-sm">
                 <option value="All">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="verified">Verified</option>
-                <option value="rejected">Rejected</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="OnHold">On Hold</option>
             </select>
             <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
         </div>
     </div>
 
-    <!-- Company Cards -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-        <div id="loadingIndicator" class="col-span-full flex justify-center items-center py-10">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-        </div>
-        <!-- Cards will be dynamically inserted here -->
+    <!-- Loading State -->
+    <div id="companyLoading" class="text-center py-12">
+        <i class="fas fa-spinner fa-spin text-3xl text-red-500"></i>
+        <p class="text-gray-500 mt-3">Loading company data...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div id="companyEmpty" class="hidden text-center py-12">
+        <i class="fas fa-building text-5xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500">No JD submissions found.</p>
+    </div>
+
+    <!-- Company Cards Container -->
+    <div id="companyCardsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 hidden">
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!requireAuth('Admin')) return;
-            await loadJobPostings();
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (!requireAuth('Admin')) return;
+    loadCompanyCards();
+});
+
+async function loadCompanyCards() {
+    const container = document.getElementById('companyCardsContainer');
+    const loading = document.getElementById('companyLoading');
+    const empty = document.getElementById('companyEmpty');
+
+    try {
+        const res = await authFetch('/api/company/job-postings');
+        const result = await res.json();
+
+        loading.classList.add('hidden');
+
+        if (!result.success || !result.data || result.data.length === 0) {
+            empty.classList.remove('hidden');
+            return;
+        }
+
+        container.classList.remove('hidden');
+        container.innerHTML = '';
+
+        result.data.forEach(jp => {
+            const card = createCompanyCard(jp);
+            container.appendChild(card);
         });
 
-        let allJobPostings = [];
-
-        async function loadJobPostings() {
-            try {
-                const res = await authFetch('/api/company/job-postings');
-                if (!res || !res.ok) throw new Error('Failed to fetch');
-                const data = await res.json();
-                
-                allJobPostings = data.data || [];
-                renderCards(allJobPostings);
-            } catch (err) {
-                console.error('Error loading job postings:', err);
-                document.getElementById('loadingIndicator').innerHTML = '<p class="text-red-500 font-semibold">Failed to load postings. Please try again later.</p>';
-            }
-        }
-
-        function renderCards(postings) {
-            const container = document.querySelector('.grid-cols-1.lg\\:grid-cols-2');
-            const loading = document.getElementById('loadingIndicator');
-            if (loading) loading.remove();
-            
-            // Remove existing cards
-            container.querySelectorAll('.filterable-card').forEach(c => c.remove());
-
-            if (postings.length === 0) {
-                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-500 font-medium">No job postings found.</div>';
-                return;
-            }
-
-            let html = '';
-            postings.forEach(c => {
-                const firstLetter = c.companyName ? c.companyName.charAt(0).toUpperCase() : 'C';
-                const status = c.status || 'Pending';
-                
-                // Status Badge Logic
-                let badgeHtml = '';
-                if (status === 'Approved') {
-                    badgeHtml = `<span class="bg-[#f0fdf4] text-[#166534] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#bbf7d0] flex items-center gap-1"><i class="fas fa-check"></i> Approved</span>`;
-                } else if (status === 'OnHold') {
-                    badgeHtml = `<span class="bg-[#fffbeb] text-[#d97706] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#fef3c7] flex items-center gap-1"><i class="fas fa-pause-circle"></i> On Hold</span>`;
-                } else {
-                    badgeHtml = `<span class="bg-[#fffbeb] text-[#ca8a04] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#fef3c7] flex items-center gap-1">⌛ Pending</span>`;
-                }
-
-                // Action Buttons Logic
-                let actionButtonsHtml = '';
-                if (status === 'Approved') {
-                    actionButtonsHtml = `
-                        <div class="grid grid-cols-2 gap-2 mb-4">
-                            <div class="bg-[#10b981] text-white py-2 round-md text-center font-bold text-xs flex items-center justify-center gap-1 rounded-md">
-                                <i class="fas fa-check"></i> APPROVED
-                            </div>
-                            <button onclick="updateStatus(${c.id}, 'Pending')" class="bg-[#6b7280] text-white py-2 rounded-md hover:bg-[#4b5563] transition font-bold text-xs uppercase cursor-pointer border-none shadow-sm">
-                                Undo
-                            </button>
-                        </div>`;
-                } else {
-                    actionButtonsHtml = `
-                        <div class="grid grid-cols-3 gap-2 mb-4">
-                            <button onclick="updateStatus(${c.id}, 'Rejected')" class="bg-[#dc2626] text-white py-2 rounded-md hover:bg-red-700 transition font-bold text-xs uppercase cursor-pointer border-none shadow-sm flex items-center justify-center gap-1">
-                                <i class="fas fa-times"></i> DECLINE
-                            </button>
-                            <button onclick="updateStatus(${c.id}, 'OnHold')" class="bg-[#f97316] text-white py-2 rounded-md hover:bg-orange-600 transition font-bold text-xs uppercase cursor-pointer border-none shadow-sm flex items-center justify-center gap-1">
-                                <i class="fas fa-pause"></i> HOLD
-                            </button>
-                            <button onclick="updateStatus(${c.id}, 'Approved')" class="bg-[#10b981] text-white py-2 rounded-md hover:bg-[#059669] transition font-bold text-xs uppercase cursor-pointer border-none shadow-sm flex items-center justify-center gap-1">
-                                <i class="fas fa-check"></i> ACCEPT
-                            </button>
-                        </div>`;
-                }
-
-                html += `
-                <div id="card-${c.id}" class="filterable-card bg-[#e5dcd3] p-5 rounded-2xl shadow-sm border border-[#d6c9bc] transition-all hover:shadow-md flex flex-col" 
-                     data-name="${c.companyName}" data-role="${c.jobPosition}" data-location="${c.jobLocation}" data-salary="${c.annualCTC}" data-status="${c.status.toLowerCase()}">
-                    
-                    <!-- Header: Icon, Info, Badge -->
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-start gap-4">
-                            <div class="bg-[#2563eb] text-white w-12 h-12 flex items-center justify-center rounded-xl text-xl font-bold shrink-0 shadow-sm">
-                                ${firstLetter}
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-[#1f2937] text-base leading-tight">${c.companyName}</h3>
-                                <p class="text-[#4b5563] text-sm font-medium mt-0.5">${c.jobPosition}</p>
-                            </div>
-                        </div>
-                        ${badgeHtml}
-                    </div>
-
-                    <!-- Details: Salary, Location, Process -->
-                    <div class="mb-5">
-                        <p class="text-[#dc2626] font-bold text-xl mb-1">${c.annualCTC || 'N/A'}</p>
-                        <p class="flex items-center gap-1.5 text-[#4b5563] text-sm font-semibold mb-2">
-                            <i class="fas fa-map-marker-alt opacity-70"></i> ${c.jobLocation || 'N/A'}
-                        </p>
-                        <p class="text-[#4b5563] text-xs font-medium leading-relaxed">
-                             ${c.selectionProcess || 'N/A'}
-                        </p>
-                    </div>
-
-                    <!-- Lifecycle Actions -->
-                    ${actionButtonsHtml}
-
-                    <!-- Footer Details -->
-                    <div class="grid grid-cols-2 gap-3 pt-2">
-                        <a href="/Admin/JdDetail?id=${c.id}" class="bg-[#efe5d9] border border-[#d1c2b1] text-[#374151] py-2.5 rounded-lg hover:bg-white/50 transition font-bold text-xs text-center no-underline uppercase tracking-tight shadow-sm">
-                            VIEW DETAILS
-                        </a>
-                        <a href="/Admin/JdDetail?id=${c.id}&edit=true" class="bg-[#2563eb] text-white py-2.5 rounded-lg hover:bg-[#1d4ed8] transition font-bold text-xs text-center no-underline uppercase tracking-tight border-none shadow-sm">
-                            EDIT DETAILS
-                        </a>
-                    </div>
-                </div>`;
-            });
-
-            container.insertAdjacentHTML('beforeend', html);
-        }
-
-        async function updateStatus(id, newStatus) {
-            try {
-                const res = await authFetch(`/api/company/job-postings/${id}/status`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: newStatus })
-                });
-
-                if (res && res.ok) {
-                    const result = await res.json();
-                    if (result.success) {
-                        // Re-fetch to guarantee sync with DB
-                        await loadJobPostings();
-                        // Re-apply filters
-                        filterCards();
-                    } else {
-                        alert(result.message || 'Update failed');
-                    }
-                } else {
-                    alert('Update request failed.');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('An error occurred.');
-            }
-        }
-        
-        // Override filterCards since we don't have static IDs anymore
-        function filterCards() {
-            const searchTerm = (document.getElementById('searchInput')?.value || '').toLowerCase();
-            const searchCategory = document.getElementById('searchCategory')?.value || 'All';
-            const filterStatus = document.getElementById('filterStatus')?.value || 'All';
-            
-            // Map our specific backend statuses to frontend filter statuses
-            let mappedFilterStatus = filterStatus;
-            
-            const cards = document.querySelectorAll('.filterable-card');
-            cards.forEach(card => {
-                const name = (card.dataset.name || '').toLowerCase();
-                const role = (card.dataset.role || '').toLowerCase();
-                const location = (card.dataset.location || '').toLowerCase();
-                const salary = (card.dataset.salary || '').toLowerCase();
-                const status = (card.dataset.status || '').toLowerCase();
-
-                let statusMatch = true;
-                if (filterStatus === 'pending') {
-                    statusMatch = (status === 'pending');
-                } else if (filterStatus === 'verified') {
-                    statusMatch = (status === 'approved'); // mapped to approved
-                } else if (filterStatus === 'rejected') {
-                    statusMatch = (status === 'rejected');
-                }
-
-                if (!statusMatch) { card.style.display = 'none'; return; }
-
-                let textMatch = true;
-                if (searchTerm) {
-                    if (searchCategory === 'All') {
-                        textMatch = name.includes(searchTerm) || role.includes(searchTerm) || location.includes(searchTerm) || salary.includes(searchTerm);
-                    } else if (searchCategory === 'Company') {
-                        textMatch = name.includes(searchTerm);
-                    } else if (searchCategory === 'Role') {
-                        textMatch = role.includes(searchTerm);
-                    } else if (searchCategory === 'Location') {
-                        textMatch = location.includes(searchTerm);
-                    } else if (searchCategory === 'Salary') {
-                        textMatch = salary.includes(searchTerm);
-                    }
-                }
-
-                card.style.display = textMatch ? '' : 'none';
-            });
-        }
-    </script>
+    } catch (err) {
+        loading.classList.add('hidden');
+        empty.classList.remove('hidden');
+        console.error('Failed to load companies:', err);
+    }
 }
-    </div>
-</div>
+
+function createCompanyCard(jp) {
+    const card = document.createElement('div');
+    card.id = 'jp-' + jp.id;
+    card.className = 'filterable-card bg-[#d8cfc3] p-6 rounded-xl shadow';
+    card.dataset.name = jp.companyName;
+    card.dataset.role = jp.jobPosition;
+    card.dataset.location = jp.jobLocation || '';
+    card.dataset.salary = jp.annualCTC;
+    card.dataset.status = jp.status;
+
+    const initial = jp.companyName ? jp.companyName.charAt(0).toUpperCase() : '?';
+    const statusBadge = getStatusBadge(jp.status);
+
+    card.innerHTML = `
+        <!-- Header -->
+        <div class="flex items-start gap-4 mb-3">
+            <div class="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0">
+                ${initial}
+            </div>
+            <div class="flex-1 min-w-0">
+                <h3 class="font-bold text-lg m-0 truncate">${jp.companyName}</h3>
+                <p class="text-gray-600 text-sm m-0 truncate">${jp.jobPosition}</p>
+            </div>
+            <div class="flex flex-col items-end gap-2">
+                <div class="status-badge-container">
+                    ${statusBadge}
+                </div>
+                <a href="/Admin/AppliedStudents?jobId=${jp.id}" class="inline-block bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold hover:bg-purple-200 no-underline transition border border-purple-200 whitespace-nowrap">
+                    <i class="fas fa-users mr-1"></i> VIEW APPLIED STUDENTS
+                </a>
+            </div>
+        </div>
+
+        <!-- Salary -->
+        <p class="text-red-600 font-bold text-lg mb-2 m-0">${jp.annualCTC}</p>
+
+        <!-- Location -->
+        <p class="flex items-center gap-2 text-gray-600 text-sm mb-2 m-0">
+            <i class="fas fa-map-marker-alt"></i>${jp.jobLocation || 'N/A'}
+        </p>
+
+        <!-- Selection Process -->
+        <p class="text-gray-600 text-sm mb-4 m-0">${jp.selectionProcess || ''}</p>
+
+        <!-- Action Buttons -->
+        <div id="actions-${jp.id}" class="mb-3">
+            ${getActionButtons(jp.id, jp.status)}
+        </div>
+
+
+        <!-- View/Edit Buttons -->
+        <div class="grid grid-cols-2 gap-3">
+            <a href="/Admin/JdDetail?id=${jp.id}" class="border flex items-center justify-center border-black py-2 rounded hover:bg-gray-50 transition text-black font-semibold no-underline text-center text-sm md:text-base cursor-pointer">
+                VIEW DETAILS
+            </a>
+            <a href="/Admin/JdDetail?id=${jp.id}" class="bg-blue-600 text-white flex items-center justify-center py-2 rounded border-none hover:bg-blue-700 transition font-semibold text-center text-sm md:text-base no-underline cursor-pointer">
+                EDIT DETAILS
+            </a>
+        </div>
+    `;
+
+    return card;
+}
+
+function getStatusBadge(status) {
+    const colors = {
+        'Pending': 'bg-yellow-100 text-yellow-800',
+        'Approved': 'bg-green-100 text-green-800',
+        'Rejected': 'bg-red-100 text-red-800',
+        'OnHold': 'bg-gray-100 text-gray-800'
+    };
+    const labels = {
+        'Pending': '⏳ Pending',
+        'Approved': '✓ Approved',
+        'Rejected': '✕ Rejected',
+        'OnHold': '⏸ On Hold'
+    };
+    const color = colors[status] || colors['Pending'];
+    const label = labels[status] || labels['Pending'];
+    return `<span class="px-3 py-1 rounded-full text-xs font-bold ${color}">${label}</span>`;
+}
+
+function getActionButtons(id, status, hideUndo = false) {
+    if (status === 'Approved') {
+        if (hideUndo) {
+            return `
+                <div class="grid grid-cols-1 gap-2">
+                    <button disabled class="bg-green-600 text-white py-2 rounded cursor-not-allowed border-none font-semibold w-full">✓ APPROVED</button>
+                </div>`;
+        } else {
+            return `
+                <div class="grid grid-cols-2 gap-2">
+                    <button disabled class="bg-green-600 text-white py-2 rounded cursor-not-allowed border-none font-semibold">✓ APPROVED</button>
+                    <button onclick="updateJpStatus(${id}, 'Pending')" class="bg-gray-500 text-white py-2 rounded hover:bg-gray-600 transition cursor-pointer border-none font-semibold">Undo</button>
+                </div>`;
+        }
+    }
+    if (status === 'Rejected') {
+        return `
+            <div class="grid grid-cols-2 gap-2">
+                <button disabled class="bg-red-600 text-white py-2 rounded cursor-not-allowed border-none font-semibold">✕ REJECTED</button>
+                <button onclick="updateJpStatus(${id}, 'Pending')" class="bg-gray-500 text-white py-2 rounded hover:bg-gray-600 transition cursor-pointer border-none font-semibold">Undo</button>
+            </div>`;
+    }
+    if (status === 'OnHold') {
+        return `
+            <div class="grid grid-cols-3 gap-2">
+                <button disabled class="bg-orange-500 text-white py-2 rounded cursor-not-allowed border-none font-semibold">⏸ HOLD</button>
+                <button onclick="updateJpStatus(${id}, 'Approved')" class="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition cursor-pointer border-none font-semibold">✓ ACCEPT</button>
+                <button onclick="updateJpStatus(${id}, 'Rejected')" class="bg-red-600 text-white py-2 rounded hover:bg-red-700 transition cursor-pointer border-none font-semibold">✕ DECLINE</button>
+            </div>`;
+    }
+    // Pending
+    return `
+        <div class="grid grid-cols-3 gap-2">
+            <button onclick="confirmReject(${id})" class="bg-red-600 text-white py-2 rounded hover:bg-red-700 transition cursor-pointer border-none font-semibold text-sm">✕ DECLINE</button>
+            <button onclick="updateJpStatus(${id}, 'OnHold')" class="bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition cursor-pointer border-none font-semibold text-sm">⏸ HOLD</button>
+            <button onclick="updateJpStatus(${id}, 'Approved')" class="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition cursor-pointer border-none font-semibold text-sm">✓ ACCEPT</button>
+        </div>`;
+}
+
+async function confirmReject(id) {
+    if (confirm("Are you sure you want to reject this Job Description? This will delete the Job Drive.")) {
+        try {
+            const res = await authFetch(`/api/company/job-postings/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await res.json();
+            
+            if (result.success) {
+                const card = document.getElementById('jp-' + id);
+                if (card) card.remove();
+            } else {
+                alert(result.message || 'Failed to delete the job posting.');
+            }
+        } catch (err) {
+            alert('Network error. Please try again.');
+            console.error(err);
+        }
+    }
+}
+
+async function updateJpStatus(id, newStatus) {
+    try {
+        const res = await authFetch(`/api/company/job-postings/${id}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+        });
+        const result = await res.json();
+
+        if (result.success) {
+            // Update card UI
+            const card = document.getElementById('jp-' + id);
+            if (card) {
+                card.dataset.status = newStatus;
+                // Update status badge
+                const badgeContainer = card.querySelector('.status-badge-container');
+                if (badgeContainer) badgeContainer.innerHTML = getStatusBadge(newStatus);
+                // Update action buttons (always re-render standard buttons)
+                document.getElementById('actions-' + id).innerHTML = getActionButtons(id, newStatus);
+                
+                // If newly approved, hide undo after 10s
+                if (newStatus === 'Approved') {
+                    setTimeout(() => {
+                        const currentCard = document.getElementById('jp-' + id);
+                        if (currentCard && currentCard.dataset.status === 'Approved') {
+                            document.getElementById('actions-' + id).innerHTML = getActionButtons(id, 'Approved', true);
+                        }
+                    }, 10000);
+                }
+            }
+            // Re-apply filters
+            filterCards();
+        } else {
+            alert(result.message || 'Failed to update status.');
+        }
+    } catch (err) {
+        alert('Network error. Please try again.');
+        console.error(err);
+    }
+}
+</script>
+}

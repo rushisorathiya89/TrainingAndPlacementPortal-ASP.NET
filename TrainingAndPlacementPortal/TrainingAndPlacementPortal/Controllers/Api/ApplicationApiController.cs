@@ -42,15 +42,6 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 return BadRequest(new { success = false, message = "Student profile not found." });
             }
 
-            // check if user is already selected
-            var isAlreadySelected = await _context.JobApplications
-                .AnyAsync(a => a.StudentId == student.Id && a.ApplicationStatus == "Selected");
-
-            if (isAlreadySelected)
-            {
-                return BadRequest(new { success = false, message = "You have already been selected for a job and cannot apply for more." });
-            }
-
             // Verify job exists and is approved and active
             var job = await _context.JobPostings
                 .FirstOrDefaultAsync(j => j.Id == jobId && j.Status == "Approved" && j.IsActive);
@@ -137,20 +128,31 @@ namespace TrainingAndPlacementPortal.Controllers.Api
 
             return Ok(new { success = true, hasApplied });
         }
-        // ===== STUDENT: Get dashboard stats =====
-        // GET: api/applications/stats
-        [HttpGet("stats")]
-        [Authorize(Roles = "Student")]
-        public async Task<IActionResult> GetStudentDashboardStats()
-        {
-            var userId = GetUserId();
-            var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == userId);
 
-            if (student == null)
+        private async Task<int> GetCompanyId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out int userId)) return 0;
+            
+            var company = await _context.Companies.FirstOrDefaultAsync(c => c.UserId == userId);
+            return company?.Id ?? 0;
+        }
+
+        // ===== ADMIN/COMPANY: Get all students who applied for a specific job =====
+        // GET: api/applications/job/{jobId}/students
+        [HttpGet("job/{jobId}/students")]
+        [Authorize(Roles = "Admin,Company")]
+        public async Task<IActionResult> GetStudentsForJob(int jobId)
+        {
+            // Security check for Company: only allow their own jobs
+            if (User.IsInRole("Company"))
             {
-                return BadRequest(new { success = false, message = "Student profile not found." });
+                var companyId = await GetCompanyId();
+                var ownsJob = await _context.JobPostings.AnyAsync(j => j.Id == jobId && j.CompanyId == companyId);
+                if (!ownsJob) return Forbid();
             }
 
+<<<<<<< HEAD
             var totalApplications = await _context.JobApplications
                 .CountAsync(a => a.StudentId == student.Id);
 
@@ -221,53 +223,57 @@ namespace TrainingAndPlacementPortal.Controllers.Api
         public async Task<IActionResult> GetAppliedStudents(int jobId)
         {
             var students = await _context.JobApplications
+=======
+            var applications = await _context.JobApplications
+>>>>>>> 851760d24f17ea08d5a29a3df5f5dab26368342f
                 .Include(a => a.Student)
+                .ThenInclude(s => s.User)
                 .Where(a => a.JobPostingId == jobId)
                 .Select(a => new
                 {
-                    ApplicationId = a.Id,
-                    a.StudentId,
-                    StudentName = a.Student.FullName,
+                    a.Id,
+                    StudentId = a.Student.Id,
+                    a.Student.FullName,
                     a.Student.EnrollmentNumber,
                     a.Student.Branch,
                     a.Student.Semester,
                     a.Student.CGPA,
+                    a.Student.MobileNumber,
+                    Email = a.Student.User.Email,
                     a.ApplicationStatus,
                     a.AppliedAt
                 })
                 .ToListAsync();
 
-            return Ok(new { success = true, data = students });
+            return Ok(new { success = true, data = applications });
         }
 
-        // ===== ADMIN: Update student application status =====
-        // PUT: api/applications/admin/{applicationId}/status
-        [HttpPut("admin/{applicationId}/status")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateApplicationStatus(int applicationId, [FromBody] UpdateApplicationStatusDto dto)
+        // ===== ADMIN/COMPANY: Update student application status =====
+        // PUT: api/applications/{id}/status
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = "Admin,Company")]
+        public async Task<IActionResult> UpdateApplicationStatus(int id, [FromBody] string status)
         {
-            var application = await _context.JobApplications.FindAsync(applicationId);
+            var application = await _context.JobApplications
+                .Include(a => a.JobPosting)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             if (application == null)
             {
                 return NotFound(new { success = false, message = "Application not found." });
             }
 
-            var validStatuses = new[] { "Applied", "Shortlisted", "Selected", "Rejected" };
-            if (!validStatuses.Contains(dto.Status))
+            // Security check for Company: only allow their own applicants
+            if (User.IsInRole("Company"))
             {
-                return BadRequest(new { success = false, message = "Invalid status." });
+                var companyId = await GetCompanyId();
+                if (application.JobPosting.CompanyId != companyId) return Forbid();
             }
 
-            application.ApplicationStatus = dto.Status;
+            application.ApplicationStatus = status;
             await _context.SaveChangesAsync();
 
-            return Ok(new { success = true, message = "Application status updated successfully." });
+            return Ok(new { success = true, message = $"Status updated to {status}." });
         }
-    }
-
-    public class UpdateApplicationStatusDto
-    {
-        public string Status { get; set; } = string.Empty;
     }
 }

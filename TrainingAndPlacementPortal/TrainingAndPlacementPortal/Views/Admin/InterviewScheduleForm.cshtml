@@ -14,15 +14,17 @@
         </div>
     </div>
 
-    <!-- Job Selection Card -->
-    <div class="bg-[#d1c2b5] p-6 md:p-8 rounded-2xl shadow-sm mb-6 border border-[#c4b5a6]">
-        <h2 class="text-lg font-bold mb-6 m-0 uppercase tracking-tight">Select Job Drive</h2>
-        <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+    <!-- Company Details Card -->
+    <div class="bg-[#d8cfc3] p-6 md:p-8 rounded-xl shadow-md mb-6">
+        <h2 class="text-lg font-semibold mb-6 m-0">Company Details</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Approved Job Posting *</label>
-                <select id="jobPostingSelect" class="w-full p-4 rounded-xl border bg-white outline-none focus:ring-2 focus:ring-blue-500 font-medium">
-                    <option value="">-- Select an Approved Job Drive --</option>
-                </select>
+                <label class="block text-sm mb-1">Company Name</label>
+                <input type="text" id="schedCompanyName" readonly class="w-full p-3 rounded-lg border outline-none bg-gray-100" />
+            </div>
+            <div>
+                <label class="block text-sm mb-1">HR Name</label>
+                <input type="text" id="schedHrName" readonly class="w-full p-3 rounded-lg border outline-none bg-gray-100" />
             </div>
         </div>
     </div>
@@ -30,45 +32,47 @@
     <!-- Rounds Cards Container -->
     <div id="roundsContainer">
         <!-- Initial Round Card -->
-        <div class="round-card bg-[#d1c2b5] p-6 md:p-8 rounded-2xl shadow-sm mb-6 relative border border-[#c4b5a6]">
+        <div class="round-card bg-[#d8cfc3] p-6 md:p-8 rounded-xl shadow-md mb-6 relative">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="round-title text-lg font-bold m-0 uppercase tracking-tight">Round 1 Details</h2>
-                <button type="button" onclick="deleteRound(this)" class="delete-round-btn text-red-600 hover:text-red-800 p-2 rounded-xl hover:bg-red-100 transition-colors hidden cursor-pointer border-none bg-transparent" title="Delete Round">
+                <h2 class="round-title text-lg font-semibold m-0">Round 1 Details</h2>
+                <button type="button" onclick="deleteRound(this)" class="delete-round-btn text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition-colors hidden cursor-pointer border-none bg-transparent" title="Delete Round">
                     <i class="fas fa-trash-alt text-lg"></i>
                 </button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Round No</label>
-                    <input type="number" class="round-number w-full p-4 rounded-xl border outline-none bg-white font-medium" value="1" readonly />
+                    <label class="block text-sm mb-1">Round No</label>
+                    <input type="text" name="roundNo" placeholder="e.g. 1" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Round Name *</label>
-                    <input type="text" placeholder="e.g. Aptitude Test" class="round-name w-full p-4 rounded-xl border outline-none bg-white font-medium" required />
+                    <label class="block text-sm mb-1">Round Name</label>
+                    <input type="text" name="roundName" placeholder="e.g. Aptitude Test" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Interview Type *</label>
-                    <select class="interview-type w-full p-4 rounded-xl border outline-none bg-white font-medium">
-                        <option value="Offline">Offline</option>
-                        <option value="Online">Online</option>
-                    </select>
+                    <label class="block text-sm mb-1">Venue</label>
+                    <input type="text" name="venue" placeholder="e.g. Panel No. 2" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Venue / Link *</label>
-                    <input type="text" placeholder="e.g. Lab 1 or Meet Link" class="location-link w-full p-4 rounded-xl border outline-none bg-white font-medium" required />
+                    <label class="block text-sm mb-1">Waiting Area</label>
+                    <input type="text" name="waitingArea" placeholder="e.g. Krishna Murti hall" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Date *</label>
-                    <input type="date" class="interview-date w-full p-4 rounded-xl border outline-none bg-white font-medium" required />
+                    <label class="block text-sm mb-1">Date</label>
+                    <input type="date" name="date" class="w-full p-3 rounded-lg border outline-none bg-white" />
                 </div>
                 <div>
+<<<<<<< HEAD
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Timing *</label>
                     <input type="time" class="interview-time w-full p-4 rounded-xl border outline-none bg-white font-medium" required />
                 </div>
                 <div class="md:col-span-1">
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Waiting Area</label>
                     <input type="text" placeholder="e.g. Seminar Hall" class="waiting-area w-full p-4 rounded-xl border outline-none bg-white font-medium" />
+=======
+                    <label class="block text-sm mb-1">Timing</label>
+                    <input type="time" name="timing" class="w-full p-3 rounded-lg border outline-none bg-white" />
+>>>>>>> 851760d24f17ea08d5a29a3df5f5dab26368342f
                 </div>
                 <div class="md:col-span-1">
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Special Instructions</label>
@@ -79,17 +83,18 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pb-12">
-        <button type="button" onclick="addRound()" class="bg-[#2563eb] text-white px-8 py-4 rounded-xl hover:bg-blue-700 w-full md:w-auto cursor-pointer border-none transition-all font-bold text-sm uppercase shadow-sm active:scale-[0.98]">
-            + Add Another Round
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mt-8 pb-8">
+        <button type="button" onclick="addRound()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 w-full md:w-auto cursor-pointer border-none transition font-semibold text-base">
+            Schedule Another Round
         </button>
-        <button type="button" onclick="submitInterviewSchedule()" class="bg-[#e7000b] text-white px-8 py-4 rounded-xl hover:bg-red-700 w-full md:w-auto cursor-pointer border-none transition-all font-bold text-sm uppercase shadow-sm active:scale-[0.98]">
-            Schedule Interviews
+        <button type="button" onclick="submitInterviewSchedule()" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 w-full md:w-auto cursor-pointer border-none transition font-semibold text-base">
+            Submit
         </button>
     </div>
 </div>
 
 @section Scripts {
+<<<<<<< HEAD
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             if (!requireAuth('Admin')) return;
@@ -171,24 +176,179 @@
                 console.error(err);
                 alert('Error loading job drives. Only approved jobs with applications can be scheduled.');
             }
+=======
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!requireAuth('Admin')) return;
+        
+        const params = new URLSearchParams(window.location.search);
+        const jobId = params.get('jobId');
+        if (jobId) {
+            loadCompanyInfo(jobId);
         }
+    });
 
-        function updateRoundNumbers() {
-            const cards = document.querySelectorAll('.round-card');
-            const deleteBtns = document.querySelectorAll('.delete-round-btn');
-            
-            cards.forEach((card, index) => {
-                const num = index + 1;
-                card.querySelector('.round-title').innerText = `Round ${num} Details`;
-                card.querySelector('.round-number').value = num;
-            });
-
-            if (cards.length > 1) {
-                deleteBtns.forEach(btn => btn.classList.remove('hidden'));
-            } else {
-                deleteBtns.forEach(btn => btn.classList.add('hidden'));
+    async function loadCompanyInfo(jobId) {
+        try {
+            const res = await authFetch(`/api/company/job-postings/${jobId}`);
+            const result = await res.json();
+            if (result.success && result.data) {
+                document.getElementById('schedCompanyName').value = result.data.companyName;
+                document.getElementById('schedHrName').value = result.data.contactName || 'TPO Representative';
             }
+            
+            // Also load existing rounds if any
+            loadExistingRounds(jobId);
+        } catch (err) {
+            console.error('Failed to load company info:', err);
         }
+    }
+
+    async function loadExistingRounds(jobId) {
+        try {
+            const res = await authFetch(`/api/admin/interview-schedules/${jobId}`);
+            const result = await res.json();
+            
+            if (result.success && result.data && result.data.length > 0) {
+                const container = document.getElementById('roundsContainer');
+                container.innerHTML = ''; // Start fresh
+                
+                result.data.forEach((r, idx) => {
+                    addRound(r);
+                });
+            }
+        } catch (err) {
+            console.error('Failed to load rounds:', err);
+        }
+    }
+
+    function updateRoundNumbers() {
+        const cards = document.querySelectorAll('.round-card');
+        const deleteBtns = document.querySelectorAll('.delete-round-btn');
+        
+        cards.forEach((card, index) => {
+            card.querySelector('.round-title').innerText = `Round ${index + 1} Details`;
+        });
+
+        // Hide delete button if only 1 round left
+        if (cards.length > 1) {
+            deleteBtns.forEach(btn => btn.classList.remove('hidden'));
+        } else {
+            deleteBtns.forEach(btn => btn.classList.add('hidden'));
+        }
+    }
+
+    function addRound(data = null) {
+        const container = document.getElementById('roundsContainer');
+        const cards = container.querySelectorAll('.round-card');
+        
+        // Use first card as template if exists, else we need the HTML
+        let template;
+        if (cards.length > 0) {
+            template = cards[0].cloneNode(true);
+        } else {
+            // Re-create the HTML if container was empty
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <div class="round-card bg-[#d8cfc3] p-6 md:p-8 rounded-xl shadow-md mb-6 relative">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="round-title text-lg font-semibold m-0">Round Details</h2>
+                        <button type="button" onclick="deleteRound(this)" class="delete-round-btn text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-100 transition-colors hidden cursor-pointer border-none bg-transparent" title="Delete Round">
+                            <i class="fas fa-trash-alt text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm mb-1">Round No</label>
+                            <input type="text" name="roundNo" placeholder="e.g. 1" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Round Name</label>
+                            <input type="text" name="roundName" placeholder="e.g. Aptitude Test" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Venue</label>
+                            <input type="text" name="venue" placeholder="e.g. Panel No. 2" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Waiting Area</label>
+                            <input type="text" name="waitingArea" placeholder="e.g. Krishna Murti hall" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Date</label>
+                            <input type="date" name="date" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                        <div>
+                            <label class="block text-sm mb-1">Timing</label>
+                            <input type="time" name="timing" class="w-full p-3 rounded-lg border outline-none bg-white" />
+                        </div>
+                    </div>
+                </div>
+            `;
+            template = div.firstElementChild;
+        }
+        
+        // Clear or populate inputs
+        template.querySelector('input[name="roundNo"]').value = data ? data.roundNumber : (cards.length + 1);
+        template.querySelector('input[name="roundName"]').value = data ? data.roundName : '';
+        template.querySelector('input[name="venue"]').value = data ? data.venue : '';
+        template.querySelector('input[name="waitingArea"]').value = data ? data.waitingArea : '';
+        template.querySelector('input[name="date"]').value = data ? data.interviewDate.split('T')[0] : '';
+        template.querySelector('input[name="timing"]').value = data ? data.timing : '';
+        
+        container.appendChild(template);
+        updateRoundNumbers();
+    }
+
+    function deleteRound(btn) {
+        const card = btn.closest('.round-card');
+        card.remove();
+        updateRoundNumbers();
+    }
+
+    async function submitInterviewSchedule() {
+        const jobId = new URLSearchParams(window.location.search).get('jobId');
+        if (!jobId) return;
+
+        const roundCards = document.querySelectorAll('.round-card');
+        const rounds = [];
+
+        roundCards.forEach(card => {
+            rounds.push({
+                roundNumber: parseInt(card.querySelector('input[name="roundNo"]').value) || 0,
+                roundName: card.querySelector('input[name="roundName"]').value,
+                venue: card.querySelector('input[name="venue"]').value,
+                waitingArea: card.querySelector('input[name="waitingArea"]').value,
+                interviewDate: card.querySelector('input[name="date"]').value,
+                timing: card.querySelector('input[name="timing"]').value
+            });
+        });
+
+        if (rounds.length === 0) {
+            alert('Please add at least one round.');
+            return;
+>>>>>>> 851760d24f17ea08d5a29a3df5f5dab26368342f
+        }
+
+        try {
+            const res = await authFetch(`/api/admin/interview-schedules/${jobId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(rounds)
+            });
+            const result = await res.json();
+            
+            if (result.success) {
+                alert('Interview Schedule saved successfully!');
+                window.location.href = '/Admin/InterviewSchedule';
+            } else {
+                alert(result.message || 'Failed to save schedule.');
+            }
+        } catch (err) {
+            alert('Network error. Please try again.');
+        }
+<<<<<<< HEAD
 
         function addRound() {
             const container = document.getElementById('roundsContainer');
@@ -286,4 +446,8 @@
             }
         }
     </script>
+=======
+    }
+</script>
+>>>>>>> 851760d24f17ea08d5a29a3df5f5dab26368342f
 }

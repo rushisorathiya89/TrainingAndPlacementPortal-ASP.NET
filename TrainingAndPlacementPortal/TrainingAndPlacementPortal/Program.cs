@@ -32,9 +32,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register JWT Token Service
 builder.Services.AddScoped<JwtTokenService>();
 
-// Register Razorpay Service
-builder.Services.AddScoped<RazorpayService>();
-
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
@@ -59,6 +56,15 @@ builder.Services.AddAuthentication(options =>
 });
 
 var app = builder.Build();
+
+// Auto-apply any pending database migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+    // Inject dummy data if blank
+    DbSeeder.Seed(db);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -41,18 +41,16 @@
               "RelativeToolTip": "TrainingAndPlacementPortal\\Program.cs",
               "ViewState": "AgIAABwAAAAAAAAAAIBJwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-10T15:29:30.739Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-10T15:29:30.739Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "dbo.Users [Data]",
+              "Title": "dbo.Users.sql",
               "DocumentMoniker": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.Users.sql",
-              "ToolTip": "dbo.Users [Data]",
+              "ToolTip": "ViewDataWindow_MSSQL__/_localdb__MSSQLLocalDB/TPPortalDB/True/SqlTable/dbo.Users.sql",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2026-04-10T15:27:18.924Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-10T15:27:18.924Z"
             }
           ]
         },
