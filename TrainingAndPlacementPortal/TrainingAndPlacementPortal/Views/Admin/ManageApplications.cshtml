@@ -1,0 +1,258 @@
+@{ ViewData["Title"] = "Manage Applications"; }
+
+<div class="w-full">
+    <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-red-600">Manage Applications</h1>
+        <p class="text-gray-600 text-sm md:text-base mt-1 font-medium">Review and update application statuses by company.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Company List Pane -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-2xl shadow-sm border border-[#c4b5a6] overflow-hidden">
+                <div class="p-5 border-b border-[#c4b5a6] bg-gray-50/50">
+                    <h2 class="text-sm font-bold text-gray-700 uppercase flex items-center gap-2">
+                        <i class="fas fa-building text-blue-600"></i> Approved Jobs
+                    </h2>
+                </div>
+                <div id="companyList" class="divide-y divide-gray-100 max-h-[600px] overflow-y-auto custom-scrollbar">
+                    <div class="p-10 text-center text-gray-400 font-bold uppercase text-xs">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student List Pane -->
+        <div class="lg:col-span-2">
+            <div id="studentContainer" class="bg-white rounded-2xl shadow-sm border border-[#c4b5a6] overflow-hidden min-h-[400px]">
+                <div id="noCompanySelected" class="flex flex-col items-center justify-center h-full py-20 text-gray-400">
+                    <i class="fas fa-arrow-left text-4xl mb-4 opacity-20"></i>
+                    <p class="font-bold uppercase text-sm">Select a job from the list to view applicants</p>
+                </div>
+
+                <div id="studentsView" class="hidden">
+                    <div class="p-5 border-b border-[#c4b5a6] bg-gray-50/50 flex justify-between items-center">
+                        <div>
+                            <h2 id="selectedJobTitle" class="text-lg font-bold text-gray-900 m-0">Company Name</h2>
+                            <p id="selectedJobRole" class="text-xs font-bold text-blue-600 m-0 uppercase mt-0.5">Job Role</p>
+                        </div>
+                        <div class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase">
+                            <span id="applicantCount">0</span> APPLICANTS
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-gray-50 text-[10px] font-bold uppercase text-gray-500 border-b border-gray-100">
+                                <tr>
+                                    <th class="px-6 py-4">Student</th>
+                                    <th class="px-6 py-4 text-center">CGPA</th>
+                                    <th class="px-6 py-4">Applied Date</th>
+                                    <th class="px-6 py-4 text-center">Update Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody" class="divide-y divide-gray-50">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div id="statusToast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 transition-transform duration-300 pointer-events-none">
+    <div class="bg-gray-900 text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+        <div id="toastIcon" class="w-6 h-6 rounded-full flex items-center justify-center text-xs"></div>
+        <p id="toastMessage" class="text-sm font-bold m-0 uppercase"></p>
+    </div>
+</div>
+
+<style>
+    .company-item.active {
+        background-color: #fef2f2;
+        border-right: 4px solid #e7000b;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Admin')) return;
+            await loadCompanies();
+        });
+
+        let allJobsWithApps = [];
+
+        async function loadCompanies() {
+            try {
+                const res = await authFetch('/api/applications/admin/applied-companies');
+                if (!res || !res.ok) throw new Error('Fetch failed');
+                const result = await res.json();
+                
+                if (result.success) {
+                    allJobsWithApps = result.data;
+                    renderCompanyList(allJobsWithApps);
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('companyList').innerHTML = '<div class="p-10 text-center text-red-500 font-bold">Failed to load companies.</div>';
+            }
+        }
+
+        function renderCompanyList(jobs) {
+            const list = document.getElementById('companyList');
+            if (!jobs || jobs.length === 0) {
+                list.innerHTML = '<div class="p-10 text-center text-gray-500 font-bold uppercase text-xs">No jobs with applications yet.</div>';
+                return;
+            }
+
+            let html = '';
+            jobs.forEach(j => {
+                html += `
+                <div class="company-item p-5 cursor-pointer hover:bg-gray-50 transition-all group" onclick="selectJob(${j.jobPostingId}, this)">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-bold text-gray-900 text-base m-0 group-hover:text-red-600 transition-colors">${j.companyName}</span>
+                        <i class="fas fa-chevron-right text-[10px] text-gray-300 group-hover:text-red-400"></i>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] font-bold text-blue-600 uppercase">${j.jobRole}</span>
+                        <span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 rounded-md">${j.applicationCount} Applied</span>
+                    </div>
+                </div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        let currentSelectedJobId = null;
+
+        async function selectJob(jobId, element) {
+            // UI Toggle
+            document.querySelectorAll('.company-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+
+            const job = allJobsWithApps.find(j => j.jobPostingId === jobId);
+            if (!job) return;
+
+            currentSelectedJobId = jobId;
+            document.getElementById('noCompanySelected').classList.add('hidden');
+            document.getElementById('studentsView').classList.remove('hidden');
+            document.getElementById('selectedJobTitle').textContent = job.companyName;
+            document.getElementById('selectedJobRole').textContent = job.jobRole;
+
+            await loadStudents(jobId);
+        }
+
+        async function loadStudents(jobId) {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-gray-400"><i class="fas fa-spinner fa-spin mr-2"></i>Loading Students...</td></tr>';
+
+            try {
+                const res = await authFetch(`/api/applications/admin/job/${jobId}/students`);
+                if (!res || !res.ok) throw new Error('Fetch failed');
+                const result = await res.json();
+
+                if (result.success) {
+                    renderStudents(result.data);
+                }
+            } catch (err) {
+                console.error(err);
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-red-500 font-bold">Failed to load students.</td></tr>';
+            }
+        }
+
+        function renderStudents(students) {
+            const tbody = document.getElementById('studentTableBody');
+            document.getElementById('applicantCount').textContent = students.length;
+
+            if (!students || students.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-10 text-center text-gray-500 font-bold uppercase text-xs">No applicants found for this job.</td></tr>';
+                return;
+            }
+
+            let html = '';
+            students.forEach(s => {
+                const dateApplied = new Date(s.appliedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+                
+                // Status Select styling
+                let selectClass = 'border-gray-200 text-gray-700';
+                if (s.applicationStatus === 'Selected') selectClass = 'border-green-300 text-green-700 bg-green-50';
+                if (s.applicationStatus === 'Rejected') selectClass = 'border-red-300 text-red-700 bg-red-50';
+                if (s.applicationStatus === 'Shortlisted') selectClass = 'border-blue-300 text-blue-700 bg-blue-50';
+
+                html += `
+                <tr class="hover:bg-gray-50/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-gray-900 text-sm m-0">${s.studentName}</div>
+                        <div class="text-[10px] font-bold text-gray-400 uppercase">${s.enrollmentNumber} | ${s.branch} Sem ${s.semester}</div>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="bg-[#d8cfc3] text-gray-800 font-bold text-[11px] px-2.5 py-1 rounded-md shadow-sm">${s.cgpa}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-xs font-bold text-gray-500">${dateApplied}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <select onchange="updateAppStatus(${s.applicationId}, this.value)" 
+                                class="text-xs font-bold uppercase rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-red-200 cursor-pointer transition-all ${selectClass}">
+                            <option value="Applied" ${s.applicationStatus === 'Applied' ? 'selected' : ''}>Applied</option>
+                            <option value="Shortlisted" ${s.applicationStatus === 'Shortlisted' ? 'selected' : ''}>Shortlisted</option>
+                            <option value="Selected" ${s.applicationStatus === 'Selected' ? 'selected' : ''}>Selected</option>
+                            <option value="Rejected" ${s.applicationStatus === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+                    </td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        async function updateAppStatus(appId, newStatus) {
+            try {
+                const res = await authFetch(`/api/applications/admin/${appId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                if (res && res.ok) {
+                    const result = await res.json();
+                    if (result.success) {
+                        showStatusToast(`Status updated to ${newStatus}`, 'success');
+                        // Refresh students to update styling
+                        if (currentSelectedJobId) await loadStudents(currentSelectedJobId);
+                    }
+                } else {
+                    showStatusToast('Failed to update status', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showStatusToast('Network error', 'error');
+            }
+        }
+
+        function showStatusToast(msg, type) {
+            const toast = document.getElementById('statusToast');
+            const icon = document.getElementById('toastIcon');
+            const text = document.getElementById('toastMessage');
+
+            text.textContent = msg;
+            if (type === 'success') {
+                icon.innerHTML = '✓';
+                icon.className = 'w-6 h-6 rounded-full flex items-center justify-center text-xs bg-green-500/20 text-green-400 border border-green-500/50';
+            } else {
+                icon.innerHTML = '✕';
+                icon.className = 'w-6 h-6 rounded-full flex items-center justify-center text-xs bg-red-500/20 text-red-400 border border-red-500/50';
+            }
+
+            toast.style.transform = 'translateY(0)';
+            setTimeout(() => {
+                toast.style.transform = 'translateY(80px)';
+            }, 3000);
+        }
+    </script>
+}

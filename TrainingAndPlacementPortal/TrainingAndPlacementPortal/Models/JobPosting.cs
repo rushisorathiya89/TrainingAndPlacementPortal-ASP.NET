@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TrainingAndPlacementPortal.Models
@@ -43,8 +44,18 @@ namespace TrainingAndPlacementPortal.Models
         // Comma separated values for simple storage, or can use relational tables
         public string EligibleBatches { get; set; } 
         public string EligibleCourses { get; set; }
+
+        // Added properties to match usage across the codebase
+        [MaxLength(20)]
+        public string Status { get; set; } = "Pending"; // e.g. Pending, Approved, Rejected
+
+        // Minimum CGPA required for the posting (0.0 means no minimum)
+        public double MinCGPA { get; set; } = 0.0;
         
         public bool IsActive { get; set; } = true;
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation property for applications
+        public virtual ICollection<JobApplication> JobApplications { get; set; } = new List<JobApplication>();
     }
 }
