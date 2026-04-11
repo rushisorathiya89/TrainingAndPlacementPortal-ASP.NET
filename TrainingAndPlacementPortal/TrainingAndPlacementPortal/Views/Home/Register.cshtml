@@ -3,12 +3,7 @@
     Layout = "_AuthLayout";
 }
 
-<section class="bg-gray-100 min-h-screen py-12 relative">
-    <!-- Back to Home Button -->
-    <a href="/" class="absolute top-6 right-6 bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md shadow-sm hover:bg-gray-50 transition flex items-center font-medium text-sm no-underline">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Home
-    </a>
-
+<section class="bg-gray-100 min-h-screen py-12">
     <div class="max-w-4xl mx-auto px-6">
         <div class="text-center mb-8">
             <h2 class="text-2xl font-bold text-gray-800">Student Registration</h2>
@@ -19,24 +14,22 @@
         <div id="regSuccessMsg" class="hidden mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-xl text-sm text-center"></div>
         <div id="regErrorMsg" class="hidden mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl text-sm text-center"></div>
 
-        <form id="studentRegForm" onsubmit="return handleStudentRegistration(event)" class="space-y-6">
+        <form id="studentRegForm" onsubmit="return handleStudentRegistration(event)" enctype="multipart/form-data" class="space-y-6">
             <!-- Personal Information -->
             <div class="bg-white rounded-xl shadow-sm p-6">
                 <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-user"></i> Personal Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Enrollment Number *</label>
-                        <input type="text" id="enrollment" name="enrollmentNumber" class="w-full p-3 border rounded-lg" placeholder="Enter enrollment number" oninput="validateRegField('enrollment')" />
-                        <p id="enrollmentError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="text" id="enrollment" name="enrollmentNumber" class="w-full p-3 border rounded-lg" placeholder="Enter enrollment number" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                        <input type="text" id="name" name="fullName" class="w-full p-3 border rounded-lg" placeholder="Enter full name" oninput="validateRegField('name')" />
-                        <p id="nameError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="text" id="name" name="fullName" class="w-full p-3 border rounded-lg" placeholder="Enter full name" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Branch *</label>
-                        <select id="branch" name="branch" class="w-full p-3 border rounded-lg" onchange="validateRegField('branch')">
+                        <select id="branch" name="branch" class="w-full p-3 border rounded-lg">
                             <option value="">Select Branch</option>
                             <option>Computer Engineering</option>
                             <option>Information Technology</option>
@@ -44,41 +37,34 @@
                             <option>Civil Engineering</option>
                             <option>Electrical Engineering</option>
                         </select>
-                        <p id="branchError" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Semester *</label>
-                        <select id="semester" name="semester" class="w-full p-3 border rounded-lg" onchange="validateRegField('semester')">
+                        <select id="semester" name="semester" class="w-full p-3 border rounded-lg">
                             <option value="">Select Semester</option>
                             <option>1st</option><option>2nd</option><option>3rd</option><option>4th</option>
                             <option>5th</option><option>6th</option><option>7th</option><option>8th</option>
                         </select>
-                        <p id="semesterError" class="text-red-500 text-xs mt-1 hidden"></p>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">University Email *</label>
-                        <input type="email" id="universityEmail" name="email" class="w-full p-3 border rounded-lg" placeholder="Enter university email" oninput="validateRegField('universityEmail')" />
-                        <p id="universityEmailError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="email" id="universityEmail" name="email" class="w-full p-3 border rounded-lg" placeholder="Enter university email" />
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Personal Email *</label>
-                        <input type="email" id="personalEmail" name="personalEmail" class="w-full p-3 border rounded-lg" placeholder="Enter personal email" oninput="validateRegField('personalEmail')" />
-                        <p id="personalEmailError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Personal Email</label>
+                        <input type="email" id="personalEmail" name="personalEmail" class="w-full p-3 border rounded-lg" placeholder="Enter personal email" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Password *</label>
-                        <input type="password" id="password" name="password" class="w-full p-3 border rounded-lg" placeholder="Enter password (min 6 characters)" oninput="validateRegField('password')" />
-                        <p id="passwordError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="password" id="password" name="password" class="w-full p-3 border rounded-lg" placeholder="Enter password (min 6 characters)" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" class="w-full p-3 border rounded-lg" placeholder="Confirm password" oninput="validateRegField('confirmPassword')" />
-                        <p id="confirmPasswordError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="w-full p-3 border rounded-lg" placeholder="Confirm password" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Mobile Number *</label>
-                        <input type="text" id="mobile" name="mobileNumber" class="w-full p-3 border rounded-lg" placeholder="Enter mobile number" oninput="validateRegField('mobile')" />
-                        <p id="mobileError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="text" id="mobile" name="mobileNumber" class="w-full p-3 border rounded-lg" placeholder="Enter mobile number" />
                     </div>
                 </div>
             </div>
@@ -89,18 +75,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">10th Percentage *</label>
-                        <input type="number" step="0.01" id="tenth" name="tenthPercentage" class="w-full p-3 border rounded-lg" placeholder="Enter %" oninput="validateRegField('tenth')" />
-                        <p id="tenthError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="number" step="0.01" id="tenth" name="tenthPercentage" class="w-full p-3 border rounded-lg" placeholder="Enter %" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">12th Percentage *</label>
-                        <input type="number" step="0.01" id="twelfth" name="twelfthPercentage" class="w-full p-3 border rounded-lg" placeholder="Enter %" oninput="validateRegField('twelfth')" />
-                        <p id="twelfthError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="number" step="0.01" id="twelfth" name="twelfthPercentage" class="w-full p-3 border rounded-lg" placeholder="Enter %" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">CGPA *</label>
-                        <input type="number" step="0.01" id="cgpa" name="cgpa" class="w-full p-3 border rounded-lg" placeholder="Enter CGPA" oninput="validateRegField('cgpa')" />
-                        <p id="cgpaError" class="text-red-500 text-xs mt-1 hidden"></p>
+                        <input type="number" step="0.01" id="cgpa" name="cgpa" class="w-full p-3 border rounded-lg" placeholder="Enter CGPA" />
                     </div>
                 </div>
             </div>
@@ -109,9 +92,9 @@
             <div class="bg-white rounded-xl shadow-sm p-6">
                 <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-users"></i> Parent Information</h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Name *</label><input type="text" id="parentName" name="parentName" class="w-full p-3 border rounded-lg" oninput="validateRegField('parentName')" /><p id="parentNameError" class="text-red-500 text-xs mt-1 hidden"></p></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Email *</label><input type="email" id="parentEmail" name="parentEmail" class="w-full p-3 border rounded-lg" oninput="validateRegField('parentEmail')" /><p id="parentEmailError" class="text-red-500 text-xs mt-1 hidden"></p></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Mobile *</label><input type="text" id="parentMobile" name="parentMobile" class="w-full p-3 border rounded-lg" oninput="validateRegField('parentMobile')" /><p id="parentMobileError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Name</label><input type="text" id="parentName" name="parentName" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Email</label><input type="email" id="parentEmail" name="parentEmail" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Parent Mobile</label><input type="text" id="parentMobile" name="parentMobile" class="w-full p-3 border rounded-lg" /></div>
                 </div>
             </div>
 
@@ -119,22 +102,61 @@
             <div class="bg-white rounded-xl shadow-sm p-6">
                 <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-map-marker-alt"></i> Address</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Current Address *</label><textarea id="currentAddress" name="currentAddress" class="w-full p-3 border rounded-lg" rows="2" oninput="validateRegField('currentAddress')"></textarea><p id="currentAddressError" class="text-red-500 text-xs mt-1 hidden"></p></div>
-                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Permanent Address *</label><textarea id="permanentAddress" name="permanentAddress" class="w-full p-3 border rounded-lg" rows="2" oninput="validateRegField('permanentAddress')"></textarea><p id="permanentAddressError" class="text-red-500 text-xs mt-1 hidden"></p></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">City *</label><input type="text" id="city" name="city" class="w-full p-3 border rounded-lg" oninput="validateRegField('city')" /><p id="cityError" class="text-red-500 text-xs mt-1 hidden"></p></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">State *</label><input type="text" id="state" name="state" class="w-full p-3 border rounded-lg" oninput="validateRegField('state')" /><p id="stateError" class="text-red-500 text-xs mt-1 hidden"></p></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Pincode *</label><input type="text" id="pincode" name="pincode" class="w-full p-3 border rounded-lg" oninput="validateRegField('pincode')" /><p id="pincodeError" class="text-red-500 text-xs mt-1 hidden"></p></div>
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Current Address</label><textarea id="currentAddress" name="currentAddress" class="w-full p-3 border rounded-lg" rows="2"></textarea></div>
+                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700 mb-1">Permanent Address</label><textarea id="permanentAddress" name="permanentAddress" class="w-full p-3 border rounded-lg" rows="2"></textarea></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">City</label><input type="text" id="city" name="city" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">State</label><input type="text" id="state" name="state" class="w-full p-3 border rounded-lg" /></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Pincode</label><input type="text" id="pincode" name="pincode" class="w-full p-3 border rounded-lg" /></div>
                 </div>
             </div>
 
-            <!-- Consent & Payment -->
+            <!-- Online Payment (Razorpay) -->
             <div class="bg-white rounded-xl shadow-sm p-6">
-                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-upload"></i> Consent & Payment</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Consent Form (PDF) *</label><input type="file" accept=".pdf" class="w-full p-3 border rounded-lg" /></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Payment Proof (Image) *</label><input type="file" accept="image/*" class="w-full p-3 border rounded-lg" /></div>
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-credit-card"></i> Online Payment</h3>
+                <div class="bg-gray-50 rounded-lg p-5 border border-dashed border-gray-300">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <p class="font-semibold text-gray-800 text-base">Payment Required</p>
+                            <p class="text-gray-500 text-sm mt-1">Pay the placement registration fee securely via Razorpay to complete your application.</p>
+                        </div>
+                        <div class="text-center">
+                            <button type="button" id="payBtn" onclick="initiatePayment()"
+                                class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-md transition cursor-pointer border-none flex items-center gap-2">
+                                <i class="fas fa-lock"></i> Pay Now
+                            </button>
+                            <p id="payStatus" class="text-xs text-gray-400 mt-2"></p>
+                        </div>
+                    </div>
+                    <!-- Payment success indicator -->
+                    <div id="paymentSuccess" class="hidden mt-4 p-3 bg-green-50 border border-green-300 rounded-lg flex items-center gap-3">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                        <div>
+                            <p class="font-semibold text-green-700 text-sm">Payment Successful!</p>
+                            <p class="text-green-600 text-xs" id="paymentIdDisplay"></p>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-xs text-gray-400 mt-2"><i class="fas fa-info-circle"></i> File uploads will be processed in a future update.</p>
+                <!-- Hidden fields to store Razorpay response -->
+                <input type="hidden" id="razorpayOrderId" name="razorpayOrderId" />
+                <input type="hidden" id="razorpayPaymentId" name="razorpayPaymentId" />
+                <input type="hidden" id="razorpaySignature" name="razorpaySignature" />
+            </div>
+
+            <!-- Document Upload -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center gap-2"><i class="fas fa-upload"></i> Document Upload</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Consent Form (PDF) *</label>
+                        <input type="file" id="consentForm" name="consentForm" accept=".pdf" class="w-full p-3 border rounded-lg bg-white" />
+                        <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle"></i> PDF only, max 5MB</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Payment Proof (Image) *</label>
+                        <input type="file" id="paymentProof" name="paymentProof" accept="image/*" class="w-full p-3 border rounded-lg bg-white" />
+                        <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle"></i> JPG, PNG, WEBP only, max 5MB</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Buttons -->
@@ -145,7 +167,7 @@
                 </div>
                 <div id="regButtons" class="flex flex-col sm:flex-row justify-center gap-3 w-full sm:w-auto">
                     <button type="button" onclick="clearForm('studentRegForm')" class="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto bg-white cursor-pointer">Clear Form</button>
-                    <button type="submit" id="regSubmitBtn" class="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto border-none cursor-pointer">Submit Form</button>
+                    <button type="submit" id="regSubmitBtn" class="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto border-none cursor-pointer">Submit Registration</button>
                 </div>
                 <p class="text-xs text-gray-400 mt-3 text-center max-w-md mx-auto">After registration, admin will verify your payment and eligibility criteria. After verification you can access the portal.</p>
             </div>
@@ -153,8 +175,100 @@
     </div>
 </section>
 
+<!-- Razorpay Checkout.js CDN -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 @section Scripts {
 <script>
+// ===== Razorpay Payment =====
+let paymentCompleted = false;
+
+async function initiatePayment() {
+    const enrollment = document.getElementById('enrollment').value.trim();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('universityEmail').value.trim();
+    const mobile = document.getElementById('mobile').value.trim();
+
+    if (!enrollment || !name || !email) {
+        showError('Please fill Enrollment Number, Full Name, and University Email before making payment.');
+        return;
+    }
+
+    const payBtn = document.getElementById('payBtn');
+    const payStatus = document.getElementById('payStatus');
+    payBtn.disabled = true;
+    payBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating order...';
+    payStatus.textContent = '';
+
+    try {
+        // Step 1: Create Razorpay order on server
+        const orderRes = await fetch('/api/payment/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enrollmentNumber: enrollment })
+        });
+
+        const orderData = await orderRes.json();
+        if (!orderRes.ok || !orderData.success) {
+            showError(orderData.message || 'Failed to create payment order.');
+            payBtn.disabled = false;
+            payBtn.innerHTML = '<i class="fas fa-lock"></i> Pay Now';
+            return;
+        }
+
+        // Step 2: Open Razorpay Checkout popup
+        const options = {
+            key: orderData.keyId,
+            amount: orderData.amount,
+            currency: orderData.currency,
+            name: 'RK University',
+            description: 'Training & Placement Registration Fee',
+            order_id: orderData.orderId,
+            prefill: {
+                name: name,
+                email: email,
+                contact: mobile
+            },
+            theme: { color: '#e7000b' },
+            handler: function(response) {
+                // Payment successful
+                document.getElementById('razorpayOrderId').value = response.razorpay_order_id;
+                document.getElementById('razorpayPaymentId').value = response.razorpay_payment_id;
+                document.getElementById('razorpaySignature').value = response.razorpay_signature;
+
+                paymentCompleted = true;
+                payBtn.classList.add('hidden');
+                document.getElementById('paymentSuccess').classList.remove('hidden');
+                document.getElementById('paymentIdDisplay').textContent = 'Payment ID: ' + response.razorpay_payment_id;
+                payStatus.textContent = '';
+            },
+            modal: {
+                ondismiss: function() {
+                    payBtn.disabled = false;
+                    payBtn.innerHTML = '<i class="fas fa-lock"></i> Pay Now';
+                    payStatus.textContent = 'Payment was cancelled. You can try again.';
+                    payStatus.classList.add('text-yellow-600');
+                }
+            }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', function(response) {
+            payBtn.disabled = false;
+            payBtn.innerHTML = '<i class="fas fa-lock"></i> Pay Now';
+            payStatus.textContent = 'Payment failed: ' + response.error.description;
+            payStatus.classList.add('text-red-600');
+        });
+        rzp.open();
+
+    } catch (err) {
+        showError('Failed to connect to payment server: ' + err.message);
+        payBtn.disabled = false;
+        payBtn.innerHTML = '<i class="fas fa-lock"></i> Pay Now';
+    }
+}
+
+// ===== Registration Submit =====
 async function handleStudentRegistration(event) {
     event.preventDefault();
 
@@ -166,62 +280,71 @@ async function handleStudentRegistration(event) {
     successMsg.classList.add('hidden');
     errorMsg.classList.add('hidden');
 
-    // Build the request body from form fields
-    const data = {
-        enrollmentNumber: document.getElementById('enrollment').value.trim(),
-        fullName: document.getElementById('name').value.trim(),
-        branch: document.getElementById('branch').value,
-        semester: document.getElementById('semester').value,
-        email: document.getElementById('universityEmail').value.trim(),
-        personalEmail: document.getElementById('personalEmail').value.trim(),
-        password: document.getElementById('password').value,
-        confirmPassword: document.getElementById('confirmPassword').value,
-        mobileNumber: document.getElementById('mobile').value.trim(),
-        tenthPercentage: parseFloat(document.getElementById('tenth').value) || 0,
-        twelfthPercentage: parseFloat(document.getElementById('twelfth').value) || 0,
-        cgpa: parseFloat(document.getElementById('cgpa').value) || 0,
-        parentName: document.getElementById('parentName').value.trim(),
-        parentEmail: document.getElementById('parentEmail').value.trim(),
-        parentMobile: document.getElementById('parentMobile').value.trim(),
-        currentAddress: document.getElementById('currentAddress').value.trim(),
-        permanentAddress: document.getElementById('permanentAddress').value.trim(),
-        city: document.getElementById('city').value.trim(),
-        state: document.getElementById('state').value.trim(),
-        pincode: document.getElementById('pincode').value.trim()
-    };
+    // Validate required fields
+    const enrollment = document.getElementById('enrollment').value.trim();
+    const name = document.getElementById('name').value.trim();
+    const branch = document.getElementById('branch').value;
+    const semester = document.getElementById('semester').value;
+    const email = document.getElementById('universityEmail').value.trim();
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const mobile = document.getElementById('mobile').value.trim();
 
-    // Client-side validation
-    if (!data.enrollmentNumber || !data.fullName || !data.branch || !data.semester ||
-        !data.email || !data.password || !data.mobileNumber) {
-        errorMsg.textContent = 'Please fill all required fields.';
-        errorMsg.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!enrollment || !name || !branch || !semester || !email || !password || !mobile) {
+        showError('Please fill all required fields.');
+        return false;
+    }
+    if (password.length < 6) {
+        showError('Password must be at least 6 characters.');
+        return false;
+    }
+    if (password !== confirmPassword) {
+        showError('Passwords do not match.');
         return false;
     }
 
-    if (data.password.length < 6) {
-        errorMsg.textContent = 'Password must be at least 6 characters.';
-        errorMsg.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return false;
-    }
+    // Build FormData (supports file uploads)
+    const formData = new FormData();
+    formData.append('enrollmentNumber', enrollment);
+    formData.append('fullName', name);
+    formData.append('branch', branch);
+    formData.append('semester', semester);
+    formData.append('email', email);
+    formData.append('personalEmail', document.getElementById('personalEmail').value.trim());
+    formData.append('password', password);
+    formData.append('confirmPassword', confirmPassword);
+    formData.append('mobileNumber', mobile);
+    formData.append('tenthPercentage', document.getElementById('tenth').value || '0');
+    formData.append('twelfthPercentage', document.getElementById('twelfth').value || '0');
+    formData.append('cgpa', document.getElementById('cgpa').value || '0');
+    formData.append('parentName', document.getElementById('parentName').value.trim());
+    formData.append('parentEmail', document.getElementById('parentEmail').value.trim());
+    formData.append('parentMobile', document.getElementById('parentMobile').value.trim());
+    formData.append('currentAddress', document.getElementById('currentAddress').value.trim());
+    formData.append('permanentAddress', document.getElementById('permanentAddress').value.trim());
+    formData.append('city', document.getElementById('city').value.trim());
+    formData.append('state', document.getElementById('state').value.trim());
+    formData.append('pincode', document.getElementById('pincode').value.trim());
 
-    if (data.password !== data.confirmPassword) {
-        errorMsg.textContent = 'Passwords do not match.';
-        errorMsg.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return false;
-    }
+    // Razorpay payment data
+    formData.append('razorpayOrderId', document.getElementById('razorpayOrderId').value);
+    formData.append('razorpayPaymentId', document.getElementById('razorpayPaymentId').value);
+    formData.append('razorpaySignature', document.getElementById('razorpaySignature').value);
 
-    // Show spinner, hide buttons
+    // File uploads
+    const consentFile = document.getElementById('consentForm').files[0];
+    const paymentFile = document.getElementById('paymentProof').files[0];
+    if (consentFile) formData.append('consentForm', consentFile);
+    if (paymentFile) formData.append('paymentProof', paymentFile);
+
+    // Show spinner
     spinner.classList.remove('hidden');
     buttons.classList.add('hidden');
 
     try {
         const response = await fetch('/api/auth/register', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: formData  // No Content-Type header — browser sets multipart boundary automatically
         });
 
         const result = await response.json();
@@ -230,34 +353,35 @@ async function handleStudentRegistration(event) {
             successMsg.textContent = result.message;
             successMsg.classList.remove('hidden');
             document.getElementById('studentRegForm').reset();
+            paymentCompleted = false;
+            document.getElementById('paymentSuccess').classList.add('hidden');
+            document.getElementById('payBtn').classList.remove('hidden');
+            document.getElementById('payBtn').disabled = false;
+            document.getElementById('payBtn').innerHTML = '<i class="fas fa-lock"></i> Pay Now';
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
-            // Redirect to login after 3 seconds
-            setTimeout(() => {
-                window.location.href = '/Auth/Login';
-            }, 3000);
+            setTimeout(() => { window.location.href = '/Auth/Login'; }, 3000);
         } else {
             let msg = result.message || 'Registration failed.';
-            if (result.errors && result.errors.length > 0) {
-                msg += ' ' + result.errors.join(', ');
-            }
-            if (result.error) {
-                msg += ' (' + result.error + ')';
-            }
-            errorMsg.textContent = msg;
-            errorMsg.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (result.errors && result.errors.length > 0) msg += ' ' + result.errors.join(', ');
+            if (result.error) msg += ' (' + result.error + ')';
+            showError(msg);
         }
     } catch (err) {
-        errorMsg.textContent = 'Connection error. Please check your network and try again. Details: ' + err.message;
-        errorMsg.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showError('Connection error: ' + err.message);
     } finally {
         spinner.classList.add('hidden');
         buttons.classList.remove('hidden');
     }
 
     return false;
+}
+
+function showError(msg) {
+    const errorMsg = document.getElementById('regErrorMsg');
+    errorMsg.textContent = msg;
+    errorMsg.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 </script>
 }

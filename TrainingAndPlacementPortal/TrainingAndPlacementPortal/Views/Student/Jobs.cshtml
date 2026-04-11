@@ -6,113 +6,110 @@
         <p class="page-subtitle">Here you can Apply for Interviews</p>
     </header>
 
-    <!-- Loading State -->
-    <div id="jobsLoading" class="text-center py-12">
-        <i class="fas fa-spinner fa-spin text-3xl text-red-500"></i>
-        <p class="text-gray-500 mt-3">Loading available jobs...</p>
-    </div>
-
-    <!-- Empty State -->
-    <div id="jobsEmpty" class="hidden text-center py-12">
-        <i class="fas fa-briefcase text-5xl text-gray-300 mb-4"></i>
-        <p class="text-gray-500 text-lg">No approved job postings available at the moment.</p>
-        <p class="text-gray-400 text-sm">Check back later for new opportunities!</p>
-    </div>
-
-    <!-- Jobs Container -->
-    <div id="jobsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div id="loadingIndicator" class="col-span-full flex justify-center items-center py-10">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        </div>
+        <!-- Jobs will be loaded here -->
     </div>
 </div>
 
 @section Scripts {
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (!requireAuth('Student')) return;
-    loadApprovedJobs();
-});
-
-async function loadApprovedJobs() {
-    const container = document.getElementById('jobsContainer');
-    const loading = document.getElementById('jobsLoading');
-    const empty = document.getElementById('jobsEmpty');
-
-    try {
-        const res = await authFetch('/api/company/approved-jobs');
-        const result = await res.json();
-
-        loading.classList.add('hidden');
-
-        if (!result.success || !result.data || result.data.length === 0) {
-            empty.classList.remove('hidden');
-            return;
-        }
-
-        container.classList.remove('hidden');
-        container.innerHTML = '';
-
-        result.data.forEach(job => {
-            const card = createStudentJobCard(job);
-            container.appendChild(card);
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Student')) return;
+            await loadApprovedJobs();
         });
 
-    } catch (err) {
-        loading.classList.add('hidden');
-        empty.classList.remove('hidden');
-        console.error('Failed to load jobs:', err);
-    }
-}
-
-function createStudentJobCard(job) {
-    const card = document.createElement('div');
-    card.className = 'bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex flex-col';
-
-    const initial = job.companyName ? job.companyName.charAt(0).toUpperCase() : '?';
-    const cgpaText = job.minCGPA ? `CGPA ≥ ${job.minCGPA} ✔` : 'Open for all CGPA';
-
-    // We will check application status asynchronously and update the button
-    const btnId = `applyBtn${job.id}`;
-
-    card.innerHTML = `
-        <div class="flex items-start gap-4 mb-5">
-            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-2xl shrink-0">${initial}</div>
-            <div>
-                <h2 class="text-xl font-bold m-0 mb-1 text-gray-900">${job.companyName}</h2>
-                <p class="text-gray-600 text-sm font-medium m-0">${job.jobPosition}</p>
-            </div>
-        </div>
-        <div class="text-[#e7000b] text-2xl font-bold mb-4">${job.annualCTC}</div>
-        <div class="mb-6">
-            <div class="flex items-center gap-2 text-gray-600 text-sm mb-2"><span>📍</span><span>${job.jobLocation || 'N/A'}</span></div>
-            <div class="flex items-center gap-2 text-green-700 text-sm font-semibold"><span>✅</span><span>${cgpaText}</span></div>
-        </div>
-        <div class="flex gap-3 mt-auto">
-            <a href="/Student/JobDetails?id=${job.id}" class="border flex items-center justify-center border-black py-2 rounded hover:bg-gray-50 transition text-black font-semibold no-underline text-center text-sm md:text-base cursor-pointer flex-1">View Details</a>
-            <button id="${btnId}" class="bg-blue-600 text-white flex items-center justify-center py-2 rounded border-none hover:bg-blue-700 transition font-semibold text-center text-sm md:text-base no-underline cursor-pointer flex-1" onclick="applyJobApi(${job.id}, '${btnId}')">Apply</button>
-        </div>
-    `;
-
-    // Check status immediately
-    checkApplicationStatus(job.id, btnId);
-
-    return card;
-}
-
-async function checkApplicationStatus(jobId, btnId) {
-    try {
-        const res = await authFetch(`/api/applications/check/${jobId}`);
-        const result = await res.json();
-        
-        if (result.success && result.hasApplied) {
-            const btn = document.getElementById(btnId);
-            if (btn) {
-                btn.textContent = 'Applied ✅';
-                btn.className = 'btn-disabled flex-1 bg-green-100 text-green-800 cursor-not-allowed border-none font-bold py-2 rounded text-center text-sm md:text-base';
-                btn.disabled = true;
+        async function loadApprovedJobs() {
+            try {
+                // Fetch approved jobs and student's applications in parallel
+                const [jobsRes, appsRes] = await Promise.all([
+                    authFetch('/api/company/approved-jobs'),
+                    authFetch('/api/applications/my-applications')
+                ]);
+                
+                if (!jobsRes || !jobsRes.ok) throw new Error('Failed to fetch jobs');
+                
+                const jobsData = await jobsRes.json();
+                let appliedJobIds = new Set();
+                let isPlaced = false;
+                
+                if (appsRes && appsRes.ok) {
+                   const appsData = await appsRes.json();
+                   if (appsData.success && appsData.data) {
+                       appsData.data.forEach(app => {
+                           appliedJobIds.add(app.jobPostingId);
+                           if (app.applicationStatus === 'Selected') isPlaced = true;
+                       });
+                   }
+                }
+                
+                renderJobs(jobsData.data || [], appliedJobIds, isPlaced);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingIndicator').innerHTML = '<p class="text-red-500 font-semibold">Failed to load jobs.</p>';
             }
         }
-    } catch (err) {
-        console.error('Failed to check application status:', err);
-    }
+
+        function renderJobs(jobs, appliedJobIds, isPlaced = false) {
+            const container = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2');
+            document.getElementById('loadingIndicator')?.remove();
+
+            if (jobs.length === 0) {
+                container.innerHTML = '<div class="col-span-full py-10 text-center text-gray-500 font-medium">No jobs are currently available for apply.</div>';
+                return;
+            }
+
+            let html = '';
+            jobs.forEach(job => {
+                const firstLetter = job.companyName ? job.companyName.charAt(0).toUpperCase() : 'J';
+                const cgpaText = job.minCGPA > 0 ? `CGPA ≥ ${job.minCGPA}` : 'No Min CGPA Limit';
+                const location = job.jobLocation || 'N/A';
+                const btnId = 'applyBtn' + job.id;
+
+                let actionButton = '';
+                if (appliedJobIds.has(job.id)) {
+                    actionButton = '<button class="flex-1 bg-[#d1fae5] text-[#065f46] py-2.5 rounded-xl font-bold text-xs uppercase border-none cursor-default">APPLIED ✓</button>';
+                } else if (isPlaced) {
+                    actionButton = '<button class="flex-1 bg-gray-200 text-gray-500 py-2.5 rounded-xl font-bold text-xs uppercase border-none cursor-not-allowed" title="You have already been selected for a placement.">UNAVAILABLE</button>';
+                } else {
+                    actionButton = '<button id="' + btnId + '" class="flex-1 bg-[#2563eb] text-white py-2.5 rounded-xl font-bold text-xs uppercase border-none cursor-pointer hover:bg-blue-700 transition-colors" onclick="applyJob(' + job.id + ')">APPLY NOW</button>';
+                }
+
+                html += `
+                <div class="bg-[#ece6da] p-6 rounded-2xl border border-[#e0dacd] shadow-sm flex flex-col transition-all hover:shadow-md">
+                    <div class="flex items-start gap-4 mb-5">
+                        <div class="w-12 h-12 bg-[#2563eb] rounded-xl flex items-center justify-center text-white font-bold text-2xl shrink-0 shadow-sm">${firstLetter}</div>
+                        <div class="overflow-hidden">
+                            <h2 class="text-xl font-bold m-0 mb-1 text-gray-900 truncate">${job.companyName}</h2>
+                            <p class="text-gray-600 text-sm font-semibold m-0 truncate">${job.jobPosition}</p>
+                        </div>
+                    </div>
+                    <div class="text-[#e7000b] text-2xl font-extrabold mb-4 tracking-tight">${job.annualCTC || 'N/A'}</div>
+                    <div class="mb-6 space-y-2">
+                        <div class="flex items-center gap-2 text-gray-700 text-sm font-medium">
+                            <i class="fas fa-map-marker-alt text-gray-400 w-4"></i>
+                            <span>${location}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-[#16a34a] text-sm font-bold">
+                            <i class="fas fa-check-circle w-4"></i>
+                            <span>${cgpaText}</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 mt-auto pt-4 border-t border-gray-200/50">
+                        <a href="/StudJobDetails?id=${job.id}" class="flex-1 bg-white border border-gray-900 text-gray-900 py-2.5 rounded-xl font-bold text-xs text-center no-underline uppercase transition-colors hover:bg-gray-50">
+                            VIEW DETAILS
+                        </a>
+                        ${actionButton}
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+    </script>
 }
-</script>
-}
+    </div>
+</div>
+

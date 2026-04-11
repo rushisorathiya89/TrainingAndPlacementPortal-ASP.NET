@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TrainingAndPlacementPortal.Models
@@ -44,11 +43,10 @@ namespace TrainingAndPlacementPortal.Models
         [MaxLength(20)]
         public string Status { get; set; } = "Pending"; // Pending, Verified, Rejected
 
-        public string? AdminRemarks { get; set; }
-
+        // Admin remarks for verification/rejection notes
+        [MaxLength(500)]
+        public string AdminRemarks { get; set; } = string.Empty;
+        
         public DateTime RegisteredAt { get; set; } = DateTime.UtcNow;
-
-        // Navigation property
-        public ICollection<JobPosting> JobPostings { get; set; } = new List<JobPosting>();
     }
 }

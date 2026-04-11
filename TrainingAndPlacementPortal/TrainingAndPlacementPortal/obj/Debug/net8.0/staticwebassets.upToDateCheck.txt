@@ -68,3 +68,13 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
+wwwroot\uploads\students\111222333\consent_form.pdf
+wwwroot\uploads\students\111222333\payment_proof.png
+wwwroot\uploads\students\123456789\consent_form.pdf
+wwwroot\uploads\students\123456789\payment_proof.jpg
+wwwroot\uploads\students\21SOECE11099\consent_form.pdf
+wwwroot\uploads\students\21SOECE11099\payment_proof.jpg
+wwwroot\uploads\students\23SOECE22037\consent_form.pdf
+wwwroot\uploads\students\23SOECE22037\payment_proof.jpg
+wwwroot\uploads\students\23SOECE22038\consent_form.pdf
+wwwroot\uploads\students\23SOECE22038\payment_proof.jpg

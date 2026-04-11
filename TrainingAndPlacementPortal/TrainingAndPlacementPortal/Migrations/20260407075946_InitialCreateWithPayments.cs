@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrainingAndPlacementPortal.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreateWithPayments : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -82,6 +82,10 @@ namespace TrainingAndPlacementPortal.Migrations
                     Pincode = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     ConsentFormPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PaymentProofPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RazorpayOrderId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    RazorpayPaymentId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    PaymentStatus = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    PaymentAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     RegisteredAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -126,6 +130,33 @@ namespace TrainingAndPlacementPortal.Migrations
                         name: "FK_JobPostings_Companies_CompanyId",
                         column: x => x.CompanyId,
                         principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    RazorpayOrderId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    RazorpayPaymentId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    RazorpaySignature = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Currency = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaidAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -185,7 +216,7 @@ namespace TrainingAndPlacementPortal.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedAt", "Email", "IsApproved", "PasswordHash", "Role" },
-                values: new object[] { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@rku.ac.in", true, "$2a$11$GdIUjEar/o7zd1HnXw40DOyGLjbVu1mkCLY1laWAxRd4hEGc2qc/K", "Admin" });
+                values: new object[] { 1, new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc), "admin@rku.ac.in", true, "$2a$11$TmWiW5KXuATt/CEDlfSJfu.CdP6feIPqKtYLjYujRYA3.tN1WhVZC", "Admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Companies_UserId",
@@ -213,6 +244,11 @@ namespace TrainingAndPlacementPortal.Migrations
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payments_StudentId",
+                table: "Payments",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Students_UserId",
                 table: "Students",
                 column: "UserId",
@@ -233,6 +269,9 @@ namespace TrainingAndPlacementPortal.Migrations
 
             migrationBuilder.DropTable(
                 name: "JobApplications");
+
+            migrationBuilder.DropTable(
+                name: "Payments");
 
             migrationBuilder.DropTable(
                 name: "JobPostings");

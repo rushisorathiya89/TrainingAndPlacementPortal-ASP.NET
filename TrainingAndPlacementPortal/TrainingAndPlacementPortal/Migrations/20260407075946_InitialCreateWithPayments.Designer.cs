@@ -12,8 +12,8 @@ using TrainingAndPlacementPortal.Data;
 namespace TrainingAndPlacementPortal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260409114029_ExpandInterviewRounds")]
-    partial class ExpandInterviewRounds
+    [Migration("20260407075946_InitialCreateWithPayments")]
+    partial class InitialCreateWithPayments
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,9 +32,6 @@ namespace TrainingAndPlacementPortal.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AdminRemarks")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
@@ -123,29 +120,6 @@ namespace TrainingAndPlacementPortal.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("RoundName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("RoundNumber")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Timing")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Venue")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("WaitingArea")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -236,18 +210,10 @@ namespace TrainingAndPlacementPortal.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("JobLocation")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("JobPosition")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<double?>("MinCGPA")
-                        .HasColumnType("float");
 
                     b.Property<DateTime>("PostedAt")
                         .HasColumnType("datetime2");
@@ -261,11 +227,6 @@ namespace TrainingAndPlacementPortal.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<string>("Stipend")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -276,6 +237,56 @@ namespace TrainingAndPlacementPortal.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("JobPostings");
+                });
+
+            modelBuilder.Entity("TrainingAndPlacementPortal.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RazorpayOrderId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RazorpayPaymentId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RazorpaySignature")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("TrainingAndPlacementPortal.Models.Student", b =>
@@ -335,8 +346,16 @@ namespace TrainingAndPlacementPortal.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<decimal>("PaymentAmount")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("PaymentProofPath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("PermanentAddress")
                         .HasMaxLength(200)
@@ -349,6 +368,14 @@ namespace TrainingAndPlacementPortal.Migrations
                     b.Property<string>("Pincode")
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("RazorpayOrderId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RazorpayPaymentId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("RegisteredAt")
                         .HasColumnType("datetime2");
@@ -421,7 +448,7 @@ namespace TrainingAndPlacementPortal.Migrations
                             CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin@rku.ac.in",
                             IsApproved = true,
-                            PasswordHash = "$2a$11$DmVgzahhAP8lvvinePmmHe6uSV3yH0QESq7FzN8rm7q0Ukr.nUsJC",
+                            PasswordHash = "$2a$11$TmWiW5KXuATt/CEDlfSJfu.CdP6feIPqKtYLjYujRYA3.tN1WhVZC",
                             Role = "Admin"
                         });
                 });
@@ -449,7 +476,7 @@ namespace TrainingAndPlacementPortal.Migrations
             modelBuilder.Entity("TrainingAndPlacementPortal.Models.JobApplication", b =>
                 {
                     b.HasOne("TrainingAndPlacementPortal.Models.JobPosting", "JobPosting")
-                        .WithMany("Applications")
+                        .WithMany()
                         .HasForeignKey("JobPostingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -468,12 +495,23 @@ namespace TrainingAndPlacementPortal.Migrations
             modelBuilder.Entity("TrainingAndPlacementPortal.Models.JobPosting", b =>
                 {
                     b.HasOne("TrainingAndPlacementPortal.Models.Company", "Company")
-                        .WithMany("JobPostings")
+                        .WithMany()
                         .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Company");
+                });
+
+            modelBuilder.Entity("TrainingAndPlacementPortal.Models.Payment", b =>
+                {
+                    b.HasOne("TrainingAndPlacementPortal.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("TrainingAndPlacementPortal.Models.Student", b =>
@@ -485,16 +523,6 @@ namespace TrainingAndPlacementPortal.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TrainingAndPlacementPortal.Models.Company", b =>
-                {
-                    b.Navigation("JobPostings");
-                });
-
-            modelBuilder.Entity("TrainingAndPlacementPortal.Models.JobPosting", b =>
-                {
-                    b.Navigation("Applications");
                 });
 
             modelBuilder.Entity("TrainingAndPlacementPortal.Models.User", b =>

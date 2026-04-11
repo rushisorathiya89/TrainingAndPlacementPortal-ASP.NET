@@ -4,26 +4,16 @@
     <header class="page-header flex justify-between items-start mb-8">
         <div>
             <h1 class="page-title text-[#e7000b] text-[2rem] font-bold m-0 mb-2">Applied Companies List</h1>
-            <p class="page-subtitle text-[#666] text-base m-0">View all the campus placements you have applied for.</p>
+            <p class="page-subtitle text-[#666] text-base m-0">Here you can Apply for Interviews</p>
         </div>
     </header>
 
-    <!-- Loading State -->
-    <div id="appsLoading" class="text-center py-12">
-        <i class="fas fa-spinner fa-spin text-3xl text-red-500"></i>
-        <p class="text-gray-500 mt-3">Loading your applications...</p>
-    </div>
-
-    <!-- Empty State -->
-    <div id="appsEmpty" class="hidden text-center py-12 bg-white rounded-2xl shadow-sm">
-        <i class="fas fa-paper-plane text-5xl text-gray-300 mb-4"></i>
-        <p class="text-gray-500 text-lg">You haven't applied to any jobs yet.</p>
-        <a href="/Student/Jobs" class="inline-block mt-4 text-blue-600 font-semibold hover:underline bg-blue-50 px-6 py-2 rounded-lg">Browse Available Jobs</a>
-    </div>
-
-    <!-- Applications Table -->
-    <div id="appsContainer" class="hidden bg-white rounded-2xl overflow-hidden shadow-sm">
-        <div class="overflow-x-auto hide-scrollbar">
+    <div class="bg-white rounded-2xl overflow-hidden shadow-sm">
+        <div id="loadingIndicator" class="flex justify-center items-center py-10">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-[#e7000b]"></div>
+        </div>
+        
+        <div class="overflow-x-auto hide-scrollbar hidden" id="applicationsTableContainer">
             <div class="min-w-[700px]">
                 <div class="grid grid-cols-5 gap-4 px-8 py-5 border-b border-gray-200">
                     <div class="font-bold text-[#444] text-sm col-span-1 pl-[60px]">Company Name</div>
@@ -33,84 +23,91 @@
                     <div class="font-bold text-[#444] text-sm text-center">Status</div>
                 </div>
 
-                <div id="appsTableBody" class="flex flex-col">
-                    <!-- Rows dynamically loaded -->
+                <div class="flex flex-col" id="applicationsContainer">
+                    <!-- Dynamically populated rows -->
                 </div>
             </div>
+        </div>
+        <div id="emptyState" class="hidden py-8 text-center text-gray-500 font-medium">
+            You haven't applied to any jobs yet.
         </div>
     </div>
 </div>
 
 @section Scripts {
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (!requireAuth('Student')) return;
-    loadMyApplications();
-});
-
-async function loadMyApplications() {
-    const container = document.getElementById('appsContainer');
-    const tbody = document.getElementById('appsTableBody');
-    const loading = document.getElementById('appsLoading');
-    const empty = document.getElementById('appsEmpty');
-
-    try {
-        const res = await authFetch('/api/applications/my-applications');
-        const result = await res.json();
-
-        loading.classList.add('hidden');
-
-        if (!result.success || !result.data || result.data.length === 0) {
-            empty.classList.remove('hidden');
-            return;
-        }
-
-        container.classList.remove('hidden');
-        tbody.innerHTML = '';
-
-        result.data.forEach(app => {
-            const row = document.createElement('div');
-            row.className = 'grid grid-cols-5 gap-4 px-8 py-[22px] items-center bg-white border-b border-gray-200 hover:bg-gray-50 transition-colors';
-            
-            const initial = app.companyName ? app.companyName.charAt(0).toUpperCase() : '?';
-            const statusConfig = getApplicationStatusConfig(app.applicationStatus);
-            const appliedDate = new Date(app.appliedAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-
-            row.innerHTML = `
-                <div class="flex items-center gap-4 col-span-1">
-                    <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-100 text-blue-600 font-bold shrink-0">
-                        ${initial}
-                    </div>
-                    <a href="/Student/JobDetails?id=${app.jobPostingId}" class="font-bold text-[#222] text-[15.5px] whitespace-nowrap hover:text-blue-600 transition-colors no-underline">
-                        ${app.companyName}
-                    </a>
-                </div>
-                <div class="text-[#555] text-[15px] text-center whitespace-nowrap">${app.jobRole}</div>
-                <div class="font-extrabold text-[#333] text-[15px] text-center whitespace-nowrap">${app.package || 'TBD'}</div>
-                <div class="text-[#666] text-[15px] text-center whitespace-nowrap">${appliedDate}</div>
-                <div class="flex justify-center">
-                    <span class="inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[13px] font-bold ${statusConfig.bgClass} ${statusConfig.textClass}">
-                        <i class="fas ${statusConfig.iconClass} text-[11px]"></i>${app.applicationStatus}
-                    </span>
-                </div>
-            `;
-            tbody.appendChild(row);
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Student')) return;
+            await loadApplications();
         });
 
-    } catch (err) {
-        loading.classList.add('hidden');
-        empty.classList.remove('hidden');
-        console.error('Failed to load applications:', err);
-    }
+        async function loadApplications() {
+            try {
+                const res = await authFetch('/api/applications/my-applications');
+                if (!res || !res.ok) throw new Error('Failed to fetch');
+                const data = await res.json();
+                
+                renderApplications(data.data || []);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingIndicator').innerHTML = '<p class="text-red-500 font-semibold text-center">Failed to load applications.</p>';
+            }
+        }
+
+        function renderApplications(apps) {
+            const loading = document.getElementById('loadingIndicator');
+            const tableContainer = document.getElementById('applicationsTableContainer');
+            const container = document.getElementById('applicationsContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            loading.classList.add('hidden');
+
+            if (!apps || apps.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            tableContainer.classList.remove('hidden');
+            let html = '';
+
+            apps.forEach(app => {
+                // Determine icon and colors based on status (similar to the hardcoded ones)
+                const status = app.applicationStatus || 'Applied';
+                let sb = 'bg-[#dbeafe]', st = 'text-[#3b82f6]', si = 'fa-paper-plane';
+
+                if (status === 'Selected' || status === 'Approved') {
+                    sb = 'bg-[#ccfbe1]'; st = 'text-[#16a34a]'; si = 'fa-circle-check';
+                } else if (status === 'Rejected' || status === 'Declined') {
+                    sb = 'bg-[#fee2e2]'; st = 'text-[#dc2626]'; si = 'fa-circle-xmark';
+                } else if (status === 'Shortlisted') {
+                    sb = 'bg-[#f3e8ff]'; st = 'text-[#a855f7]'; si = 'fa-star';
+                } else if (status === 'Interview Scheduled') {
+                    sb = 'bg-[#d9dee6]'; st = 'text-[#314a72]'; si = 'fa-calendar-days';
+                }
+                
+                const dateText = new Date(app.appliedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' });
+
+                html += `
+                <div class="grid grid-cols-5 gap-4 px-8 py-[22px] items-center bg-white border-b border-gray-200">
+                    <div class="flex items-center gap-4 col-span-1">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-[#e1f0ff] text-[#3b82f6]">
+                            <i class="fas fa-building text-base"></i>
+                        </div>
+                        <span class="font-bold text-[#222] text-[15.5px] whitespace-nowrap">${app.companyName || 'N/A'}</span>
+                    </div>
+                    <div class="text-[#555] text-[15px] text-center whitespace-nowrap">${app.jobRole || 'N/A'}</div>
+                    <div class="font-bold text-[#333] text-[15px] text-center whitespace-nowrap">${app.package || 'N/A'}</div>
+                    <div class="text-[#666] text-[15px] text-center whitespace-nowrap">${dateText}</div>
+                    <div class="flex justify-center">
+                        <span class="inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[13px] font-bold ${sb} ${st}">
+                            <i class="fas ${si} text-[11px]"></i>${status}
+                        </span>
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+    </script>
 }
 
-function getApplicationStatusConfig(status) {
-    if (status === 'Shortlisted') return { bgClass: 'bg-[#dbeafe]', textClass: 'text-[#3b82f6]', iconClass: 'fa-star' };
-    if (status === 'Interview Scheduled') return { bgClass: 'bg-[#d9dee6]', textClass: 'text-[#314a72]', iconClass: 'fa-calendar-days' };
-    if (status === 'Selected') return { bgClass: 'bg-[#ccfbe1]', textClass: 'text-[#16a34a]', iconClass: 'fa-circle-check' };
-    if (status === 'Rejected') return { bgClass: 'bg-[#fee2e2]', textClass: 'text-[#dc2626]', iconClass: 'fa-circle-xmark' };
-    // Default: Applied
-    return { bgClass: 'bg-[#ffedd5]', textClass: 'text-[#f97316]', iconClass: 'fa-paper-plane' };
-}
-</script>
-}

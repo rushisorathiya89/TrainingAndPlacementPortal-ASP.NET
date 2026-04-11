@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using TrainingAndPlacementPortal.Data;
 using TrainingAndPlacementPortal.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace TrainingAndPlacementPortal.Controllers.Api
 {
@@ -15,10 +13,47 @@ namespace TrainingAndPlacementPortal.Controllers.Api
     public class AdminApiController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IWebHostEnvironment _env;
 
-        public AdminApiController(AppDbContext context)
+        public AdminApiController(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
+            _env = env;
+        }
+
+        // GET: api/admin/stats
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetDashboardStats()
+        {
+            try
+            {
+                var totalStudents = await _context.Students.CountAsync();
+                var pendingApprovals = await _context.Users.CountAsync(u => u.Role == "Student" && !u.IsApproved);
+                var activeJobDrives = await _context.JobPostings.CountAsync(j => j.Status == "Approved" && j.IsActive);
+                var totalApplications = await _context.JobApplications.CountAsync();
+                
+                // For demonstration, these might rely on specific application statuses
+                var shortlisted = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Shortlisted" || a.ApplicationStatus == "Interview");
+                var placed = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired" || a.ApplicationStatus == "Selected");
+
+                return Ok(new
+                {
+                    success = true,
+                    data = new
+                    {
+                        totalStudents,
+                        pendingApprovals,
+                        activeJobDrives,
+                        totalApplications,
+                        shortlisted,
+                        placed
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = "Failed to fetch stats.", error = ex.Message });
+            }
         }
 
         // GET: api/admin/students
@@ -27,7 +62,6 @@ namespace TrainingAndPlacementPortal.Controllers.Api
         {
             var students = await _context.Students
                 .Include(s => s.User)
-                .Where(s => s.User.Role == "Student")
                 .OrderByDescending(s => s.RegisteredAt)
                 .Select(s => new
                 {
@@ -38,7 +72,7 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                     s.Branch,
                     s.Semester,
                     s.CGPA,
-                    Email = s.User.Email,
+                    Email = s.User!.Email,
                     s.MobileNumber,
                     s.PersonalEmail,
                     s.TenthPercentage,
@@ -51,12 +85,52 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                     s.City,
                     s.State,
                     s.Pincode,
+                    s.ConsentFormPath,
+                    s.PaymentProofPath,
+                    s.PaymentStatus,
+                    s.RazorpayPaymentId,
+                    s.PaymentAmount,
                     IsApproved = s.User.IsApproved,
                     s.RegisteredAt
                 })
                 .ToListAsync();
 
             return Ok(new { success = true, data = students });
+        }
+
+        // GET: api/admin/students/{id}/document/{fileType}
+        [HttpGet("students/{id}/document/{fileType}")]
+        public async Task<IActionResult> DownloadDocument(int id, string fileType)
+        {
+            var student = await _context.Students.FindAsync(id);
+            if (student == null)
+                return NotFound(new { success = false, message = "Student not found." });
+
+            string? relativePath = fileType.ToLower() switch
+            {
+                "consent" => student.ConsentFormPath,
+                "payment" => student.PaymentProofPath,
+                _ => null
+            };
+
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return NotFound(new { success = false, message = "Document not found." });
+
+            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
+            if (!System.IO.File.Exists(fullPath))
+                return NotFound(new { success = false, message = "File not found on server." });
+
+            var contentType = Path.GetExtension(fullPath).ToLower() switch
+            {
+                ".pdf" => "application/pdf",
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".webp" => "image/webp",
+                _ => "application/octet-stream"
+            };
+
+            var fileName = $"{student.EnrollmentNumber}_{fileType}{Path.GetExtension(fullPath)}";
+            return PhysicalFile(fullPath, contentType, fileName);
         }
 
         // PUT: api/admin/students/{id}/approve
@@ -68,12 +142,10 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-            {
                 return NotFound(new { success = false, message = "Student not found." });
-            }
 
             student.IsApproved = true;
-            student.User.IsApproved = true;
+            student.User!.IsApproved = true;
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, message = $"{student.FullName} has been approved successfully." });
@@ -88,18 +160,15 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-            {
                 return NotFound(new { success = false, message = "Student not found." });
-            }
 
             student.IsApproved = false;
-            student.User.IsApproved = false;
+            student.User!.IsApproved = false;
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, message = $"{student.FullName} has been rejected." });
         }
 
-        // DELETE: api/admin/students/{id}
         [HttpDelete("students/{id}")]
         public async Task<IActionResult> DeleteStudent(int id)
         {
@@ -108,54 +177,31 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (student == null)
-            {
                 return NotFound(new { success = false, message = "Student not found." });
-            }
 
             var studentName = student.FullName;
 
-            // Remove student record
-            _context.Students.Remove(student);
-
-            // Remove associated user record
-            if (student.User != null)
+            // Delete uploaded files
+            var uploadDir = Path.Combine(_env.WebRootPath, "uploads", "students", student.EnrollmentNumber);
+            if (Directory.Exists(uploadDir))
             {
-                _context.Users.Remove(student.User);
+                Directory.Delete(uploadDir, true);
             }
+
+            // Remove payment records
+            var payments = await _context.Payments.Where(p => p.StudentId == id).ToListAsync();
+            _context.Payments.RemoveRange(payments);
+
+            _context.Students.Remove(student);
+            if (student.User != null)
+                _context.Users.Remove(student.User);
 
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true, message = $"{studentName} has been deleted successfully." });
         }
 
-<<<<<<< HEAD
         // --- Placement History ---
-=======
-        // GET: api/admin/dashboard-stats
-        [HttpGet("dashboard-stats")]
-        public async Task<IActionResult> GetDashboardStats()
-        {
-            var totalStudents = await _context.Students.Include(s => s.User).CountAsync(s => s.User.Role == "Student");
-            var pendingApprovals = await _context.JobPostings.CountAsync(j => j.Status == "Pending");
-            var activeJobDrives = await _context.JobPostings.CountAsync(j => j.Status == "Approved" && j.IsActive);
-            var totalApplications = await _context.JobApplications.CountAsync();
-            var shortlistedStudents = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Shortlisted");
-            var selectedStudents = await _context.JobApplications.CountAsync(a => a.ApplicationStatus == "Selected");
-
-            return Ok(new 
-            { 
-                success = true, 
-                data = new {
-                    totalStudents,
-                    pendingApprovals,
-                    activeJobDrives,
-                    totalApplications,
-                    shortlistedStudents,
-                    selectedStudents
-                }
-            });
-        }
->>>>>>> 851760d24f17ea08d5a29a3df5f5dab26368342f
 
         // GET: api/admin/placement-history
         [HttpGet("placement-history")]
@@ -163,8 +209,8 @@ namespace TrainingAndPlacementPortal.Controllers.Api
         {
             var history = await _context.JobPostings
                 .Include(j => j.Company)
-                .Include(j => j.Applications)
-                .Where(j => j.Status == "Approved" || j.Status == "Completed" || j.Status == "Rejected")
+                .Include(j => j.JobApplications)
+                .Where(j => j.Status == "Approved")
                 .OrderByDescending(j => j.PostedAt)
                 .Select(j => new
                 {
@@ -172,96 +218,14 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                     CompanyName = j.Company.CompanyName,
                     JobRole = j.JobPosition,
                     Package = j.AnnualCTC,
-                    OfferDate = j.CampusDriveDate, // Using Campus Drive Date as a proxy for offer processing start
-                    JoiningDate = j.DateOfJoining,
-                    SelectedStudents = j.Applications.Count(a => a.ApplicationStatus == "Selected"),
-                    StatusLabel = j.Status // Can map to badges in UI
+                    SelectedCount = j.JobApplications.Count(a => a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired"),
+                    j.CampusDriveDate,
+                    j.DateOfJoining,
+                    Status = j.IsActive ? "In Progress" : "Completed"
                 })
                 .ToListAsync();
 
             return Ok(new { success = true, data = history });
         }
-
-        // GET: api/admin/interview-schedules/{jobId}
-        [HttpGet("interview-schedules/{jobId}")]
-        public async Task<IActionResult> GetInterviewSchedules(int jobId)
-        {
-            var schedules = await _context.InterviewSchedules
-                .Where(s => s.JobPostingId == jobId)
-                .OrderBy(s => s.RoundNumber)
-                .ToListAsync();
-
-            return Ok(new { success = true, data = schedules });
-        }
-
-        public class InterviewRoundDto
-        {
-            public int RoundNumber { get; set; }
-            public string RoundName { get; set; }
-            public string Venue { get; set; }
-            public string WaitingArea { get; set; }
-            public DateTime InterviewDate { get; set; }
-            public string Timing { get; set; }
-        }
-
-        // POST: api/admin/interview-schedules/{jobId}
-        [HttpPost("interview-schedules/{jobId}")]
-        public async Task<IActionResult> SaveInterviewSchedules(int jobId, [FromBody] List<InterviewRoundDto> rounds)
-        {
-            var job = await _context.JobPostings.FindAsync(jobId);
-            if (job == null) return NotFound(new { success = false, message = "Job not found." });
-
-            // Clear existing rounds
-            var existing = _context.InterviewSchedules.Where(s => s.JobPostingId == jobId);
-            _context.InterviewSchedules.RemoveRange(existing);
-
-            // Add new rounds
-            foreach (var r in rounds)
-            {
-                _context.InterviewSchedules.Add(new InterviewSchedule
-                {
-                    JobPostingId = jobId,
-                    RoundNumber = r.RoundNumber,
-                    RoundName = r.RoundName,
-                    Venue = r.Venue,
-                    WaitingArea = r.WaitingArea,
-                    InterviewDate = r.InterviewDate,
-                    Timing = r.Timing,
-                    InterviewType = "Offline", // Default
-                    CreatedAt = DateTime.UtcNow
-                });
-            }
-
-            await _context.SaveChangesAsync();
-            return Ok(new { success = true, message = "Interview rounds updated successfully." });
-        }
-
-        public class AddPortalUserDto
-        {
-            public string Email { get; set; }
-            public string Password { get; set; }
-        }
-
-        // POST: api/admin/add-portal-user
-        [HttpPost("add-portal-user")]
-        public async Task<IActionResult> AddPortalUser([FromBody] AddPortalUserDto dto)
-        {
-            var existing = await _context.Users.AnyAsync(u => u.Email == dto.Email);
-            if (existing) return BadRequest(new { success = false, message = "Email already registered." });
-
-            var user = new User
-            {
-                Email = dto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = "Admin",
-                IsApproved = true,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { success = true, message = "User added successfully!" });
-        }
     }
-    }
+}

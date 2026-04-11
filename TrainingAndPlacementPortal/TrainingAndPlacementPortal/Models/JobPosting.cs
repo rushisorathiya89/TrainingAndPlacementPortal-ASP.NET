@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace TrainingAndPlacementPortal.Models
@@ -30,10 +31,6 @@ namespace TrainingAndPlacementPortal.Models
 
         public DateTime DateOfJoining { get; set; }
 
-        [Required]
-        [MaxLength(100)]
-        public string JobLocation { get; set; }
-
         public string SelectionProcess { get; set; }
 
         public DateTime CampusDriveDate { get; set; }
@@ -44,20 +41,21 @@ namespace TrainingAndPlacementPortal.Models
         public string AdditionalNotes { get; set; }
         public string DocumentsPath { get; set; }
 
-        // Comma separated values for simple storage
+        // Comma separated values for simple storage, or can use relational tables
         public string EligibleBatches { get; set; } 
         public string EligibleCourses { get; set; }
 
-        // Approval workflow
+        // Added properties to match usage across the codebase
         [MaxLength(20)]
-        public string Status { get; set; } = "Pending"; // Pending, Approved, Rejected, OnHold
+        public string Status { get; set; } = "Pending"; // e.g. Pending, Approved, Rejected
 
-        public double? MinCGPA { get; set; }
+        // Minimum CGPA required for the posting (0.0 means no minimum)
+        public double MinCGPA { get; set; } = 0.0;
         
         public bool IsActive { get; set; } = true;
         public DateTime PostedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation property for applications
-        public ICollection<JobApplication> Applications { get; set; } = new List<JobApplication>();
+        public virtual ICollection<JobApplication> JobApplications { get; set; } = new List<JobApplication>();
     }
 }

@@ -6,215 +6,246 @@
         <p class="page-subtitle">Read All Information Properly Before Apply</p>
     </div>
 
-    <!-- Loading -->
-    <div id="jobDetailLoading" class="text-center py-12">
-        <i class="fas fa-spinner fa-spin text-3xl text-red-500"></i>
-        <p class="text-gray-500 mt-3">Loading job details...</p>
-    </div>
+<div id="loadingIndicator" class="flex justify-center items-center py-20">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+</div>
 
-    <!-- Content -->
-    <div id="jobDetailContent" class="hidden">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Left Section -->
-            <div class="lg:col-span-2 space-y-6">
+<div id="jobDetailContent" class="hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Section -->
+        <div class="lg:col-span-2 space-y-6">
 
-                <!-- Header Card -->
-                <div class="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex items-center gap-6">
-                    <div id="jdInitial" class="w-16 h-16 bg-blue-500 rounded-xl shadow-sm flex items-center justify-center shrink-0 text-white font-bold text-3xl">?</div>
+            <!-- Header Card -->
+            <div class="bg-[#ece6da] p-6 rounded-2xl border border-[#e0dacd] shadow-sm flex items-center gap-6">
+                <div id="companyLogo" class="w-16 h-16 bg-[#2563eb] rounded-2xl shadow-sm flex items-center justify-center shrink-0 text-white font-bold text-3xl">L</div>
+                <div>
+                    <h2 id="jobTitle" class="text-2xl font-bold text-gray-900 m-0 mb-2">Job Title</h2>
+                    <div class="flex flex-wrap items-center gap-4 text-sm text-gray-700 font-bold">
+                        <div class="flex items-center gap-1.5"><span class="text-blue-600">🏢</span> <span id="companyNameHeader">Company Name</span></div>
+                        <div class="flex items-center gap-1.5"><span class="text-blue-600">📍</span> <span id="jobLocationHeader">Location</span></div>
+                        <div id="websiteContainer" class="flex items-center gap-1.5"><span class="text-blue-600">🌐</span> <a id="companyWebsite" href="" target="_blank" class="hover:underline text-gray-700 no-underline">website</a></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="bg-[#eafdf0] rounded-2xl p-5 shadow-sm border border-[#d1f4da]">
+                    <div id="ctcMetric" class="text-green-600 text-lg font-extrabold mb-1">N/A</div>
+                    <div class="text-gray-600 text-xs font-bold uppercase tracking-wider">Annual CTC</div>
+                </div>
+                <div class="bg-[#eff6ff] rounded-2xl p-5 shadow-sm border border-[#dbeafe]">
+                    <div id="stipendMetric" class="text-blue-700 text-lg font-extrabold mb-1">N/A</div>
+                    <div class="text-gray-600 text-xs font-bold uppercase tracking-wider">Stipend</div>
+                </div>
+                <div class="bg-[#fefce8] rounded-2xl p-5 shadow-sm border border-[#fef08a]">
+                    <div id="durationMetric" class="text-yellow-700 text-lg font-extrabold mb-1">N/A</div>
+                    <div class="text-gray-600 text-xs font-bold uppercase tracking-wider">Internship</div>
+                </div>
+                <div class="bg-[#fef2f2] rounded-2xl p-5 shadow-sm border border-[#fecaca]">
+                    <div id="bondMetric" class="text-red-700 text-lg font-extrabold mb-1">N/A</div>
+                    <div class="text-gray-600 text-xs font-bold uppercase tracking-wider">Bond</div>
+                </div>
+            </div>
+
+            <!-- Description Content -->
+            <div class="bg-[#ece6da] p-8 rounded-2xl border border-[#e0dacd] shadow-sm">
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 border-b border-gray-300 pb-2 m-0 uppercase tracking-tight">About Company & Job Description</h3>
+                    <p id="jobDescription" class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap m-0 font-medium">Description here...</p>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 border-b border-gray-300 pb-2 m-0 uppercase tracking-tight">Selection Process</h3>
+                    <p id="selectionProcess" class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap m-0 font-medium">Process here...</p>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 border-b border-gray-300 pb-2 m-0 uppercase tracking-tight">Additional Information</h3>
+                    <p id="additionalInfo" class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap m-0 font-medium">Notes here...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section -->
+        <div class="lg:col-span-1 space-y-6">
+
+            <div class="bg-[#ece6da] p-6 rounded-2xl border border-[#e0dacd] shadow-sm">
+                <h3 class="text-lg font-bold text-gray-900 mb-5 m-0 uppercase tracking-tight">Eligibility & Dates</h3>
+
+                <div class="space-y-5">
                     <div>
-                        <h2 id="jdTitle" class="text-2xl font-bold text-gray-900 m-0 mb-2"></h2>
-                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-700 font-medium">
-                            <div class="flex items-center gap-1.5"><span class="text-blue-600">🏢</span> <span id="jdCompName"></span></div>
-                            <div class="flex items-center gap-1.5"><span class="text-blue-600">📍</span> <span id="jdLoc"></span></div>
-                            <div class="flex items-center gap-1.5"><span class="text-blue-600">🌐</span> <a id="jdWeb" href="#" target="_blank" rel="noopener noreferrer" class="hover:underline text-gray-700 no-underline"></a></div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Eligible Courses</div>
+                        <div id="eligibleCourses" class="text-sm text-gray-900 font-bold">N/A</div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Eligible Batches</div>
+                        <div id="eligibleBatches" class="text-sm text-gray-900 font-bold">N/A</div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Drive Date</div>
+                        <div id="driveDate" class="text-sm text-gray-900 font-bold">N/A</div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Tentative Joining Date</div>
+                        <div id="joiningDate" class="text-sm text-gray-900 font-bold">N/A</div>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Registration Link</div>
+                        <div id="regLinkContainer" class="text-sm text-blue-600 font-bold break-all">
+                             <a id="regLink" href="#" target="_blank" class="hover:underline">Link</a>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Metrics -->
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div class="bg-[#eafdf0] rounded-xl p-5 shadow-sm border border-[#d1f4da]">
-                        <div id="jdCtc" class="text-green-600 text-lg font-bold mb-1"></div>
-                        <div class="text-gray-600 text-sm font-medium">Annual CTC</div>
-                    </div>
-                    <div class="bg-[#eff6ff] rounded-xl p-5 shadow-sm border border-[#dbeafe]">
-                        <div id="jdStipendVal" class="text-blue-700 text-lg font-bold mb-1">-</div>
-                        <div class="text-gray-600 text-sm font-medium">Stipend</div>
-                    </div>
-                    <div class="bg-[#fefce8] rounded-xl p-5 shadow-sm border border-[#fef08a]">
-                        <div id="jdInternVal" class="text-yellow-700 text-lg font-bold mb-1">-</div>
-                        <div class="text-gray-600 text-sm font-medium">Internship</div>
-                    </div>
-                    <div class="bg-[#fef2f2] rounded-xl p-5 shadow-sm border border-[#fecaca]">
-                        <div id="jdBondVal" class="text-red-700 text-lg font-bold mb-1">-</div>
-                        <div class="text-gray-600 text-sm font-medium">Bond</div>
-                    </div>
-                </div>
-
-                <!-- Description Content -->
-                <div class="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
-                    <div class="mb-6">
-                        <h3 class="text-lg font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2 m-0">About Company &amp; Job Description</h3>
-                        <p id="jdDesc" class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap m-0"></p>
-                    </div>
-
-                    <div class="mb-6">
-                        <h3 class="text-lg font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2 m-0">Selection Process</h3>
-                        <p id="jdProcess" class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap m-0"></p>
-                    </div>
-
-                    <div id="jdNotesSection">
-                        <h3 class="text-lg font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2 m-0">Additional Information</h3>
-                        <p id="jdNotes" class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap m-0"></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Right Section -->
-            <div class="lg:col-span-1 space-y-6">
-
-                <div class="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4 m-0">Eligibility &amp; Dates</h3>
-
-                    <div class="space-y-4">
-                        <div>
-                            <div class="text-sm font-bold text-gray-900">Eligible Courses</div>
-                            <div id="jdCourses" class="text-sm text-gray-600"></div>
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-gray-900">Eligible Batches</div>
-                            <div id="jdBatches" class="text-sm text-gray-600"></div>
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-gray-900">Drive Date</div>
-                            <div id="jdDriveDate" class="text-sm text-gray-600"></div>
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-gray-900">Tentative Joining Date</div>
-                            <div id="jdJoinDate" class="text-sm text-gray-600"></div>
-                        </div>
-                        <div id="jdRegLinkSection" class="hidden">
-                            <div class="text-sm font-bold text-gray-900">Registration Link</div>
-                            <a id="jdRegLink" href="#" target="_blank" class="text-sm text-blue-600 hover:underline break-all"></a>
-                        </div>
-                    </div>
+            <div class="pt-2">
+                <button id="applyBtn" onclick="applyFromDetail()" class="w-full py-4 rounded-xl font-bold text-white uppercase bg-[#e7000b] hover:bg-red-700 transition-all shadow-md active:scale-[0.98] border-none cursor-pointer text-sm">
+                    APPLY NOW <span class="ml-2 text-xl leading-none">→</span>
+                </button>
+                <div class="mt-4 text-center">
+                    <a href="/StudJobs" class="text-gray-500 text-sm font-bold no-underline hover:text-gray-700 flex items-center justify-center gap-1">
+                        ← Back to All Jobs
+                    </a>
                 </div>
-
-                <div class="pt-2 flex flex-col items-center">
-                    <button id="applyNowBtn" onclick="applyJob('applyNowBtn')" class="w-full py-4 rounded-xl font-bold text-white uppercase bg-[#e7000b] hover:bg-red-700 transition-colors shadow-md flex items-center justify-center gap-2 mb-3 border-none cursor-pointer">
-                        APPLY NOW <span class="text-xl leading-none">→</span>
-                    </button>
-                    <a href="/Student/Jobs" class="text-sm text-gray-500 hover:text-gray-700 no-underline">← Back to All Jobs</a>
-                </div>
-
             </div>
+
         </div>
     </div>
 </div>
 
 @section Scripts {
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (!requireAuth('Student')) return;
+    <script>
+        let currentJobId = null;
 
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
-    if (!id) {
-        window.location.href = '/Student/Jobs';
-        return;
-    }
-    loadJobDetail(id);
-});
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!requireAuth('Student')) return;
+            
+            const params = new URLSearchParams(window.location.search);
+            currentJobId = params.get('id');
 
-async function loadJobDetail(id) {
-    const loading = document.getElementById('jobDetailLoading');
-    const content = document.getElementById('jobDetailContent');
-
-    try {
-        const res = await authFetch(`/api/company/approved-jobs/${id}`);
-        const result = await res.json();
-
-        loading.classList.add('hidden');
-
-        if (!result.success || !result.data) {
-            alert('Job not found or no longer available.');
-            window.location.href = '/Student/Jobs';
-            return;
-        }
-
-        const job = result.data;
-
-        // Header
-        document.getElementById('jdInitial').textContent = job.companyName ? job.companyName.charAt(0).toUpperCase() : '?';
-        document.getElementById('jdTitle').textContent = job.jobPosition;
-        document.getElementById('jdCompName').textContent = job.companyName;
-        document.getElementById('jdLoc').textContent = job.jobLocation || 'N/A';
-        
-        const webEl = document.getElementById('jdWeb');
-        if (job.website) {
-            webEl.textContent = job.website.replace(/^https?:\/\//, '');
-            webEl.href = job.website.startsWith('http') ? job.website : 'https://' + job.website;
-        } else {
-            webEl.textContent = 'N/A';
-        }
-
-        // Metrics
-        document.getElementById('jdCtc').textContent = job.annualCTC || '-';
-        document.getElementById('jdStipendVal').textContent = job.stipend || '-';
-        document.getElementById('jdInternVal').textContent = job.internshipDuration || '-';
-        document.getElementById('jdBondVal').textContent = job.bond || '-';
-
-        // Description
-        document.getElementById('jdDesc').textContent = job.description || 'No description provided.';
-        document.getElementById('jdProcess').textContent = job.selectionProcess || 'Not specified.';
-        
-        const notes = job.additionalNotes;
-        if (notes) {
-            document.getElementById('jdNotes').textContent = notes;
-        } else {
-            document.getElementById('jdNotesSection').classList.add('hidden');
-        }
-
-        // Eligibility
-        document.getElementById('jdCourses').textContent = job.eligibleCourses ? job.eligibleCourses.replace(/,/g, ', ') : 'All courses';
-        document.getElementById('jdBatches').textContent = job.eligibleBatches ? job.eligibleBatches.replace(/,/g, ', ') : 'All batches';
-
-        // Dates
-        document.getElementById('jdDriveDate').textContent = job.campusDriveDate ? new Date(job.campusDriveDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : 'TBD';
-        document.getElementById('jdJoinDate').textContent = job.dateOfJoining ? new Date(job.dateOfJoining).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' }) : 'TBD';
-
-        // Registration Link
-        if (job.registrationLink) {
-            document.getElementById('jdRegLinkSection').classList.remove('hidden');
-            const regLink = document.getElementById('jdRegLink');
-            regLink.href = job.registrationLink.startsWith('http') ? job.registrationLink : 'https://' + job.registrationLink;
-            regLink.textContent = job.registrationLink;
-        }
-
-        // Apply Button API setup
-        const applyBtn = document.getElementById('applyNowBtn');
-        applyBtn.onclick = () => applyJobApi(job.id, 'applyNowBtn');
-
-        // Check if already applied
-        try {
-            const checkRes = await authFetch(`/api/applications/check/${job.id}`);
-            const checkResult = await checkRes.json();
-            if (checkResult.success && checkResult.hasApplied) {
-                applyBtn.textContent = 'APPLIED ✅';
-                applyBtn.className = 'w-full py-4 rounded-xl font-bold text-green-800 uppercase bg-green-100 cursor-not-allowed shadow-md flex items-center justify-center gap-2 mb-3 border-none';
-                applyBtn.disabled = true;
+            if (!currentJobId) {
+                document.getElementById('loadingIndicator').innerHTML = '<p class="text-red-500 font-bold">Invalid Job ID.</p>';
+                return;
             }
-        } catch (e) {
-            console.error('Failed to check application status:', e);
+
+            await loadJobDetail();
+        });
+
+        async function loadJobDetail() {
+            try {
+                // Parallel fetch for job details and application status
+                const [jobRes, appRes] = await Promise.all([
+                    authFetch(`/api/company/approved-jobs/${currentJobId}`),
+                    authFetch('/api/applications/my-applications')
+                ]);
+
+                if (!jobRes || !jobRes.ok) throw new Error('Job not found');
+                const data = await jobRes.json();
+                
+                if (data.success) {
+                    const job = data.data;
+                    
+                    // Populate UI
+                    document.getElementById('jobTitle').textContent = job.jobPosition;
+                    document.getElementById('companyNameHeader').textContent = job.companyName;
+                    document.getElementById('jobLocationHeader').textContent = job.jobLocation;
+                    document.getElementById('companyLogo').textContent = job.companyName.charAt(0).toUpperCase();
+                    
+                    if (job.website) {
+                        document.getElementById('companyWebsite').href = job.website.startsWith('http') ? job.website : 'https://' + job.website;
+                        document.getElementById('companyWebsite').textContent = job.website;
+                    } else {
+                        document.getElementById('websiteContainer').classList.add('hidden');
+                    }
+
+                    document.getElementById('ctcMetric').textContent = job.annualCTC || 'N/A';
+                    document.getElementById('stipendMetric').textContent = job.stipend || 'N/A';
+                    document.getElementById('durationMetric').textContent = job.internshipDuration || 'N/A';
+                    document.getElementById('bondMetric').textContent = job.bond || 'N/A';
+                    
+                    document.getElementById('jobDescription').textContent = job.description || 'No description provided.';
+                    document.getElementById('selectionProcess').textContent = job.selectionProcess || 'No details provided.';
+                    document.getElementById('additionalInfo').textContent = job.additionalNotes || 'No additional information.';
+                    
+                    document.getElementById('eligibleCourses').textContent = job.eligibleCourses || 'All Courses';
+                    document.getElementById('eligibleBatches').textContent = job.eligibleBatches || 'All Batches';
+                    document.getElementById('driveDate').textContent = job.campusDriveDate ? new Date(job.campusDriveDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'To be announced';
+                    document.getElementById('joiningDate').textContent = job.dateOfJoining ? new Date(job.dateOfJoining).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A';
+                    
+                    if (job.registrationLink) {
+                        document.getElementById('regLink').href = job.registrationLink;
+                        document.getElementById('regLink').textContent = job.registrationLink;
+                    } else {
+                        document.getElementById('regLinkContainer').textContent = 'N/A';
+                    }
+
+                    // Check if already applied or already placed
+                    if (appRes && appRes.ok) {
+                        const appData = await appRes.json();
+                        const applications = appData.data || [];
+                        const isApplied = applications.some(a => a.jobPostingId == currentJobId);
+                        const isPlaced = applications.some(a => a.applicationStatus === 'Selected');
+                        
+                        const btn = document.getElementById('applyBtn');
+                        
+                        if (isApplied) {
+                            btn.textContent = 'APPLIED ✓';
+                            btn.classList.add('bg-[#d1fae5]', 'text-[#065f46]', 'cursor-default');
+                            btn.classList.remove('bg-[#e7000b]', 'hover:bg-red-700', 'cursor-pointer');
+                            btn.onclick = null;
+                        } else if (isPlaced) {
+                            btn.textContent = 'PLACEMENT COMPLETED';
+                            btn.classList.add('bg-gray-200', 'text-gray-500', 'cursor-not-allowed');
+                            btn.classList.remove('bg-[#e7000b]', 'hover:bg-red-700', 'cursor-pointer');
+                            btn.title = "You have already been selected for a placement.";
+                            btn.onclick = null;
+                        }
+                    }
+
+                    document.getElementById('loadingIndicator').classList.add('hidden');
+                    document.getElementById('jobDetailContent').classList.remove('hidden');
+                } else {
+                    document.getElementById('loadingIndicator').innerHTML = `<p class="text-red-500 font-bold">${data.message}</p>`;
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingIndicator').innerHTML = '<p class="text-red-500 font-bold">Error loading job details.</p>';
+            }
         }
 
-        content.classList.remove('hidden');
+        async function applyFromDetail() {
+            if (!currentJobId) return;
+            
+            const btn = document.getElementById('applyBtn');
+            const originalText = btn.innerHTML;
+            
+            try {
+                btn.textContent = 'Applying...';
+                btn.disabled = true;
 
-    } catch (err) {
-        loading.classList.add('hidden');
-        alert('Failed to load job details.');
-        console.error(err);
-    }
+                const res = await authFetch('/api/applications/apply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ jobPostingId: parseInt(currentJobId) })
+                });
+
+                const result = await res.json();
+                if (result.success) {
+                    alert('Successfully applied for ' + document.getElementById('companyNameHeader').textContent);
+                    window.location.reload();
+                } else {
+                    alert(result.message || 'Application failed');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred while applying.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
 }
-</script>
-}
+</div>

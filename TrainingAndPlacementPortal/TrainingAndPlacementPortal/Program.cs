@@ -11,26 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// Register DbContext with SQL Server. Allow overriding the connection string via environment variables
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-// Support common env var forms: ConnectionStrings__DefaultConnection or DEFAULT_CONNECTION
-var envConn = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-           ?? Environment.GetEnvironmentVariable("DEFAULT_CONNECTION");
-if (!string.IsNullOrEmpty(envConn))
-{
-    connectionString = envConn;
-    Console.WriteLine("Using database connection from environment variable.");
-}
-else
-{
-    Console.WriteLine("Using database connection from configuration (appsettings).");
-}
-
+// Register DbContext with SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register JWT Token Service
 builder.Services.AddScoped<JwtTokenService>();
+
+// Register Razorpay Service
+builder.Services.AddScoped<RazorpayService>();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -57,15 +46,6 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Auto-apply any pending database migrations on startup
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.Migrate();
-    // Inject dummy data if blank
-    DbSeeder.Seed(db);
-}
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -78,21 +58,8 @@ else
     // Run seeders in development
     using (var scope = app.Services.CreateScope())
     {
-        // Ensure database schema is up-to-date before running seeders
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        db.Database.Migrate();
-
-        // Run seeders but don't let them crash the app if something goes wrong
-        try
-        {
-            SeedTestData.Run(scope.ServiceProvider);
-            InterviewSeeder.Run(scope.ServiceProvider);
-        }
-        catch (Exception ex)
-        {
-            // Log and continue. In development you can inspect the exception details in the console.
-            Console.WriteLine("Seeder error: " + ex.Message);
-        }
+        SeedTestData.Run(scope.ServiceProvider);
+        InterviewSeeder.Run(scope.ServiceProvider);
     }
 }
 
