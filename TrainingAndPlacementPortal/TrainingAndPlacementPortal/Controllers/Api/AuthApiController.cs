@@ -262,6 +262,32 @@ namespace TrainingAndPlacementPortal.Controllers.Api
 
             return Ok(new { success = true, message = "Password updated successfully!" });
         }
+
+        // POST: api/auth/forgot-password
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.NewPassword))
+                return BadRequest(new { success = false, message = "Email and new password are required." });
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            if (user == null)
+            {
+                // For security, don't reveal if user exists or not, but here we might want to tell them
+                return NotFound(new { success = false, message = "No account found with this email address." });
+            }
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true, message = "Password has been reset successfully. You can now login with your new password." });
+        }
+    }
+
+    public class ForgotPasswordDto
+    {
+        public string Email { get; set; } = "";
+        public string NewPassword { get; set; } = "";
     }
 
     public class ChangePasswordDto

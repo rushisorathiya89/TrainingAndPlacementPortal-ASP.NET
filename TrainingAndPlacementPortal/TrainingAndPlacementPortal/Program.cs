@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TrainingAndPlacementPortal.Data;
 using TrainingAndPlacementPortal.Services;
+using TrainingAndPlacementPortal.Scripts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,15 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    // Run seeders in development
+    using (var scope = app.Services.CreateScope())
+    {
+        SeedTestData.Run(scope.ServiceProvider);
+        InterviewSeeder.Run(scope.ServiceProvider);
+    }
 }
 
 app.UseHttpsRedirection();

@@ -66,9 +66,13 @@
                     <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Timing *</label>
                     <input type="time" class="interview-time w-full p-4 rounded-xl border outline-none bg-white font-medium" required />
                 </div>
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Waiting Area / Extra Notes</label>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Waiting Area</label>
                     <input type="text" placeholder="e.g. Seminar Hall" class="waiting-area w-full p-4 rounded-xl border outline-none bg-white font-medium" />
+                </div>
+                <div class="md:col-span-1">
+                    <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Special Instructions</label>
+                    <input type="text" placeholder="e.g. Bring your own laptop" class="instructions w-full p-4 rounded-xl border outline-none bg-white font-medium" />
                 </div>
             </div>
         </div>
@@ -90,28 +94,82 @@
         document.addEventListener('DOMContentLoaded', async () => {
             if (!requireAuth('Admin')) return;
             await loadApprovedJobs();
+
+            // Check if we are in 'Edit' mode
+            const urlParams = new URLSearchParams(window.location.search);
+            const jobId = urlParams.get('jobId');
+            if (jobId) {
+                document.getElementById('jobPostingSelect').value = jobId;
+                await loadExistingSchedules(jobId);
+            }
         });
+
+        async function loadExistingSchedules(jobId) {
+            try {
+                const res = await authFetch('/api/admin/interview-schedules');
+                if (!res || !res.ok) return;
+                const result = await res.json();
+                
+                if (result.success) {
+                    const existing = result.data.filter(s => s.jobPostingId == jobId);
+                    if (existing.length > 0) {
+                        // Clear container first
+                        const container = document.getElementById('roundsContainer');
+                        container.innerHTML = '';
+                        
+                        existing.forEach((iv, index) => {
+                            addRound();
+                            const cards = document.querySelectorAll('.round-card');
+                            const card = cards[index];
+                            
+                            card.querySelector('.round-name').value = iv.roundName;
+                            card.querySelector('.interview-type').value = iv.interviewType;
+                            card.querySelector('.location-link').value = iv.locationOrLink;
+                            card.querySelector('.waiting-area').value = iv.waitingArea || '';
+                            card.querySelector('.instructions').value = iv.instructions || '';
+                            
+                            // Handle date and time
+                            const dt = new Date(iv.interviewDate);
+                            card.querySelector('.interview-date').value = dt.toISOString().split('T')[0];
+                            card.querySelector('.interview-time').value = dt.toTimeString().slice(0, 5);
+                        });
+                        updateRoundNumbers();
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading existing schedules:', err);
+            }
+        }
 
         async function loadApprovedJobs() {
             try {
-                const res = await authFetch('/api/company/job-postings');
-                if (!res || !res.ok) throw new Error('Failed to load jobs');
+                // Use the new endpoint that filters Approved + Has Applications
+                const res = await authFetch('/api/company/admin/schedulable-jobs');
+                if (!res || !res.ok) throw new Error('Failed to load eligible jobs');
                 const result = await res.json();
                 
                 if (result.success) {
                     const select = document.getElementById('jobPostingSelect');
-                    const approvedJobs = result.data.filter(j => j.status === 'Approved');
+                    select.innerHTML = '<option value="">-- Select an Eligible Job Drive --</option>';
                     
-                    approvedJobs.forEach(job => {
+                    if (result.data.length === 0) {
+                        const option = document.createElement('option');
+                        option.disabled = true;
+                        option.textContent = "No approved jobs with applications found.";
+                        select.appendChild(option);
+                        return;
+                    }
+
+                    result.data.forEach(job => {
                         const option = document.createElement('option');
                         option.value = job.id;
-                        option.textContent = `${job.companyName} - ${job.jobPosition} (${job.annualCTC})`;
+                        option.textContent = `${job.companyName} - ${job.jobRole} (${job.package}) [${job.applicationCount} Applied]`;
                         select.appendChild(option);
                     });
                 }
             } catch (err) {
                 console.error(err);
-                alert('Error loading job drives. Please refresh.');
+                alert('Error loading job drives. Only approved jobs with applications can be scheduled.');
             }
         }
 
@@ -179,6 +237,7 @@
                     locationOrLink: location,
                     interviewDate: `${date}T${time}:00`,
                     waitingArea: card.querySelector('.waiting-area').value,
+                    instructions: card.querySelector('.instructions').value,
                     status: 'Pending'
                 });
             }
@@ -200,13 +259,30 @@
                     alert(result.message);
                     window.location.href = '/AdminInterviewSchedule';
                 } else {
-                    alert(result.message || 'Failed to schedule interviews');
+                    // Show detailed error if available
+                    let errMsg = result.message || 'Failed to schedule interviews';
+                    if (result.error) errMsg += `\nError: ${result.error}`;
+                    
+                    // Robust check for array of errors (standard ASP.NET Core validation)
+                    if (result.errors) {
+                        if (Array.isArray(result.errors)) {
+                            errMsg += `\nDetails: ${result.errors.join(', ')}`;
+                        } else if (typeof result.errors === 'object') {
+                            const details = Object.values(result.errors).flat().join(', ');
+                            errMsg += `\nDetails: ${details}`;
+                        }
+                    }
+                    
+                    alert(errMsg);
                     btn.textContent = originalText;
                     btn.disabled = false;
                 }
             } catch (err) {
                 console.error(err);
-                alert('An error occurred during submission.');
+                alert('An error occurred during submission. Please check your data and try again.');
+                const btn = document.querySelector('button[onclick="submitInterviewSchedule()"]');
+                btn.textContent = 'Schedule Interviews';
+                btn.disabled = false;
             }
         }
     </script>

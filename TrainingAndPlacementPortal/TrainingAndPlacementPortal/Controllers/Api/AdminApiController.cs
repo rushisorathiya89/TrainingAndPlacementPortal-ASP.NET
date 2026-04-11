@@ -201,54 +201,6 @@ namespace TrainingAndPlacementPortal.Controllers.Api
             return Ok(new { success = true, message = $"{studentName} has been deleted successfully." });
         }
 
-        // --- Interview Scheduling ---
-
-        // GET: api/admin/interview-schedules
-        [HttpGet("interview-schedules")]
-        public async Task<IActionResult> GetInterviewSchedules()
-        {
-            var schedules = await _context.InterviewSchedules
-                .Include(i => i.JobPosting)
-                .ThenInclude(j => j.Company)
-                .OrderByDescending(i => i.InterviewDate)
-                .Select(i => new
-                {
-                    i.Id,
-                    i.JobPostingId,
-                    CompanyName = i.JobPosting.Company.CompanyName,
-                    JobRole = i.JobPosting.JobPosition,
-                    i.RoundNumber,
-                    i.RoundName,
-                    i.InterviewDate,
-                    i.InterviewType,
-                    i.LocationOrLink,
-                    i.WaitingArea,
-                    i.Instructions,
-                    i.Status,
-                    AnnualCTC = i.JobPosting.AnnualCTC
-                })
-                .ToListAsync();
-
-            return Ok(new { success = true, data = schedules });
-        }
-
-        // POST: api/admin/interview-schedules
-        [HttpPost("interview-schedules")]
-        public async Task<IActionResult> CreateInterviewSchedules([FromBody] List<InterviewSchedule> schedules)
-        {
-            if (schedules == null || schedules.Count == 0)
-                return BadRequest(new { success = false, message = "No schedules provided." });
-
-            foreach (var s in schedules)
-            {
-                s.CreatedAt = DateTime.UtcNow;
-                _context.InterviewSchedules.Add(s);
-            }
-
-            await _context.SaveChangesAsync();
-            return Ok(new { success = true, message = $"{schedules.Count} rounds scheduled successfully." });
-        }
-
         // --- Placement History ---
 
         // GET: api/admin/placement-history

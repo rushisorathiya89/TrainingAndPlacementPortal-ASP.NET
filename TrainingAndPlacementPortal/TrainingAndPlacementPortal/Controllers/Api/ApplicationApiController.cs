@@ -161,8 +161,22 @@ namespace TrainingAndPlacementPortal.Controllers.Api
                 .CountAsync(a => a.StudentId == student.Id && (a.ApplicationStatus == "Placed" || a.ApplicationStatus == "Hired" || a.ApplicationStatus == "Selected"));
 
             // Upcoming interviews count from InterviewSchedules
-            var upcomingInterviews = await _context.InterviewSchedules
-                .CountAsync(i => i.InterviewDate >= DateTime.UtcNow && i.Status == "Pending");
+            var applications = await _context.JobApplications
+                .Where(a => a.StudentId == student.Id && a.ApplicationStatus != "Rejected")
+                .Select(a => new { a.JobPostingId, a.ApplicationStatus })
+                .ToListAsync();
+            
+            var jobIds = applications.Select(a => a.JobPostingId).ToList();
+            var allUpcoming = await _context.InterviewSchedules
+                .Where(i => i.InterviewDate >= DateTime.UtcNow && i.Status == "Pending" && jobIds.Contains(i.JobPostingId))
+                .ToListAsync();
+
+            var upcomingInterviews = allUpcoming.Count(s => {
+                var app = applications.FirstOrDefault(a => a.JobPostingId == s.JobPostingId);
+                if (app == null) return false;
+                if (s.RoundNumber == 1) return true;
+                return app.ApplicationStatus == "Shortlisted" || app.ApplicationStatus == "Selected";
+            });
 
             return Ok(new
             {
